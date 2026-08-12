@@ -1,0 +1,1257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>CaveMan Training</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="theme-color" content="#1c1c1e" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#1c1c1e; --surface:#252527; --surface2:#313133; --border:#4a4a4d;
+  --text:#ffffff; --text-dim:#c2bfba;
+  --orange:#e88a3a; --red:#b8442f; --olive:#75904d; --sand:#e9dab9; --blue:#5b83a6;
+  --radius:14px;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0; background:var(--bg); color:var(--text); font-family:'Montserrat',sans-serif; height:100%;}
+h1,h2,h3,.brand{font-family:'Bebas Neue',sans-serif; letter-spacing:0.5px;}
+#app{max-width:480px; margin:0 auto; min-height:100vh; padding-bottom:84px; position:relative;}
+header.top{padding:18px 16px 10px; display:flex; align-items:center; justify-content:space-between;}
+header.top .brand{font-size:26px; color:var(--sand);}
+header.top .brand span{color:var(--orange);}
+.screen{padding:0 16px 16px; display:none;}
+.screen.active{display:block;}
+.card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:14px;}
+.card h3{margin:0 0 8px; font-size:20px; color:var(--sand);}
+.pill{display:inline-block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; padding:3px 9px; border-radius:20px; background:#fff; color:#1c1c1e; margin-right:6px;}
+.pill.strength{background:#fff; color:#a4520f;}
+.pill.hiit{background:#fff; color:#8f2d1c;}
+.pill.run_zone2{background:#fff; color:#2c5578;}
+.row{display:flex; gap:10px; align-items:center;}
+.row.between{justify-content:space-between;}
+.big{font-size:34px; font-family:'Bebas Neue',sans-serif; color:var(--orange);}
+.muted{color:var(--text-dim); font-size:13px;}
+button{font-family:'Montserrat',sans-serif; font-weight:700; border:none; border-radius:10px; padding:14px; font-size:15px; cursor:pointer;}
+button.primary{background:var(--orange); color:#1a1310; width:100%;}
+button.secondary{background:var(--surface2); color:var(--text); border:1px solid var(--border);}
+button.ghost{background:transparent; color:var(--text-dim); border:1px solid var(--border);}
+button.danger{background:var(--red); color:#fff;}
+button:disabled{opacity:0.4;}
+input,select,textarea{width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:10px; font-family:'Montserrat',sans-serif; font-size:14px;}
+label{font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; display:block; margin:12px 0 4px;}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.chip-group{display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;}
+.chip{padding:7px 12px; border-radius:20px; border:1px solid var(--border); background:var(--surface2); color:var(--text-dim); font-size:13px; cursor:pointer;}
+.chip.selected{background:var(--olive); color:#fff; border-color:var(--olive);}
+nav.tabs{position:fixed; bottom:0; left:0; right:0; max-width:480px; margin:0 auto; background:var(--surface); border-top:1px solid var(--border); display:flex;}
+nav.tabs button{flex:1; background:none; border-radius:0; color:var(--text-dim); font-size:11px; padding:10px 4px; display:flex; flex-direction:column; align-items:center; gap:3px;}
+nav.tabs button.active{color:var(--orange);}
+nav.tabs .icon{font-size:18px;}
+.exercise-row{display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);}
+.exercise-row:last-child{border-bottom:none;}
+.exercise-row .name{font-weight:600;}
+.exercise-row .presc{color:var(--text-dim); font-size:13px;}
+.exercise-row.active-exercise{background:rgba(232,138,58,0.12); border-left:3px solid var(--orange); border-radius:6px; padding:10px 8px; margin:2px -8px 2px -1px;}
+.exercise-row.active-exercise .name{color:var(--orange);}
+.modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,0.7); display:none; align-items:flex-end; justify-content:center; z-index:50;}
+.modal-overlay.active{display:flex;}
+.modal{background:var(--bg); width:100%; max-width:480px; max-height:92vh; overflow-y:auto; border-radius:20px 20px 0 0; padding:20px 18px 28px;}
+.week-day{display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);}
+.week-day:last-child{border-bottom:none;}
+.week-day .dayname{width:44px; font-weight:700; color:var(--sand);}
+.timer-circle{width:220px; height:220px; border-radius:50%; border:6px solid var(--orange); display:flex; align-items:center; justify-content:center; margin:24px auto; flex-direction:column;}
+.timer-circle.rest{border-color:var(--olive);}
+.timer-num{font-family:'Bebas Neue',sans-serif; font-size:56px;}
+.bars{display:flex; gap:6px; align-items:flex-end; height:80px; margin-top:8px;}
+.bars .bar{flex:1; height:100%; background:var(--surface2); border-radius:4px 4px 0 0; position:relative;}
+.bars .bar .fill{position:absolute; bottom:0; left:0; right:0; background:var(--orange); border-radius:4px 4px 0 0;}
+.bars .bar .lbl{position:absolute; bottom:-18px; left:0; right:0; text-align:center; font-size:10px; color:var(--text-dim);}
+.lock{opacity:0.45; position:relative;}
+.lock::after{content:"🔒 Premium"; position:absolute; top:8px; right:8px; font-size:10px; color:var(--sand); background:var(--surface2); padding:3px 8px; border-radius:10px;}
+.toast{position:fixed; bottom:96px; left:50%; transform:translateX(-50%); background:var(--surface2); border:1px solid var(--border); padding:10px 18px; border-radius:20px; font-size:13px; z-index:60; display:none;}
+.hero-card{background:linear-gradient(160deg, #e8933f 0%, #c8622c 45%, #3a2416 100%); border:1px solid var(--border); border-radius:var(--radius); padding:28px 20px 24px; margin-bottom:14px; text-align:center;}
+.hero-card img.hero-logo{max-width:210px; width:100%; display:block; margin:0 auto 14px; filter:drop-shadow(0 6px 14px rgba(0,0,0,0.45));}
+.hero-card .hero-tag{color:#fff3e2; font-size:15px; font-weight:600; margin:0 0 18px;}
+.hero-card button{max-width:280px; margin:0 auto;}
+nav.tabs img.tab-icon{width:24px; height:24px; object-fit:contain; opacity:0.65;}
+nav.tabs button.active img.tab-icon{opacity:1;}
+.progressbar{height:8px; background:var(--surface2); border-radius:6px; overflow:hidden; margin-top:10px;}
+.progressbar .fill{height:100%; background:var(--orange);}
+.art-preview{text-align:center; margin-top:10px;}
+.art-preview img{max-height:320px; width:auto; max-width:100%; border-radius:10px;}
+.tier-badge-sm{width:22px; height:22px; object-fit:contain; vertical-align:middle; margin-right:4px;}
+.lib-row{padding:10px 0; border-bottom:1px solid var(--border);}
+.lib-row:last-child{border-bottom:none;}
+.lib-row .cue{color:var(--text-dim); font-size:12.5px; margin-top:3px;}
+.lib-row .impact-tag{color:var(--red); font-size:11px; text-transform:uppercase; margin-left:6px;}
+.week-strip{display:flex; gap:6px; margin-bottom:14px;}
+.week-strip .day-chip{flex:1; text-align:center; padding:7px 2px; border-radius:8px; background:var(--surface2); border:1px solid var(--border); cursor:pointer;}
+.week-strip .day-chip.today{border-color:var(--orange); border-width:2px;}
+.week-strip .day-chip .d{font-size:10px; color:var(--text-dim); text-transform:uppercase; font-weight:700;}
+.week-strip .day-chip .dot{width:16px; height:16px; border-radius:50%; margin:4px auto 0; display:flex; align-items:center; justify-content:center; font-size:9px; color:#fff; background:var(--border);}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="top">
+    <div class="brand">CAVE<span>MAN</span></div>
+    <div class="muted" id="headerSub">Train like survival depends on it.</div>
+  </header>
+
+  <!-- HOME -->
+  <section class="screen active" id="screen-home">
+    <div id="homeContent"></div>
+  </section>
+
+  <!-- PROGRAM -->
+  <section class="screen" id="screen-program">
+    <div class="card">
+      <div class="row between"><h3>Weekly Mission</h3><button class="ghost" style="padding:6px 10px;font-size:12px" onclick="regenerateWeek()">Regenerate</button></div>
+      <p class="muted" id="weeklyMissionProgress"></p>
+      <div class="progressbar"><div class="fill" id="weeklyMissionFill" style="width:0%"></div></div>
+      <div id="weekList" style="margin-top:10px"></div>
+    </div>
+    <div class="card">
+      <h3>Build Your Own Mission</h3>
+      <p class="muted">Free tier: mix strength, HIIT, or Zone-2 exercises into your own session.</p>
+      <button class="primary" onclick="openBuilder(null)">+ New Custom Mission</button>
+    </div>
+    <div class="card">
+      <h3>Exercise Library</h3>
+      <p class="muted">Browse every exercise — pattern, prescription, and how to do it.</p>
+      <button class="secondary" onclick="openLibrary()">Browse All Exercises</button>
+    </div>
+  </section>
+
+  <!-- PROGRESS -->
+  <section class="screen" id="screen-progress">
+    <div class="card">
+      <div class="muted">Mission Score</div>
+      <div class="row between" style="align-items:baseline">
+        <div class="big" style="font-size:44px" id="statHunterScore">0</div>
+        <div class="muted" style="font-size:14px"><img class="tier-badge-sm" id="statTierImg" src="assets/tier-scout.png" alt="" /><span id="statTier">Scout</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row between">
+        <h3>30-Day Mission</h3>
+        <div class="row" style="gap:8px">
+          <span class="muted" id="thirtyDayCycle"></span>
+          <button class="ghost" style="padding:4px 10px;font-size:11px" onclick="openMissionStartEdit()">Edit</button>
+        </div>
+      </div>
+      <p class="muted" id="thirtyDayLabel"></p>
+      <div class="progressbar"><div class="fill" id="thirtyDayFill" style="width:0%"></div></div>
+    </div>
+    <div class="card">
+      <h3>Last 7 Days</h3>
+      <div class="bars" id="progressBars"></div>
+    </div>
+    <div class="card">
+      <div class="grid2">
+        <div><div class="big" id="statCompleted" style="font-size:24px">0</div><div class="muted">Completed</div></div>
+        <div><div class="big" id="statAvgRpe" style="font-size:24px">–</div><div class="muted">Avg RPE</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>History</h3>
+      <div id="historyList"></div>
+    </div>
+  </section>
+
+  <!-- PROFILE -->
+  <section class="screen" id="screen-profile">
+    <div class="card">
+      <h3>About You</h3>
+      <label>Age</label><input type="number" id="p_age" min="16" max="100" />
+      <div class="grid2">
+        <div><label>Height (cm)</label><input type="number" id="p_height" /></div>
+        <div><label>Weight (kg)</label><input type="number" id="p_weight" /></div>
+      </div>
+      <div class="muted" id="p_bmi" style="margin-top:8px"></div>
+      <div class="art-preview" id="ageArtPreview"></div>
+      <label>Recovery Profile</label>
+      <select id="p_recovery">
+        <option value="fast">Fast</option>
+        <option value="moderate">Moderate</option>
+        <option value="conservative">Conservative</option>
+      </select>
+      <label>Fitness Level</label>
+      <select id="p_level" onchange="updateTierPreview()">
+        <option>Scout</option><option>Hunter</option><option>Alpha</option><option>Apex</option>
+      </select>
+      <div class="art-preview" id="tierArtPreview"></div>
+      <label>Activity Level</label>
+      <select id="p_activity">
+        <option value="sedentary">Sedentary</option>
+        <option value="light">Light</option>
+        <option value="moderate">Moderate</option>
+        <option value="active">Active</option>
+        <option value="very_active">Very Active</option>
+      </select>
+      <label>Diet Type</label>
+      <select id="p_diet">
+        <option value="omnivore">Omnivore</option>
+        <option value="vegetarian">Vegetarian</option>
+        <option value="vegan">Vegan</option>
+        <option value="pescatarian">Pescatarian</option>
+        <option value="keto">Keto</option>
+        <option value="other">Other</option>
+      </select>
+      <div class="grid2">
+        <div><label>Smoker</label><select id="p_smoker"><option value="false">No</option><option value="true">Yes</option></select></div>
+        <div><label>Alcohol</label><select id="p_alcohol">
+          <option value="none">None</option><option value="occasional">Occasional</option>
+          <option value="moderate">Moderate</option><option value="frequent">Frequent</option>
+        </select></div>
+      </div>
+      <label>Goals</label>
+      <div class="chip-group" id="p_goals"></div>
+      <label>Injuries</label>
+      <div class="chip-group" id="p_injuries"></div>
+      <button class="primary" style="margin-top:16px" onclick="saveProfile()">Save Profile</button>
+    </div>
+
+    <div class="card lock">
+      <h3>Smart Scale Data</h3>
+      <p class="muted">Body fat %, muscle %, water % — unlocks the AI-generated diet + training plan.</p>
+      <div class="grid2">
+        <div><label>Body Fat %</label><input disabled /></div>
+        <div><label>Muscle %</label><input disabled /></div>
+      </div>
+      <button class="secondary" style="margin-top:12px" disabled>Upgrade to Premium</button>
+    </div>
+
+    <div class="card">
+      <h3>Reminders</h3>
+      <p class="muted">Local notification stub — "Your mission awaits."</p>
+      <button class="secondary" onclick="stubReminder()">Enable Daily Reminder</button>
+    </div>
+  </section>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="home" onclick="switchTab('home')"><img class="tab-icon" src="assets/icon-home.png" alt="" />Home</button>
+    <button class="tab-btn" data-tab="program" onclick="switchTab('program')"><img class="tab-icon" src="assets/icon-program.png" alt="" />Program</button>
+    <button class="tab-btn" data-tab="progress" onclick="switchTab('progress')"><img class="tab-icon" src="assets/icon-progress.png" alt="" />Progress</button>
+    <button class="tab-btn" data-tab="profile" onclick="switchTab('profile')"><img class="tab-icon" src="assets/icon-profile.png" alt="" />Profile</button>
+  </nav>
+</div>
+
+<!-- PRE-WORKOUT CHECK MODAL -->
+<div class="modal-overlay" id="modal-check">
+  <div class="modal">
+    <h3>How do you feel today?</h3>
+    <p class="muted" id="checkHuntName"></p>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px">
+      <button class="secondary" onclick="startMission('strong')">💪 Strong</button>
+      <button class="secondary" onclick="startMission('normal')">🙂 Normal</button>
+      <button class="secondary" onclick="startMission('fatigued')">😴 Fatigued</button>
+    </div>
+    <button class="ghost" style="width:100%; margin-top:16px" onclick="closeModal('modal-check')">Cancel</button>
+  </div>
+</div>
+
+<!-- WORKOUT SCREEN MODAL -->
+<div class="modal-overlay" id="modal-workout">
+  <div class="modal">
+    <div class="row between">
+      <h3 id="workoutTitle">Mission</h3>
+      <button class="ghost" style="padding:6px 10px" onclick="closeModal('modal-workout')">✕</button>
+    </div>
+    <div class="row" id="workoutMeta" style="margin-bottom:8px"></div>
+    <div id="workoutNotes" class="muted" style="margin-bottom:10px"></div>
+    <div class="row between" style="margin-bottom:10px">
+      <span class="muted">Scaling</span>
+      <div class="chip-group" id="scalingToggle"></div>
+    </div>
+
+    <div id="timerBlock"></div>
+
+    <div class="card" style="margin-top:10px">
+      <div id="exerciseList"></div>
+    </div>
+
+    <button class="primary" onclick="openCompleteHunt()">Complete Mission</button>
+  </div>
+</div>
+
+<!-- COMPLETE MISSION MODAL -->
+<div class="modal-overlay" id="modal-complete">
+  <div class="modal">
+    <h3>Log Your Mission</h3>
+    <label>Actual RPE (1-10)</label>
+    <input type="number" id="log_rpe" min="1" max="10" value="7" />
+    <label>Notes (optional)</label>
+    <textarea id="log_notes" rows="3"></textarea>
+    <button class="primary" style="margin-top:16px" onclick="finishHuntLog(true)">Save — Completed</button>
+    <button class="ghost" style="width:100%; margin-top:10px" onclick="finishHuntLog(false)">Mark as Skipped</button>
+  </div>
+</div>
+
+<!-- BUILDER MODAL -->
+<div class="modal-overlay" id="modal-builder">
+  <div class="modal">
+    <div class="row between">
+      <h3 id="builderTitle">Build a Mission</h3>
+      <button class="ghost" style="padding:6px 10px" onclick="closeModal('modal-builder')">✕</button>
+    </div>
+    <label>Modality</label>
+    <select id="b_modality" onchange="builderPreselected=[]; renderBuilderList()">
+      <option value="strength">Strength</option>
+      <option value="hiit">HIIT (7x50s/15s)</option>
+      <option value="run_zone2">Zone 2</option>
+    </select>
+    <label>Pick Exercises</label>
+    <div id="builderExerciseList" style="max-height:260px; overflow-y:auto; border:1px solid var(--border); border-radius:8px; padding:8px"></div>
+    <button class="primary" style="margin-top:16px" onclick="saveCustomHunt()" id="builderSaveBtn">Save to Today</button>
+    <button class="ghost" style="width:100%; margin-top:10px" onclick="closeModal('modal-builder')">Cancel</button>
+  </div>
+</div>
+
+<!-- 30-DAY MISSION START EDIT MODAL -->
+<div class="modal-overlay" id="modal-mission-start">
+  <div class="modal">
+    <div class="row between">
+      <h3>Edit 30-Day Mission</h3>
+      <button class="ghost" style="padding:6px 10px" onclick="closeModal('modal-mission-start')">✕</button>
+    </div>
+    <p class="muted">Set which day your 30-Day Mission started. Useful if you were already training before setting this up, or want to restart the cycle.</p>
+    <label>Start Date</label>
+    <input type="date" id="mission_start_date" />
+    <button class="primary" style="margin-top:16px" onclick="saveMissionStart()">Save</button>
+    <button class="ghost" style="width:100%; margin-top:10px" onclick="restartMission()">Restart at Day 1 (Today)</button>
+  </div>
+</div>
+
+<!-- EXERCISE LIBRARY MODAL -->
+<div class="modal-overlay" id="modal-library">
+  <div class="modal">
+    <div class="row between">
+      <h3>Exercise Library</h3>
+      <button class="ghost" style="padding:6px 10px" onclick="closeModal('modal-library')">✕</button>
+    </div>
+    <div class="chip-group" id="libraryFilter" style="margin-bottom:12px"></div>
+    <div id="libraryList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== DATA: atomic Workout library ===================== */
+const WORKOUTS = [
+  {id:"band_chest_press",name:"Band Chest Press",pattern:"lift",modality:"strength",difficulty:2,highImpact:false,substitutions:["push_up"],defaultSets:3,defaultReps:12,defaultRestSeconds:60,cue:"Anchor band behind you, press forward like a bench press."},
+  {id:"band_squat",name:"Band Squat",pattern:"lift",modality:"strength",difficulty:2,highImpact:false,substitutions:["bodyweight_squat","chair_squat"],defaultSets:3,defaultReps:12,defaultRestSeconds:60,cue:"Stand on band, handles at shoulders, squat."},
+  {id:"push_up",name:"Push-Up",pattern:"lift",modality:"strength",difficulty:2,highImpact:false,substitutions:["incline_push_up","wall_push_up"],defaultSets:3,defaultReps:12,defaultRestSeconds:60,cue:"Hands under shoulders, body straight, lower your chest to the floor."},
+  {id:"incline_push_up",name:"Incline Push-Up",pattern:"lift",modality:"strength",difficulty:1,highImpact:false,substitutions:["wall_push_up"],defaultSets:3,defaultReps:12,defaultRestSeconds:60,cue:"Hands on a raised surface (bench, counter) — easier angle than the floor."},
+  {id:"wall_push_up",name:"Wall Push-Up",pattern:"lift",modality:"strength",difficulty:1,highImpact:false,substitutions:[],defaultSets:3,defaultReps:12,defaultRestSeconds:45,cue:"Hands on a wall, step back, push-up standing — gentlest variation."},
+  {id:"band_shoulder_press",name:"Band Shoulder Press",pattern:"lift",modality:"strength",difficulty:2,highImpact:false,substitutions:["band_chest_press"],defaultSets:3,defaultReps:10,defaultRestSeconds:60,cue:"Stand on band, press overhead."},
+  {id:"plank",name:"Plank",pattern:"lift",modality:"strength",difficulty:1,highImpact:false,substitutions:["knee_plank"],defaultSets:2,defaultSeconds:45,defaultRestSeconds:30,cue:"Forearms down, straight line head to heels, brace your core."},
+  {id:"knee_plank",name:"Knee Plank",pattern:"lift",modality:"strength",difficulty:1,highImpact:false,substitutions:[],defaultSets:2,defaultSeconds:30,defaultRestSeconds:30,cue:"Plank from the knees — easier variation to build core endurance."},
+  {id:"pull_up",name:"Pull-Up",pattern:"climb",modality:"strength",difficulty:4,highImpact:false,substitutions:["band_assisted_pull_up","band_row"],defaultSets:3,defaultReps:6,defaultRestSeconds:90,cue:"If too hard: band-assisted pull-ups."},
+  {id:"band_assisted_pull_up",name:"Band-Assisted Pull-Up",pattern:"climb",modality:"strength",difficulty:3,highImpact:false,substitutions:["band_row"],defaultSets:3,defaultReps:6,defaultRestSeconds:75,cue:"Loop a band under your foot or knee on the bar for extra lift."},
+  {id:"band_row",name:"Band Row",pattern:"lift",modality:"strength",difficulty:2,highImpact:false,substitutions:[],defaultSets:3,defaultReps:12,defaultRestSeconds:60,cue:"Anchor band at chest height, pull toward you."},
+  {id:"band_deadlift",name:"Band Deadlift",pattern:"lift",modality:"strength",difficulty:2,highImpact:false,substitutions:["hip_hinge_bodyweight"],defaultSets:3,defaultReps:12,defaultRestSeconds:60,cue:"Stand on band, hinge at hips, pull up."},
+  {id:"hip_hinge_bodyweight",name:"Bodyweight Hip Hinge",pattern:"lift",modality:"strength",difficulty:1,highImpact:false,substitutions:[],defaultSets:3,defaultReps:12,defaultRestSeconds:45,cue:"Hinge at the hips, flat back, like a deadlift without weight."},
+  {id:"band_face_pull",name:"Band Face Pull",pattern:"lift",modality:"strength",difficulty:1,highImpact:false,substitutions:[],defaultSets:3,defaultReps:12,defaultRestSeconds:45,cue:"Great for posture and shoulder health."},
+  {id:"core_rotation",name:"Band Core Rotation",pattern:"lift",modality:"strength",difficulty:2,highImpact:false,substitutions:["standing_core_rotation"],defaultSets:2,defaultReps:12,defaultRestSeconds:45,cue:"Anti-rotation band exercise."},
+  {id:"standing_core_rotation",name:"Standing Core Rotation (no band)",pattern:"lift",modality:"strength",difficulty:1,highImpact:false,substitutions:[],defaultSets:2,defaultReps:10,defaultRestSeconds:30,cue:"Rotate your torso side to side under control, feet planted."},
+  {id:"band_incline_chest_press",name:"Band Incline Chest Press",pattern:"lift",modality:"strength",difficulty:2,highImpact:false,substitutions:["band_chest_press"],defaultSets:3,defaultReps:12,defaultRestSeconds:60,cue:"Anchor band low, press upward."},
+  {id:"band_biceps_curl",name:"Band Biceps Curl",pattern:"lift",modality:"strength",difficulty:1,highImpact:false,substitutions:[],defaultSets:3,defaultReps:12,defaultRestSeconds:45,cue:"Stand on band, curl."},
+  {id:"band_triceps_extension",name:"Band Triceps Extension",pattern:"lift",modality:"strength",difficulty:1,highImpact:false,substitutions:[],defaultSets:3,defaultReps:12,defaultRestSeconds:45,cue:"Anchor band high, extend downward."},
+  {id:"bodyweight_lunge",name:"Bodyweight Lunge",pattern:"lift",modality:"strength",difficulty:2,highImpact:false,substitutions:["assisted_lunge"],defaultSets:3,defaultReps:10,defaultRestSeconds:60,cue:"Step forward, drop the back knee toward the floor. Reps are per leg."},
+  {id:"assisted_lunge",name:"Assisted Lunge (hand support)",pattern:"lift",modality:"strength",difficulty:1,highImpact:false,substitutions:[],defaultSets:2,defaultReps:8,defaultRestSeconds:60,cue:"Hold a wall or chair for balance while stepping into a lunge."},
+  {id:"bodyweight_squat",name:"Bodyweight Squat",pattern:"lift",modality:"strength",difficulty:1,highImpact:false,substitutions:["chair_squat"],defaultSets:3,defaultReps:12,defaultRestSeconds:60,cue:"Feet shoulder-width, sit hips back and down, chest up."},
+  {id:"chair_squat",name:"Chair Squat (sit-to-stand)",pattern:"lift",modality:"strength",difficulty:1,highImpact:false,substitutions:[],defaultSets:3,defaultReps:10,defaultRestSeconds:60,cue:"Sit down to a chair and stand back up — controlled sit-to-stand."},
+  {id:"hanging_knee_raise",name:"Hanging Knee Raise",pattern:"climb",modality:"strength",difficulty:3,highImpact:false,substitutions:["lying_knee_raise"],defaultSets:2,defaultReps:10,defaultRestSeconds:45,cue:"Core + grip strength."},
+  {id:"lying_knee_raise",name:"Lying Knee Raise",pattern:"lift",modality:"strength",difficulty:1,highImpact:false,substitutions:[],defaultSets:2,defaultReps:10,defaultRestSeconds:30,cue:"Lying on your back, lift knees toward your chest, lower slowly."},
+  {id:"glute_bridge",name:"Glute Bridge",pattern:"lift",modality:"strength",difficulty:1,highImpact:false,substitutions:[],defaultSets:3,defaultReps:15,defaultRestSeconds:45,cue:"Lying on your back, knees bent, drive hips up by squeezing glutes."},
+  {id:"burpee",name:"Burpee",pattern:"crawl",modality:"hiit",difficulty:3,highImpact:true,substitutions:["step_back_burpee","squat_thrust_no_jump"],defaultSeconds:50,defaultRestSeconds:15,cue:"Squat, plank, push-up, jump feet in, jump up — full-body cycle."},
+  {id:"step_back_burpee",name:"Step-Back Burpee (no jump)",pattern:"crawl",modality:"hiit",difficulty:2,highImpact:false,substitutions:["squat_thrust_no_jump"],defaultSeconds:50,defaultRestSeconds:15,cue:"Burpee without the jump — step back to plank, step up to finish."},
+  {id:"squat_thrust_no_jump",name:"Squat Thrust (no jump, no push-up)",pattern:"lift",modality:"hiit",difficulty:1,highImpact:false,substitutions:[],defaultSeconds:50,defaultRestSeconds:15,cue:"Plank to squat and back, no push-up or jump — steady pace."},
+  {id:"bear_crawl",name:"Bear Crawl",pattern:"crawl",modality:"hiit",difficulty:2,highImpact:false,substitutions:["hands_knees_crawl"],defaultSeconds:50,defaultRestSeconds:15,cue:"Hands and feet on the floor, knees hovering, crawl forward."},
+  {id:"hands_knees_crawl",name:"Hands-and-Knees Crawl",pattern:"crawl",modality:"hiit",difficulty:1,highImpact:false,substitutions:[],defaultSeconds:50,defaultRestSeconds:15,cue:"Crawl on hands and knees — gentler than a full bear crawl."},
+  {id:"mountain_climber",name:"Mountain Climber",pattern:"crawl",modality:"hiit",difficulty:2,highImpact:false,substitutions:["slow_mountain_climber"],defaultSeconds:50,defaultRestSeconds:15,cue:"Plank position, drive knees toward your chest alternately, quick pace."},
+  {id:"slow_mountain_climber",name:"Slow Mountain Climber",pattern:"crawl",modality:"hiit",difficulty:1,highImpact:false,substitutions:[],defaultSeconds:50,defaultRestSeconds:15,cue:"Mountain climber at a controlled, deliberate pace."},
+  {id:"farmer_carry",name:"Farmer Carry",pattern:"carry",modality:"hiit",difficulty:2,highImpact:false,substitutions:["suitcase_carry"],defaultSeconds:50,defaultRestSeconds:15,cue:"Carry a heavy household object at your sides, walk tall."},
+  {id:"suitcase_carry",name:"Suitcase Carry (single-side, lighter load)",pattern:"carry",modality:"hiit",difficulty:1,highImpact:false,substitutions:[],defaultSeconds:50,defaultRestSeconds:15,cue:"Carry a light weight in one hand, walk tall without leaning."},
+  {id:"box_jump",name:"Box Jump",pattern:"climb",modality:"hiit",difficulty:4,highImpact:true,substitutions:["step_up"],defaultSeconds:50,defaultRestSeconds:15,cue:"Jump onto a stable box or step, land soft, step back down."},
+  {id:"step_up",name:"Step-Up",pattern:"climb",modality:"hiit",difficulty:2,highImpact:false,substitutions:["slow_step_up"],defaultSeconds:50,defaultRestSeconds:15,cue:"Box jump → step-up."},
+  {id:"slow_step_up",name:"Slow Controlled Step-Up (low step)",pattern:"climb",modality:"hiit",difficulty:1,highImpact:false,substitutions:[],defaultSeconds:50,defaultRestSeconds:15,cue:"Step onto a low, stable surface one leg at a time, controlled."},
+  {id:"sprint",name:"Sprint",pattern:"sprint",modality:"hiit",difficulty:4,highImpact:true,substitutions:["incline_walk","brisk_walk"],defaultSeconds:50,defaultRestSeconds:15,cue:"All-out running effort for the interval."},
+  {id:"incline_walk",name:"Incline Walk",pattern:"sprint",modality:"hiit",difficulty:2,highImpact:false,substitutions:["brisk_walk"],defaultSeconds:50,defaultRestSeconds:15,cue:"Sprint → incline walk."},
+  {id:"brisk_walk",name:"Brisk Walk",pattern:"sprint",modality:"hiit",difficulty:1,highImpact:false,substitutions:[],defaultSeconds:50,defaultRestSeconds:15,cue:"Fast-paced walk, elevated heart rate but sustainable."},
+  {id:"jump_squat",name:"Jump Squat",pattern:"lift",modality:"hiit",difficulty:3,highImpact:true,substitutions:["bodyweight_squat"],defaultSeconds:50,defaultRestSeconds:15,cue:"Squat down, explode up into a jump, land softly."},
+  {id:"high_knees",name:"High Knees",pattern:"sprint",modality:"hiit",difficulty:2,highImpact:true,substitutions:["marching_high_knees"],defaultSeconds:50,defaultRestSeconds:15,cue:"Quick alternating knee drives, staying light on your feet."},
+  {id:"marching_high_knees",name:"Marching High Knees (low impact)",pattern:"sprint",modality:"hiit",difficulty:1,highImpact:false,substitutions:[],defaultSeconds:50,defaultRestSeconds:15,cue:"High knees at a marching pace — low-impact version."},
+  {id:"zone2_run",name:"Zone 2 Run",pattern:"sprint",modality:"run_zone2",difficulty:2,highImpact:true,substitutions:["zone2_bike","zone2_walk"],defaultSeconds:2100,cue:"Conversational pace, ~60-70% max HR."},
+  {id:"zone2_bike",name:"Zone 2 Indoor Bike",pattern:"sprint",modality:"run_zone2",difficulty:1,highImpact:false,substitutions:["zone2_walk"],defaultSeconds:2400,cue:"Steady, conversational-pace indoor cycling."},
+  {id:"zone2_row",name:"Zone 2 Rowing",pattern:"sprint",modality:"run_zone2",difficulty:2,highImpact:false,substitutions:["zone2_bike","zone2_walk"],defaultSeconds:1800,cue:"Steady, conversational-pace rowing."},
+  {id:"zone2_walk",name:"Zone 2 Walk",pattern:"sprint",modality:"run_zone2",difficulty:1,highImpact:false,substitutions:[],defaultSeconds:2700,cue:"Brisk, sustainable walk — no strain, just steady movement."},
+];
+const findWorkout = (id) => WORKOUTS.find(w => w.id === id);
+const workoutsByModality = (m) => WORKOUTS.filter(w => w.modality === m);
+
+/* ===================== ENGINE: compose a Hunt from atomic Workouts ===================== */
+function toHuntExercise(workoutId, overrides) {
+  const w = findWorkout(workoutId);
+  return Object.assign({ workoutId, sets:w.defaultSets, reps:w.defaultReps, seconds:w.defaultSeconds, restSeconds:w.defaultRestSeconds }, overrides||{});
+}
+function averageDifficulty(ids){ return ids.reduce((s,id)=>s+(findWorkout(id)?.difficulty||2),0)/ids.length; }
+// Mission taxonomy: Expedition = outdoor/Zone-2, Survival Mission = a
+// particularly demanding session, Daily Mission = everything else.
+function missionLabel(category, highIntensity){
+  if(category==="run_zone2") return "Expedition";
+  return highIntensity ? "Survival Mission" : "Daily Mission";
+}
+function buildCustomHunt({name,type,category,workoutIds,exerciseOverrides={},source="self_built"}){
+  const exercises = workoutIds.map(id => toHuntExercise(id, exerciseOverrides[id]));
+  const totalSeconds = exercises.reduce((s,e)=> s + (e.seconds||0)*(e.sets||1) + (e.restSeconds||0)*(e.sets||1), 0);
+  const avgDiff = averageDifficulty(workoutIds);
+  const highIntensity = category==="hiit" && avgDiff>=2.5;
+  return {
+    id: `hunt_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
+    name: name || missionLabel(category, highIntensity), type, category,
+    duration: Math.max(5, Math.round(totalSeconds/60) || exercises.length*3),
+    targetRPE: category==="run_zone2" ? 5 : Math.min(9, Math.round(4+avgDiff)),
+    exercises,
+    scalingOptions: [
+      {label:"beginner",description:"Easier substitutions / fewer reps",volumeMultiplier:0.7},
+      {label:"standard",description:"As prescribed",volumeMultiplier:1.0},
+      {label:"advanced",description:"Added rounds / heavier band",volumeMultiplier:1.25},
+    ],
+    highIntensity,
+    source,
+  };
+}
+function buildHiitHunt({name,workoutIds,source}){
+  const rounds = workoutIds.slice(0,7);
+  const overrides = {}; rounds.forEach(id => overrides[id] = {seconds:50,restSeconds:15,sets:1});
+  return buildCustomHunt({name,type:"HIIT",category:"hiit",workoutIds:rounds,exerciseOverrides:overrides,source});
+}
+function buildStrengthHunt({name,workoutIds,source}){
+  return buildCustomHunt({name,type:"FOR_TIME",category:"strength",workoutIds,source});
+}
+function buildZone2Hunt({name,workoutId,source}){
+  return buildCustomHunt({name,type:"ZONE2",category:"run_zone2",workoutIds:[workoutId],source});
+}
+
+/* ===================== ENGINE: Age-Adaptive Scaling ===================== */
+function needsHighImpactSub(ageGroup){ return ageGroup==="50-59" || ageGroup==="60+"; }
+function applyAgeScaling({ageGroup,hunt}){
+  const notes = [];
+  const substitute = needsHighImpactSub(ageGroup);
+  const exercises = hunt.exercises.map(ex => {
+    if(!substitute) return ex;
+    const w = findWorkout(ex.workoutId);
+    if(w && w.highImpact && w.substitutions.length>0){
+      const rep = w.substitutions[0];
+      notes.push(`${w.name} → ${findWorkout(rep)?.name||rep} (high-impact swap)`);
+      return Object.assign({}, ex, {workoutId:rep});
+    }
+    return ex;
+  });
+  if(ageGroup==="60+"){
+    notes.push("Age 60+: target RPE 5-7, prioritize balance/control/walking, high-impact exercises removed");
+    return {volumeMultiplier:0.75,maxRPE:7,minRPE:5,exercises,notes};
+  }
+  if(ageGroup==="50-59"){
+    notes.push("Age 50-59: -25% volume, high-impact exercises replaced");
+    return {volumeMultiplier:0.75,maxRPE:9,minRPE:3,exercises,notes};
+  }
+  notes.push(`Age ${ageGroup}: no scaling applied`);
+  return {volumeMultiplier:1,maxRPE:10,minRPE:1,exercises,notes};
+}
+
+/* ===================== ENGINE: Adaptive Intensity ===================== */
+function countTrailingHighIntensity(logs){
+  let streak=0;
+  for(let i=logs.length-1;i>=0;i--){
+    if(logs[i].completed && logs[i].highIntensity) streak++; else break;
+  }
+  return streak;
+}
+function computeAdaptiveIntensity({feeling,last3Logs,upcomingHuntIsHighIntensity}){
+  const reason=[]; let volumeMultiplier=1, intensityDelta=0, extraRestSeconds=0;
+  if(feeling==="fatigued"){ volumeMultiplier*=0.8; intensityDelta-=1; extraRestSeconds+=15; reason.push("Feeling fatigued: -20% volume, lower intensity, +15s rest"); }
+  else if(feeling==="strong"){ volumeMultiplier*=1.15; intensityDelta+=1; reason.push("Feeling strong: +15% volume/density"); }
+  else { reason.push("Feeling normal: no change"); }
+  const completed = last3Logs.filter(l=>l.completed);
+  if(completed.length>0){
+    const avgRPE = completed.reduce((s,l)=>s+l.actualRPE,0)/completed.length;
+    if(avgRPE>=8){ volumeMultiplier*=0.9; extraRestSeconds+=15; reason.push(`Last ${completed.length} session(s) averaged RPE ${avgRPE.toFixed(1)}: extra recovery added`); }
+  }
+  const streak = countTrailingHighIntensity(last3Logs);
+  if(upcomingHuntIsHighIntensity && streak>=2){
+    volumeMultiplier=Math.min(volumeMultiplier,0.75); intensityDelta=Math.min(intensityDelta,-2); extraRestSeconds+=30;
+    reason.push(`${streak} consecutive high-intensity days: capping today's intensity to protect recovery`);
+  }
+  const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+  return {volumeMultiplier:clamp(volumeMultiplier,0.5,1.3), intensityDelta:clamp(intensityDelta,-3,2), extraRestSeconds, reason};
+}
+
+/* ===================== ENGINE: combine both into a scaled Hunt ===================== */
+function scaleHuntForToday({hunt,ageGroup,feeling,last3Logs}){
+  const ageResult = applyAgeScaling({ageGroup,hunt});
+  const intensityResult = computeAdaptiveIntensity({feeling,last3Logs,upcomingHuntIsHighIntensity:hunt.highIntensity});
+  const mult = ageResult.volumeMultiplier * intensityResult.volumeMultiplier;
+  const scaleEx = (ex) => {
+    const out = Object.assign({}, ex);
+    if(out.reps!=null) out.reps = Math.max(1, Math.round(out.reps*mult));
+    if(out.sets!=null) out.sets = Math.max(1, Math.round(out.sets*mult));
+    if(out.seconds!=null) out.seconds = Math.round(out.seconds*mult);
+    if(out.restSeconds!=null) out.restSeconds = out.restSeconds + intensityResult.extraRestSeconds;
+    return out;
+  };
+  const exercises = ageResult.exercises.map(scaleEx);
+  const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+  const targetRPE = clamp(hunt.targetRPE + intensityResult.intensityDelta, ageResult.minRPE, ageResult.maxRPE);
+  return {huntId:hunt.id, targetRPE, exercises, notes:[...ageResult.notes, ...intensityResult.reason]};
+}
+
+/* ===================== ENGINE: Weekly Composer ===================== */
+const WEEK_ORDER = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+function slice(pool,cursor,count){ const n=Math.min(count,pool.length); return Array.from({length:n},(_,i)=>pool[(cursor+i)%pool.length]); }
+function composeWeeklyPlan({userId,weekStart,ageGroup,recoveryProfile,rotationIndex=0}){
+  const strengthPool = workoutsByModality("strength").map(w=>w.id);
+  const hiitPool = workoutsByModality("hiit").map(w=>w.id);
+  const easyHiitPool = workoutsByModality("hiit").filter(w=>w.difficulty<=2).map(w=>w.id);
+  const runWorkoutId = ageGroup==="60+" ? "zone2_walk" : "zone2_run";
+  const maxConsecutiveHigh = ageGroup==="60+" ? 1 : 2;
+  const baseTemplate = ["hiit","strength","hiit","strength","rest","run","mobility"];
+  const conservativeTemplate = ["hiit","strength","mobility","strength","rest","run","mobility"];
+  const template = (ageGroup==="60+" || recoveryProfile==="conservative") ? conservativeTemplate : baseTemplate;
+  const days=[]; let consecutiveHigh=0;
+  let strengthCursor = rotationIndex*5, hiitCursor = rotationIndex*7;
+  for(let i=0;i<WEEK_ORDER.length;i++){
+    const day = WEEK_ORDER[i]; const slot = template[i];
+    if(slot==="rest"||slot==="mobility"){ days.push({day,slot,highIntensity:false}); consecutiveHigh=0; continue; }
+    if(slot==="strength"){
+      const ids = slice(strengthPool, strengthCursor, 5); strengthCursor+=5;
+      const hunt = buildStrengthHunt({workoutIds:ids, source:"composer"});
+      consecutiveHigh = hunt.highIntensity ? consecutiveHigh+1 : 0;
+      days.push({day,slot:"workout",hunt,highIntensity:hunt.highIntensity}); continue;
+    }
+    if(slot==="hiit"){
+      const needsEasy = consecutiveHigh>=maxConsecutiveHigh;
+      const pool = needsEasy ? easyHiitPool : hiitPool;
+      const ids = slice(pool, hiitCursor, 7); hiitCursor+=7;
+      const hunt = buildHiitHunt({workoutIds:ids, source:"composer"});
+      consecutiveHigh = hunt.highIntensity ? consecutiveHigh+1 : 0;
+      days.push({day,slot:"workout",hunt,highIntensity:hunt.highIntensity}); continue;
+    }
+    const hunt = buildZone2Hunt({workoutId:runWorkoutId, source:"composer"});
+    consecutiveHigh=0;
+    days.push({day,slot:"workout",hunt,highIntensity:false});
+  }
+  return {userId, weekStart, days, source:"composer", generatedAt:new Date()};
+}
+
+/* ===================== STORE ===================== */
+const Store = {
+  get profile(){ return JSON.parse(localStorage.getItem("cm_profile")||"null"); },
+  set profile(v){ localStorage.setItem("cm_profile", JSON.stringify(v)); },
+  get plan(){ return JSON.parse(localStorage.getItem("cm_plan")||"null"); },
+  set plan(v){ localStorage.setItem("cm_plan", JSON.stringify(v)); },
+  get logs(){ return JSON.parse(localStorage.getItem("cm_logs")||"[]"); },
+  set logs(v){ localStorage.setItem("cm_logs", JSON.stringify(v)); },
+};
+
+function ageGroupFromAge(age){
+  if(age<30) return "18-29"; if(age<40) return "30-39"; if(age<50) return "40-49"; if(age<60) return "50-59"; return "60+";
+}
+function mondayOf(date){
+  const d=new Date(date); const day=d.getDay(); const diff=(day===0?-6:1-day); d.setDate(d.getDate()+diff); d.setHours(0,0,0,0); return d;
+}
+function weekRotationIndex(weekStart){
+  const epoch = new Date("2024-01-01T00:00:00Z");
+  return Math.floor((new Date(weekStart) - epoch) / (7*24*3600*1000));
+}
+function todayWeekday(){
+  const idx = new Date().getDay(); // 0=Sun
+  return WEEK_ORDER[(idx+6)%7];
+}
+function ensureWeekPlan(){
+  const profile = Store.profile; if(!profile) return null;
+  const weekStart = mondayOf(new Date());
+  const existing = Store.plan;
+  if(existing && new Date(existing.weekStart).toDateString() === weekStart.toDateString()){
+    return existing;
+  }
+  const plan = composeWeeklyPlan({
+    userId:"local", weekStart, ageGroup:profile.ageGroup, recoveryProfile:profile.recovery,
+    rotationIndex: weekRotationIndex(weekStart),
+  });
+  Store.plan = plan;
+  return plan;
+}
+
+let activeCustomHunt = null; // hunt currently loaded into the workout screen
+let activeScaled = null;
+let activeCategory = null;
+let currentScalingLabel = "standard";
+let timerState = null; // {mode:'work'|'rest', idx, secondsLeft, interval}
+let playerState = null; // {exercises, idx, setNum, phase:'ready'|'work'|'rest', secondsLeft, interval}
+
+const GOALS = ["fat_loss","build_muscle","performance","longevity","mobility","independence","muscle_preservation"];
+const INJURIES = ["knee","lower_back","shoulder","hip","ankle","wrist","none"];
+const TIER_ART = {Scout:"assets/tier-scout.png", Hunter:"assets/tier-hunter.png", Alpha:"assets/tier-alpha.png", Apex:"assets/tier-apex.png"};
+const AGE_ART = {
+  "18-29":"assets/age-18-29.png", "30-39":"assets/age-30-39.png", "40-49":"assets/age-40-49.png",
+  "50-59":"assets/age-50-59.png", "60+":"assets/age-60plus.png",
+};
+
+/* ===================== UI: navigation ===================== */
+function switchTab(tab){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById("screen-"+tab).classList.add("active");
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active", b.dataset.tab===tab));
+  if(tab==="home") renderHome();
+  if(tab==="program") renderProgram();
+  if(tab==="progress") renderProgress();
+  if(tab==="profile") renderProfileForm();
+}
+function openModal(id){ document.getElementById(id).classList.add("active"); }
+function closeModal(id){ document.getElementById(id).classList.remove("active"); stopTimer(); stopGpsTrackingHard(); stopPlayerTimer(); }
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.style.display="block"; setTimeout(()=>t.style.display="none", 2200); }
+
+/* ===================== UI: Home ===================== */
+function huntPrescriptionLine(hunt){
+  if(hunt.category==="run_zone2") return `${hunt.duration} min`;
+  if(hunt.type==="HIIT") return `${hunt.exercises.length} rounds · 50s/15s`;
+  return `${hunt.exercises.length} exercises`;
+}
+function weekStripHtml(plan, todayKey){
+  const catColor = {strength:"var(--orange)", hiit:"var(--red)", run_zone2:"var(--blue)"};
+  const completedDates = new Set(Store.logs.filter(l=>l.completed).map(l=>new Date(l.date).toDateString()));
+  return `<div class="week-strip">` + plan.days.map((d,i) => {
+    const date = new Date(plan.weekStart); date.setDate(date.getDate()+i);
+    const done = completedDates.has(date.toDateString());
+    const isToday = d.day === todayKey;
+    const bg = d.slot==="workout" && d.hunt ? (catColor[d.hunt.category]||"var(--border)") : "var(--border)";
+    return `<div class="day-chip ${isToday?"today":""}" onclick="switchTab('program')" title="${d.slot==="workout" && d.hunt ? d.hunt.name : d.slot}">
+      <div class="d">${d.day}</div>
+      <div class="dot" style="background:${done?"var(--olive)":bg}">${done?"✓":""}</div>
+    </div>`;
+  }).join("") + `</div>`;
+}
+function renderHome(){
+  const profile = Store.profile;
+  const el = document.getElementById("homeContent");
+  if(!profile){
+    el.innerHTML = `<div class="hero-card">
+      <img class="hero-logo" src="assets/hero-logo.png" alt="CaveMan Training" />
+      <p class="hero-tag">Your first Mission is waiting.</p>
+      <button class="primary" onclick="switchTab('profile')">Set Up Profile</button>
+    </div>`;
+    return;
+  }
+  const plan = ensureWeekPlan();
+  const today = todayWeekday();
+  const day = plan.days.find(d=>d.day===today);
+  const score = missionScore();
+  const tierName = tierFromScore(score);
+  const weekLink = `<div class="row between" style="margin-bottom:8px">
+    <span class="muted" style="text-transform:uppercase; font-size:11px; letter-spacing:0.5px">Your Weekly Mission</span>
+    <button class="ghost" style="padding:5px 12px; font-size:11px" onclick="switchTab('program')">Full week & edit →</button>
+  </div>
+  ${weekStripHtml(plan, today)}`;
+  let body = "";
+  if(!day || day.slot!=="workout" || !day.hunt){
+    body = `<div class="card">${weekLink}<h3>${day && day.slot==="rest" ? "Rest Day" : "Mobility Day"}</h3><p class="muted">${day && day.slot==="rest" ? "Recovery is training too. No Mission today." : "Light mobility / walk. Listen to your body."}</p></div>`;
+  } else {
+    const h = day.hunt;
+    body = `<div class="card">
+      ${weekLink}
+      <span class="pill ${h.category}">${h.category.replace("_"," ").toUpperCase()}</span>
+      <span class="pill">${h.type}</span>
+      <h3 style="margin-top:10px">${h.name}</h3>
+      <div class="row between">
+        <div><div class="muted">Target RPE</div><div class="big">${h.targetRPE}</div></div>
+        <div><div class="muted">Prescription</div><div>${huntPrescriptionLine(h)}</div></div>
+      </div>
+      <button class="primary" style="margin-top:14px" onclick="openPreCheck('${day.day}')">Start Mission</button>
+    </div>`;
+  }
+  el.innerHTML = `
+    <div class="card">
+      <div class="muted">Mission Score</div>
+      <div class="row between" style="align-items:baseline">
+        <div class="big" style="font-size:44px">${score}</div>
+        <div class="muted" style="font-size:14px"><img class="tier-badge-sm" src="${TIER_ART[tierName]}" alt="" /><span>${tierName}</span></div>
+      </div>
+    </div>
+    ${body}
+  `;
+}
+let pendingDay = null;
+function openPreCheck(dayKey){
+  pendingDay = dayKey;
+  const plan = ensureWeekPlan();
+  const day = plan.days.find(d=>d.day===dayKey);
+  document.getElementById("checkHuntName").textContent = day.hunt.name;
+  openModal("modal-check");
+}
+function startMission(feeling){
+  closeModal("modal-check");
+  const plan = ensureWeekPlan();
+  const day = plan.days.find(d=>d.day===pendingDay);
+  loadHuntIntoWorkoutScreen(day.hunt, feeling);
+}
+
+/* ===================== UI: Program (weekly view + builder) ===================== */
+function weeklySessionsCompleted(){
+  const weekStart = mondayOf(new Date());
+  return Store.logs.filter(l=>l.completed && new Date(l.date) >= weekStart).length;
+}
+function renderProgram(){
+  const profile = Store.profile;
+  const el = document.getElementById("weekList");
+  if(!profile){ el.innerHTML = `<p class="muted">Set up your profile first.</p>`; return; }
+  const plan = ensureWeekPlan();
+  const completedThisWeek = weeklySessionsCompleted();
+  document.getElementById("weeklyMissionProgress").textContent = `${completedThisWeek} of 3–5 sessions completed this week`;
+  document.getElementById("weeklyMissionFill").style.width = `${Math.min(100, Math.round((completedThisWeek/5)*100))}%`;
+  el.innerHTML = plan.days.map(d => {
+    const label = d.slot==="workout" && d.hunt ? `${d.hunt.name} <span class="pill ${d.hunt.category}" style="margin-left:6px">${d.hunt.category.replace("_"," ")}</span>` : (d.slot==="rest" ? "Rest" : "Mobility");
+    return `<div class="week-day">
+      <div class="dayname">${d.day}</div>
+      <div style="flex:1">${label}</div>
+      ${d.slot==="workout" ? `<button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">Edit</button>` : ""}
+    </div>`;
+  }).join("");
+}
+function regenerateWeek(){
+  const profile = Store.profile; if(!profile) return;
+  const weekStart = mondayOf(new Date());
+  const plan = composeWeeklyPlan({userId:"local", weekStart, ageGroup:profile.ageGroup, recoveryProfile:profile.recovery, rotationIndex: weekRotationIndex(weekStart)+1});
+  Store.plan = plan;
+  renderProgram(); toast("Week regenerated");
+}
+let builderTargetDay = null;
+let builderPreselected = [];
+function openBuilder(dayKey){
+  builderTargetDay = dayKey;
+  const plan = ensureWeekPlan();
+  const existingDay = dayKey ? plan.days.find(d=>d.day===dayKey) : null;
+  const existingHunt = existingDay && existingDay.slot==="workout" ? existingDay.hunt : null;
+  builderPreselected = existingHunt ? existingHunt.exercises.map(e=>e.workoutId) : [];
+  document.getElementById("b_modality").value = existingHunt ? existingHunt.category : "strength";
+  document.getElementById("builderTitle").textContent = existingHunt ? "Edit Mission" : "Build a Mission";
+  document.getElementById("builderSaveBtn").textContent = dayKey ? `Save to ${dayKey}` : "Save to Today";
+  renderBuilderList();
+  openModal("modal-builder");
+}
+function renderBuilderList(){
+  const modality = document.getElementById("b_modality").value;
+  const pool = workoutsByModality(modality);
+  document.getElementById("builderExerciseList").innerHTML = pool.map(w => `
+    <label style="display:flex; align-items:center; gap:8px; padding:6px 0; text-transform:none; color:var(--text); font-size:14px">
+      <input type="checkbox" value="${w.id}" ${builderPreselected.includes(w.id)?"checked":""} style="width:auto" /> ${w.name} <span class="muted">(${w.pattern})</span>
+    </label>
+  `).join("");
+}
+function saveCustomHunt(){
+  const modality = document.getElementById("b_modality").value;
+  const ids = Array.from(document.querySelectorAll("#builderExerciseList input:checked")).map(i=>i.value);
+  if(ids.length===0){ toast("Pick at least one exercise"); return; }
+  let hunt;
+  if(modality==="hiit") hunt = buildHiitHunt({workoutIds:ids, source:"self_built"});
+  else if(modality==="run_zone2") hunt = buildZone2Hunt({workoutId:ids[0], source:"self_built"});
+  else hunt = buildStrengthHunt({workoutIds:ids, source:"self_built"});
+
+  const plan = ensureWeekPlan();
+  const targetDay = builderTargetDay || todayWeekday();
+  const dayObj = plan.days.find(d=>d.day===targetDay);
+  dayObj.slot = "workout"; dayObj.hunt = hunt; dayObj.highIntensity = hunt.highIntensity;
+  Store.plan = plan;
+  closeModal("modal-builder");
+  renderProgram(); renderHome();
+  toast("Mission saved to "+targetDay);
+}
+
+/* ===================== UI: Exercise Library ===================== */
+let libraryFilterModality = "all";
+function openLibrary(){
+  renderLibraryFilter();
+  renderLibraryList();
+  openModal("modal-library");
+}
+function renderLibraryFilter(){
+  const options = [["all","All"],["strength","Strength"],["hiit","HIIT"],["run_zone2","Zone 2"]];
+  document.getElementById("libraryFilter").innerHTML = options.map(([val,label]) =>
+    `<span class="chip ${libraryFilterModality===val?"selected":""}" onclick="setLibraryFilter('${val}')">${label}</span>`
+  ).join("");
+}
+function setLibraryFilter(val){ libraryFilterModality = val; renderLibraryFilter(); renderLibraryList(); }
+function exerciseDefaultPrescriptionLine(w){
+  if(w.defaultSets && w.defaultReps) return `${w.defaultSets} x ${w.defaultReps} · rest ${w.defaultRestSeconds||0}s`;
+  if(w.defaultSets && w.defaultSeconds) return `${w.defaultSets} x ${w.defaultSeconds}s · rest ${w.defaultRestSeconds||0}s`;
+  if(w.defaultSeconds) return `${Math.round(w.defaultSeconds/60)} min`;
+  return "";
+}
+function renderLibraryList(){
+  const pool = libraryFilterModality==="all" ? WORKOUTS : workoutsByModality(libraryFilterModality);
+  document.getElementById("libraryList").innerHTML = pool.map(w => `
+    <div class="lib-row">
+      <div class="row between">
+        <div class="name">${w.name}</div>
+        <span class="pill ${w.modality}">${w.pattern}</span>
+      </div>
+      <div class="presc">${exerciseDefaultPrescriptionLine(w)}${w.highImpact ? '<span class="impact-tag">High Impact</span>' : ""}</div>
+      ${w.cue ? `<div class="cue">${w.cue}</div>` : ""}
+    </div>
+  `).join("");
+}
+
+/* ===================== UI: Workout screen + timer ===================== */
+function loadHuntIntoWorkoutScreen(hunt, feeling){
+  const profile = Store.profile;
+  const last3 = Store.logs.slice(-3);
+  activeCategory = hunt.category;
+  currentScalingLabel = "standard";
+  stopGpsTrackingHard(); gpsState = null;
+  stopPlayerTimer(); playerState = null;
+  const scaled = scaleHuntForToday({hunt, ageGroup:profile.ageGroup, feeling, last3Logs:last3});
+  activeCustomHunt = hunt;
+  activeScaled = scaled;
+  renderWorkoutScreen();
+  openModal("modal-workout");
+}
+function applyScalingMultiplier(exercises, label){
+  const opt = activeCustomHunt.scalingOptions.find(o=>o.label===label) || {volumeMultiplier:1};
+  return exercises.map(ex => {
+    const out = Object.assign({}, ex);
+    if(out.reps!=null) out.reps = Math.max(1, Math.round(out.reps*opt.volumeMultiplier));
+    if(out.sets!=null) out.sets = Math.max(1, Math.round(out.sets*opt.volumeMultiplier));
+    return out;
+  });
+}
+function renderExerciseList(){
+  const exercises = applyScalingMultiplier(activeScaled.exercises, currentScalingLabel);
+  const activeIdx = (playerState && activeCustomHunt.type==="FOR_TIME" && playerState.idx < playerState.exercises.length) ? playerState.idx : -1;
+  document.getElementById("exerciseList").innerHTML = exercises.map((ex,i) => {
+    const w = findWorkout(ex.workoutId);
+    let presc = "";
+    if(ex.sets && ex.reps) presc = `${ex.sets} x ${ex.reps} · rest ${ex.restSeconds||0}s`;
+    else if(ex.sets && ex.seconds) presc = `${ex.sets} x ${ex.seconds}s · rest ${ex.restSeconds||0}s`;
+    else if(ex.seconds) presc = `${Math.round(ex.seconds/60)} min`;
+    return `<div class="exercise-row ${i===activeIdx?"active-exercise":""}"><div style="flex:1"><div class="name">${w.name}</div><div class="presc">${presc}</div>${w.cue?`<div class="muted" style="margin-top:3px">${w.cue}</div>`:""}</div>${i===activeIdx?'<span class="pill" style="background:var(--orange); color:#1a1310">NOW</span>':""}</div>`;
+  }).join("");
+}
+function renderWorkoutScreen(){
+  document.getElementById("workoutTitle").textContent = activeCustomHunt.name;
+  document.getElementById("workoutMeta").innerHTML = `<span class="pill ${activeCustomHunt.category}">${activeCustomHunt.category.replace("_"," ")}</span><span class="pill">RPE ${activeScaled.targetRPE}</span>`;
+  document.getElementById("workoutNotes").textContent = activeScaled.notes.join(" · ");
+  document.getElementById("scalingToggle").innerHTML = ["beginner","standard","advanced"].map(l =>
+    `<span class="chip ${l===currentScalingLabel?"selected":""}" onclick="setScaling('${l}')">${l}</span>`
+  ).join("");
+
+  renderExerciseList();
+
+  if(activeCustomHunt.type==="HIIT"){
+    document.getElementById("timerBlock").innerHTML =
+      `<div class="timer-circle" id="timerCircle"><div class="timer-num" id="timerNum">50</div><div class="muted" id="timerLabel">Ready</div></div>
+       <button class="secondary" style="width:100%" onclick="toggleHiitTimer()" id="timerBtn">Start Timer</button>`;
+  } else if(activeCustomHunt.category==="run_zone2"){
+    document.getElementById("timerBlock").innerHTML =
+      `<div class="card" style="text-align:center">
+        <div class="big" style="font-size:40px" id="gpsDistance">0.00 km</div>
+        <div class="muted">Distance</div>
+        <div class="row" style="justify-content:center; gap:32px; margin-top:12px">
+          <div><div class="big" style="font-size:22px" id="gpsTime">00:00</div><div class="muted">Time</div></div>
+          <div><div class="big" style="font-size:22px" id="gpsPace">–</div><div class="muted">Pace /km</div></div>
+        </div>
+        <div class="muted" id="gpsStatus" style="margin-top:10px; font-size:12px"></div>
+      </div>
+      <button class="secondary" style="width:100%" onclick="toggleGpsTracking()" id="gpsBtn">Start GPS Tracking</button>
+      <p class="muted" style="margin-top:8px; font-size:11px">Keep this screen open while moving — background tracking isn't supported yet, so lock screen / app switching will pause it.</p>`;
+  } else if(activeCustomHunt.type==="FOR_TIME"){
+    document.getElementById("timerBlock").innerHTML = `<div id="playerBlock"></div>`;
+    if(!playerState) initPlayer(); else renderPlayer();
+  } else {
+    document.getElementById("timerBlock").innerHTML = `<p class="muted">Tap an exercise's rest time, or just work through the list at your own pace.</p>`;
+  }
+}
+function setScaling(label){ currentScalingLabel = label; renderWorkoutScreen(); }
+
+function toggleHiitTimer(){
+  if(timerState){ stopTimer(); document.getElementById("timerBtn").textContent="Start Timer"; return; }
+  const exercises = applyScalingMultiplier(activeScaled.exercises, currentScalingLabel);
+  timerState = {idx:0, mode:"work", secondsLeft: exercises[0].seconds||50, exercises};
+  document.getElementById("timerBtn").textContent="Pause";
+  runTimerTick();
+}
+function runTimerTick(){
+  updateTimerDisplay();
+  timerState.interval = setInterval(()=>{
+    if(!timerState) return;
+    timerState.secondsLeft--;
+    if(timerState.secondsLeft<0){
+      if(navigator.vibrate) navigator.vibrate(200);
+      if(timerState.mode==="work"){
+        const restSec = timerState.exercises[timerState.idx].restSeconds||15;
+        timerState.mode="rest"; timerState.secondsLeft=restSec;
+      } else {
+        timerState.idx++;
+        if(timerState.idx>=timerState.exercises.length){ stopTimer(); toast("Hunt complete! Log it below."); return; }
+        timerState.mode="work"; timerState.secondsLeft = timerState.exercises[timerState.idx].seconds||50;
+      }
+    }
+    updateTimerDisplay();
+  }, 1000);
+}
+function updateTimerDisplay(){
+  if(!timerState) return;
+  const circle = document.getElementById("timerCircle");
+  const num = document.getElementById("timerNum");
+  const label = document.getElementById("timerLabel");
+  if(!circle) return;
+  circle.classList.toggle("rest", timerState.mode==="rest");
+  num.textContent = timerState.secondsLeft;
+  const w = findWorkout(timerState.exercises[timerState.idx].workoutId);
+  label.textContent = (timerState.mode==="work" ? "WORK: " : "REST → next: ") + w.name;
+}
+function stopTimer(){ if(timerState && timerState.interval) clearInterval(timerState.interval); timerState=null; }
+
+/* ===================== UI: Step-through exercise player (Strength Missions) ===================== */
+// Flow: Start Set -> (rep-based: user performs reps, taps "Done"; time-based: auto countdown)
+// -> auto Rest countdown -> auto-advance to next set, or next exercise once sets are exhausted.
+function initPlayer(){
+  playerState = {exercises: applyScalingMultiplier(activeScaled.exercises, currentScalingLabel), idx:0, setNum:1, phase:"ready"};
+  renderPlayer();
+}
+function playerExercise(){ return playerState.exercises[playerState.idx]; }
+function playerTotalSets(){ return playerExercise().sets || 1; }
+function playerIsTimed(ex){ return !!ex.seconds && !ex.reps; }
+function renderPlayer(){
+  const el = document.getElementById("playerBlock");
+  if(!el) return;
+  if(!playerState || playerState.idx >= playerState.exercises.length){
+    el.innerHTML = `<div class="card" style="text-align:center"><h3>All exercises done 💪</h3><p class="muted">Tap Complete Mission below to log it.</p></div>`;
+    renderExerciseList();
+    return;
+  }
+  const ex = playerExercise();
+  const w = findWorkout(ex.workoutId);
+  const target = ex.reps ? `${ex.reps} reps` : ex.seconds ? `${ex.seconds}s` : "";
+  const timed = playerIsTimed(ex);
+  let circleNum = target, label = "Ready", disabled = false, btnLabel = "Start Set";
+  if(playerState.phase==="work"){
+    if(timed){ circleNum = playerState.secondsLeft; label = "Go!"; disabled = true; btnLabel = "In progress…"; }
+    else { label = "Perform your reps"; btnLabel = "Done — Next"; }
+  } else if(playerState.phase==="rest"){
+    circleNum = playerState.secondsLeft; label = "Rest"; disabled = true; btnLabel = "Resting…";
+  }
+  el.innerHTML = `<div class="card" style="text-align:center">
+    <div class="muted">Exercise ${playerState.idx+1} of ${playerState.exercises.length} · Set ${playerState.setNum} of ${playerTotalSets()}</div>
+    <h3 style="margin:6px 0">${w.name}</h3>
+    ${w.cue?`<div class="muted" style="margin-bottom:8px">${w.cue}</div>`:""}
+    <div class="timer-circle ${playerState.phase==="rest"?"rest":""}" id="playerCircle">
+      <div class="timer-num" id="playerNum">${circleNum}</div>
+      <div class="muted" id="playerLabel">${label}</div>
+    </div>
+    <button class="primary" style="width:100%" onclick="playerAction()" id="playerBtn" ${disabled?"disabled":""}>${btnLabel}</button>
+    ${playerState.phase==="rest" ? `<button class="ghost" style="width:100%; margin-top:8px" onclick="playerSkipRest()">Skip Rest</button>` : ""}
+  </div>`;
+  renderExerciseList();
+}
+function playerAction(){
+  if(!playerState || playerState.idx >= playerState.exercises.length) return;
+  const ex = playerExercise();
+  if(playerState.phase==="ready"){
+    playerState.phase = "work";
+    if(playerIsTimed(ex)){
+      playerState.secondsLeft = ex.seconds;
+      renderPlayer();
+      playerState.interval = setInterval(() => {
+        playerState.secondsLeft--;
+        if(playerState.secondsLeft<=0){ clearInterval(playerState.interval); beginPlayerRest(); return; }
+        const n = document.getElementById("playerNum"); if(n) n.textContent = playerState.secondsLeft;
+      }, 1000);
+    } else {
+      renderPlayer();
+    }
+    return;
+  }
+  if(playerState.phase==="work" && !playerIsTimed(ex)){
+    beginPlayerRest();
+  }
+}
+function beginPlayerRest(){
+  const ex = playerExercise();
+  playerState.phase = "rest";
+  playerState.secondsLeft = ex.restSeconds || 30;
+  renderPlayer();
+  playerState.interval = setInterval(() => {
+    playerState.secondsLeft--;
+    if(playerState.secondsLeft<=0){ clearInterval(playerState.interval); advancePlayer(); return; }
+    const n = document.getElementById("playerNum"); if(n) n.textContent = playerState.secondsLeft;
+  }, 1000);
+}
+function playerSkipRest(){
+  if(playerState && playerState.interval) clearInterval(playerState.interval);
+  advancePlayer();
+}
+function advancePlayer(){
+  if(navigator.vibrate) navigator.vibrate(200);
+  const totalSets = playerTotalSets();
+  playerState.setNum++;
+  if(playerState.setNum > totalSets){ playerState.setNum = 1; playerState.idx++; }
+  playerState.phase = "ready";
+  renderPlayer();
+}
+function stopPlayerTimer(){ if(playerState && playerState.interval) clearInterval(playerState.interval); }
+
+/* ===================== UI: GPS tracking (Expedition / Zone-2) ===================== */
+let gpsState = null; // {watchId, tickInterval, tickStart, elapsedSeconds, distanceMeters, lastPos, tracking}
+function haversineMeters(lat1,lon1,lat2,lon2){
+  const R=6371000, toRad=d=>d*Math.PI/180;
+  const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1);
+  const a=Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function toggleGpsTracking(){
+  if(gpsState && gpsState.tracking){ pauseGpsTracking(); } else { startGpsTracking(); }
+}
+function startGpsTracking(){
+  if(!("geolocation" in navigator)){ document.getElementById("gpsStatus").textContent="Geolocation not supported on this device."; return; }
+  if(!gpsState) gpsState = {distanceMeters:0, elapsedSeconds:0, lastPos:null};
+  gpsState.tracking = true;
+  gpsState.tickStart = Date.now() - (gpsState.elapsedSeconds*1000);
+  document.getElementById("gpsBtn").textContent = "Pause";
+  document.getElementById("gpsStatus").textContent = "Acquiring GPS signal…";
+  gpsState.watchId = navigator.geolocation.watchPosition(pos => {
+    const {latitude, longitude, accuracy} = pos.coords;
+    document.getElementById("gpsStatus").textContent = `Accuracy ±${Math.round(accuracy)}m`;
+    if(accuracy && accuracy > 60) return; // skip noisy fixes
+    if(gpsState.lastPos){
+      const d = haversineMeters(gpsState.lastPos.lat, gpsState.lastPos.lon, latitude, longitude);
+      if(d > 0.5 && d < 200) gpsState.distanceMeters += d; // filter jitter + implausible jumps
+    }
+    gpsState.lastPos = {lat:latitude, lon:longitude};
+    updateGpsDisplay();
+  }, err => {
+    document.getElementById("gpsStatus").textContent = err.code===1 ? "Location permission denied." : "GPS error: "+err.message;
+  }, {enableHighAccuracy:true, maximumAge:2000, timeout:10000});
+  gpsState.tickInterval = setInterval(() => {
+    gpsState.elapsedSeconds = Math.floor((Date.now()-gpsState.tickStart)/1000);
+    updateGpsDisplay();
+  }, 1000);
+}
+function pauseGpsTracking(){
+  if(!gpsState) return;
+  gpsState.tracking = false;
+  if(gpsState.watchId!=null) navigator.geolocation.clearWatch(gpsState.watchId);
+  if(gpsState.tickInterval) clearInterval(gpsState.tickInterval);
+  const btn = document.getElementById("gpsBtn"); if(btn) btn.textContent = "Resume";
+}
+function stopGpsTrackingHard(){
+  if(!gpsState) return;
+  if(gpsState.watchId!=null) navigator.geolocation.clearWatch(gpsState.watchId);
+  if(gpsState.tickInterval) clearInterval(gpsState.tickInterval);
+}
+function updateGpsDisplay(){
+  if(!gpsState) return;
+  const km = gpsState.distanceMeters/1000;
+  const distEl = document.getElementById("gpsDistance"); if(distEl) distEl.textContent = km.toFixed(2)+" km";
+  const mins = Math.floor(gpsState.elapsedSeconds/60), secs = gpsState.elapsedSeconds%60;
+  const timeEl = document.getElementById("gpsTime"); if(timeEl) timeEl.textContent = `${String(mins).padStart(2,"0")}:${String(secs).padStart(2,"0")}`;
+  const paceEl = document.getElementById("gpsPace");
+  if(paceEl && km>0.05){
+    const paceSecPerKm = gpsState.elapsedSeconds/km;
+    const pm = Math.floor(paceSecPerKm/60), ps = Math.round(paceSecPerKm%60);
+    paceEl.textContent = `${pm}:${String(ps).padStart(2,"0")}`;
+  }
+}
+
+function openCompleteHunt(){ openModal("modal-complete"); }
+function finishHuntLog(completed){
+  const rpe = parseInt(document.getElementById("log_rpe").value,10) || 0;
+  const notes = document.getElementById("log_notes").value;
+  const log = {
+    userId:"local", date:new Date().toISOString(), huntName:activeCustomHunt.name, category:activeCustomHunt.category,
+    exercises: activeScaled.exercises.map(e=>({workoutId:e.workoutId})),
+    completed, actualRPE:rpe, duration:activeCustomHunt.duration, highIntensity:activeCustomHunt.highIntensity,
+    notes,
+  };
+  if(gpsState && gpsState.distanceMeters>0){
+    log.distanceKm = +(gpsState.distanceMeters/1000).toFixed(2);
+    log.gpsSeconds = gpsState.elapsedSeconds;
+  }
+  const logs = Store.logs; logs.push(log); Store.logs = logs;
+  gpsState = null;
+  closeModal("modal-complete"); closeModal("modal-workout");
+  document.getElementById("log_notes").value="";
+  toast(completed ? "Mission logged 🔥" : "Marked as skipped");
+  renderHome();
+}
+
+/* ===================== UI: Progress ===================== */
+// Mission Score = how consistently you complete what you start (0-400) +
+// how hard those sessions actually were (avg RPE, 0-600). Max 1000.
+function missionScore(){
+  const logs = Store.logs;
+  if(logs.length===0) return 0;
+  const completed = logs.filter(l=>l.completed);
+  const completionRate = completed.length / logs.length;
+  const avgRpe = completed.length ? completed.reduce((s,l)=>s+l.actualRPE,0)/completed.length : 0;
+  return Math.round(completionRate*400 + avgRpe*60);
+}
+function tierFromScore(score){
+  return score>700?"Apex":score>450?"Alpha":score>200?"Hunter":"Scout";
+}
+function programDay(){
+  const profile = Store.profile;
+  if(!profile || !profile.programStartDate) return null;
+  const days = Math.floor((new Date() - new Date(profile.programStartDate))/86400000)+1;
+  return {cycleDay: ((days-1)%30)+1, cycleNum: Math.floor((days-1)/30)+1};
+}
+function openMissionStartEdit(){
+  const profile = Store.profile; if(!profile) return;
+  const d = new Date(profile.programStartDate || new Date());
+  document.getElementById("mission_start_date").value = d.toISOString().slice(0,10);
+  openModal("modal-mission-start");
+}
+function saveMissionStart(){
+  const val = document.getElementById("mission_start_date").value;
+  if(!val){ toast("Pick a date"); return; }
+  const profile = Store.profile;
+  profile.programStartDate = new Date(val+"T00:00:00").toISOString();
+  Store.profile = profile;
+  closeModal("modal-mission-start");
+  renderProgress();
+  toast("30-Day Mission updated");
+}
+function restartMission(){
+  const profile = Store.profile;
+  profile.programStartDate = new Date().toISOString();
+  Store.profile = profile;
+  closeModal("modal-mission-start");
+  renderProgress();
+  toast("Mission restarted at Day 1");
+}
+function renderProgress(){
+  const logs = Store.logs;
+  const pd = programDay();
+  if(pd){
+    document.getElementById("thirtyDayLabel").textContent = `Day ${pd.cycleDay} of 30`;
+    document.getElementById("thirtyDayCycle").textContent = pd.cycleNum>1 ? `Cycle ${pd.cycleNum}` : "";
+    document.getElementById("thirtyDayFill").style.width = `${Math.round((pd.cycleDay/30)*100)}%`;
+  }
+  const score = missionScore();
+  document.getElementById("statHunterScore").textContent = score;
+  const tierName = tierFromScore(score);
+  document.getElementById("statTier").textContent = tierName;
+  document.getElementById("statTierImg").src = TIER_ART[tierName];
+  const completed = logs.filter(l=>l.completed);
+  document.getElementById("statCompleted").textContent = completed.length;
+  document.getElementById("statAvgRpe").textContent = completed.length ? (completed.reduce((s,l)=>s+l.actualRPE,0)/completed.length).toFixed(1) : "–";
+
+  const bars = [];
+  for(let i=6;i>=0;i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const dayLogs = logs.filter(l=>new Date(l.date).toDateString()===d.toDateString());
+    const done = dayLogs.some(l=>l.completed);
+    bars.push({label: d.toLocaleDateString(undefined,{weekday:'short'}).slice(0,2), height: done?100:8});
+  }
+  document.getElementById("progressBars").innerHTML = bars.map(b=>`<div class="bar"><div class="fill" style="height:${b.height}%"></div><div class="lbl">${b.label}</div></div>`).join("");
+
+  document.getElementById("historyList").innerHTML = logs.slice().reverse().slice(0,15).map(l => `
+    <div class="exercise-row">
+      <div><div class="name">${l.huntName}</div><div class="presc">${new Date(l.date).toLocaleDateString()} · RPE ${l.actualRPE}${l.distanceKm?` · ${l.distanceKm} km`:""}</div></div>
+      <span class="pill ${l.category}">${l.completed?"done":"skipped"}</span>
+    </div>
+  `).join("") || `<p class="muted">No missions logged yet.</p>`;
+}
+
+/* ===================== UI: Profile ===================== */
+function renderChipGroup(containerId, options, selected){
+  const el = document.getElementById(containerId);
+  el.innerHTML = options.map(o => `<span class="chip ${selected.includes(o)?"selected":""}" data-val="${o}" onclick="this.classList.toggle('selected')">${o.replace("_"," ")}</span>`).join("");
+}
+function renderProfileForm(){
+  const p = Store.profile || {age:30,heightCm:175,weightKg:75,recovery:"moderate",fitnessLevel:"Scout",activityLevel:"moderate",dietType:"omnivore",smoker:false,alcohol:"occasional",goals:[],injuries:[]};
+  document.getElementById("p_age").value = p.age;
+  document.getElementById("p_height").value = p.heightCm;
+  document.getElementById("p_weight").value = p.weightKg;
+  document.getElementById("p_recovery").value = p.recovery;
+  document.getElementById("p_level").value = p.fitnessLevel;
+  document.getElementById("p_activity").value = p.activityLevel;
+  document.getElementById("p_diet").value = p.dietType;
+  document.getElementById("p_smoker").value = String(p.smoker);
+  document.getElementById("p_alcohol").value = p.alcohol;
+  renderChipGroup("p_goals", GOALS, p.goals||[]);
+  renderChipGroup("p_injuries", INJURIES, p.injuries||[]);
+  updateBmiPreview();
+  updateTierPreview();
+  document.getElementById("p_height").oninput = updateBmiPreview;
+  document.getElementById("p_weight").oninput = updateBmiPreview;
+  document.getElementById("p_age").oninput = updateBmiPreview;
+}
+function updateBmiPreview(){
+  const h = parseFloat(document.getElementById("p_height").value)/100;
+  const w = parseFloat(document.getElementById("p_weight").value);
+  if(h>0 && w>0){
+    const bmi = (w/(h*h)).toFixed(1);
+    document.getElementById("p_bmi").textContent = `BMI: ${bmi}`;
+  }
+  const age = parseInt(document.getElementById("p_age").value,10);
+  const ageGroup = age ? ageGroupFromAge(age) : null;
+  const art = ageGroup ? AGE_ART[ageGroup] : null;
+  document.getElementById("ageArtPreview").innerHTML = art ? `<img src="${art}" alt="${ageGroup}" />` : "";
+}
+function updateTierPreview(){
+  const level = document.getElementById("p_level").value;
+  document.getElementById("tierArtPreview").innerHTML = `<img src="${TIER_ART[level]}" alt="${level}" />`;
+}
+function saveProfile(){
+  const age = parseInt(document.getElementById("p_age").value,10);
+  const heightCm = parseFloat(document.getElementById("p_height").value);
+  const weightKg = parseFloat(document.getElementById("p_weight").value);
+  const goals = Array.from(document.querySelectorAll("#p_goals .chip.selected")).map(c=>c.dataset.val);
+  const injuries = Array.from(document.querySelectorAll("#p_injuries .chip.selected")).map(c=>c.dataset.val);
+  const existing = Store.profile;
+  const profile = {
+    age, heightCm, weightKg,
+    bmi: heightCm>0 ? +(weightKg/((heightCm/100)**2)).toFixed(1) : null,
+    ageGroup: ageGroupFromAge(age),
+    programStartDate: (existing && existing.programStartDate) || new Date().toISOString(),
+    recovery: document.getElementById("p_recovery").value,
+    fitnessLevel: document.getElementById("p_level").value,
+    activityLevel: document.getElementById("p_activity").value,
+    dietType: document.getElementById("p_diet").value,
+    smoker: document.getElementById("p_smoker").value==="true",
+    alcohol: document.getElementById("p_alcohol").value,
+    goals, injuries,
+  };
+  Store.profile = profile;
+  Store.plan = null; // force regeneration with new profile
+  toast("Profile saved");
+  switchTab("home");
+}
+function stubReminder(){
+  if(!("Notification" in window)){ toast("Notifications not supported here"); return; }
+  Notification.requestPermission().then(perm => {
+    if(perm==="granted"){ new Notification("CaveMan Training", {body:"Your mission awaits."}); toast("Reminder stub fired"); }
+    else toast("Permission denied");
+  });
+}
+
+/* ===================== INIT ===================== */
+renderHome();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

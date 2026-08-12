@@ -1,0 +1,10 @@
+{
+  "name": "CaveMan Training",
+  "short_name": "CaveMan",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#15120f",
+  "theme_color": "#15120f",
+  "icons": []
+}
