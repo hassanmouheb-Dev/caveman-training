@@ -84,7 +84,7 @@ nav.tabs button.active img.tab-icon{opacity:1;}
 .progressbar .fill{height:100%; background:var(--orange);}
 .art-preview{text-align:center; margin-top:10px;}
 .art-preview img{max-height:320px; width:auto; max-width:100%; border-radius:10px;}
-.tier-badge-sm{width:60px; height:60px; object-fit:contain; vertical-align:middle; margin-right:6px;}
+.tier-badge-sm{width:88px; height:88px; object-fit:contain; vertical-align:middle; margin-right:6px;}
 .lib-row{padding:10px 0; border-bottom:1px solid var(--border);}
 .lib-row:last-child{border-bottom:none;}
 .lib-row .cue{color:var(--text-dim); font-size:12.5px; margin-top:3px;}
@@ -152,8 +152,8 @@ nav.tabs button.active img.tab-icon{opacity:1;}
     <div class="card">
       <div class="muted">Mission Score</div>
       <div class="row between" style="align-items:baseline">
-        <div class="big" style="font-size:64px" id="statHunterScore">0</div>
-        <div class="muted" style="font-size:17px; font-weight:700"><img class="tier-badge-sm" id="statTierImg" src="assets/tier-scout.png" alt="" /><span id="statTier">Scout</span></div>
+        <div class="big" style="font-size:44px" id="statHunterScore">0</div>
+        <div class="muted" style="font-size:14px"><img class="tier-badge-sm" id="statTierImg" src="assets/tier-scout.png" alt="" /><span id="statTier">Scout</span></div>
       </div>
     </div>
     <div class="card">
@@ -723,8 +723,8 @@ function renderHome(){
     <div class="card">
       <div class="muted">Mission Score</div>
       <div class="row between" style="align-items:baseline">
-        <div class="big" style="font-size:64px">${score}</div>
-        <div class="muted" style="font-size:17px; font-weight:700"><img class="tier-badge-sm" src="${TIER_ART[tierName]}" alt="" /><span>${tierName}</span></div>
+        <div class="big" style="font-size:44px">${score}</div>
+        <div class="muted" style="font-size:14px"><img class="tier-badge-sm" src="${TIER_ART[tierName]}" alt="" /><span>${tierName}</span></div>
       </div>
     </div>
     ${body}
@@ -1227,32 +1227,14 @@ function renderProgress(){
 
   renderAchievements();
 }
-function achievementChipStat(l){
-  if(!l.completed) return "Skipped";
-  if(l.distanceKm) return `${l.distanceKm} km`;
-  return `${l.duration} min`;
-}
 function renderAchievements(){
   const logs = Store.logs;
-  const groups = {};
-  logs.forEach(l => { (groups[l.huntName] = groups[l.huntName] || []).push(l); });
-  const groupNames = Object.keys(groups).sort((a,b) => {
-    const aLatest = Math.max(...groups[a].map(l => new Date(l.date).getTime()));
-    const bLatest = Math.max(...groups[b].map(l => new Date(l.date).getTime()));
-    return bLatest - aLatest;
-  });
-  document.getElementById("historyList").innerHTML = groupNames.map(name => {
-    const entries = groups[name].slice().sort((a,b) => new Date(b.date) - new Date(a.date));
-    return `<div class="achievement-group">
-      <div class="ag-title">${name} <span class="muted">(${entries.length})</span></div>
-      <div class="ag-scroll">${entries.map(l => `
-        <div class="ag-chip" onclick="openAchievementDetail('${l.id||""}')">
-          <div class="ag-date">${new Date(l.date).toLocaleDateString(undefined,{day:"2-digit",month:"short"})}</div>
-          <div class="ag-stat">${achievementChipStat(l)}</div>
-        </div>
-      `).join("")}</div>
-    </div>`;
-  }).join("") || `<p class="muted">No missions logged yet.</p>`;
+  document.getElementById("historyList").innerHTML = logs.slice().reverse().slice(0,20).map(l => `
+    <div class="exercise-row" onclick="openAchievementDetail('${l.id||""}')" style="cursor:pointer">
+      <div><div class="name">${l.huntName}</div><div class="presc">${new Date(l.date).toLocaleDateString()} · RPE ${l.actualRPE}${l.distanceKm?` · ${l.distanceKm} km`:""}</div></div>
+      <span class="pill ${l.category}">${l.completed?"done":"skipped"}</span>
+    </div>
+  `).join("") || `<p class="muted">No missions logged yet.</p>`;
 }
 function openAchievementDetail(id){
   const log = Store.logs.find(l => l.id === id);
