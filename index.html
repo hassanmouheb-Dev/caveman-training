@@ -21,9 +21,8 @@
 html,body{margin:0; padding:0; background:var(--bg); color:var(--text); font-family:'Montserrat',sans-serif; height:100%;}
 h1,h2,h3,.brand{font-family:'Bebas Neue',sans-serif; letter-spacing:0.5px;}
 #app{max-width:480px; margin:0 auto; min-height:100vh; padding-bottom:84px; position:relative;}
-header.top{padding:18px 16px 10px; display:flex; align-items:center; justify-content:space-between;}
-header.top .brand{font-size:26px; color:var(--heading);}
-header.top .brand span{color:var(--orange);}
+header.top{padding:18px 16px 10px; display:flex; align-items:center; justify-content:flex-start;}
+header.top .brand-logo{height:52px; width:auto;}
 .screen{padding:0 16px 16px; display:none;}
 .screen.active{display:block;}
 .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:14px;}
@@ -134,8 +133,7 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
 <div id="app">
 
   <header class="top">
-    <div class="brand">CAVE<span>MAN</span></div>
-    <div class="muted" id="headerSub">Train like survival depends on it.</div>
+    <img class="brand-logo" src="assets/CavemanLogo.png" alt="Caveman Training" />
   </header>
 
   <!-- HOME -->
@@ -905,15 +903,17 @@ function renderBuilderList(){
     const reps = ov.reps ?? w.defaultReps ?? 10;
     const seconds = ov.seconds ?? w.defaultSeconds ?? 30;
     const rest = ov.restSeconds ?? w.defaultRestSeconds ?? 30;
+    const amrapRest = ov.restSeconds ?? 0;
     let fields = "";
     if(checked){
       if(modality === "run_zone2" && !isAmrap){
         const mins = Math.round(seconds/60);
         fields = `<span class="muted">Duration (min)</span><input type="number" value="${mins}" oninput="updateBuilderOverride('${w.id}','seconds', Number(this.value)*60)" style="width:64px" />`;
       } else if(isAmrap){
-        fields = timeBased
-          ? `<span class="muted">Seconds</span><input type="number" value="${seconds}" oninput="updateBuilderOverride('${w.id}','seconds',this.value)" style="width:64px" />`
-          : `<span class="muted">Reps</span><input type="number" value="${reps}" oninput="updateBuilderOverride('${w.id}','reps',this.value)" style="width:64px" />`;
+        fields = (timeBased
+          ? `<span class="muted">Seconds</span><input type="number" value="${seconds}" oninput="updateBuilderOverride('${w.id}','seconds',this.value)" style="width:56px" />`
+          : `<span class="muted">Reps</span><input type="number" value="${reps}" oninput="updateBuilderOverride('${w.id}','reps',this.value)" style="width:56px" />`)
+          + `<span class="muted">Rest after(s)</span><input type="number" value="${amrapRest}" oninput="updateBuilderOverride('${w.id}','restSeconds',this.value)" style="width:56px" />`;
       } else {
         fields = `<span class="muted">Sets</span><input type="number" value="${sets}" oninput="updateBuilderOverride('${w.id}','sets',this.value)" style="width:48px" />`
           + (timeBased
@@ -944,7 +944,7 @@ function saveCustomHunt(){
     if(format!=="amrap" && ov.sets !== undefined) clean.sets = ov.sets;
     if(ov.reps !== undefined) clean.reps = ov.reps;
     if(ov.seconds !== undefined) clean.seconds = ov.seconds;
-    if(format==="amrap") clean.restSeconds = 0;
+    if(format==="amrap") clean.restSeconds = ov.restSeconds !== undefined ? ov.restSeconds : 0;
     else if(ov.restSeconds !== undefined) clean.restSeconds = ov.restSeconds;
     exerciseOverrides[id] = clean;
   });
@@ -1045,7 +1045,7 @@ function renderExerciseList(){
   document.getElementById("exerciseList").innerHTML = exercises.map((ex,i) => {
     const w = findWorkout(ex.workoutId);
     let presc = "";
-    if(isAmrap) presc = ex.reps ? `${ex.reps} reps` : ex.seconds ? `${ex.seconds}s` : "";
+    if(isAmrap) presc = (ex.reps ? `${ex.reps} reps` : ex.seconds ? `${ex.seconds}s` : "") + (ex.restSeconds ? ` · rest ${ex.restSeconds}s` : "");
     else if(ex.sets && ex.reps) presc = `${ex.sets} x ${ex.reps} · rest ${ex.restSeconds||0}s`;
     else if(ex.sets && ex.seconds) presc = `${ex.sets} x ${ex.seconds}s · rest ${ex.restSeconds||0}s`;
     else if(ex.seconds) presc = `${Math.round(ex.seconds/60)} min`;
@@ -1238,6 +1238,7 @@ function initAmrapPlayer(){
     idx: 0, round: 1,
     secondsLeft: activeCustomHunt.timeCapSeconds || 1200,
     running: false, finished: false, interval: null,
+    phase: "work", restSecondsLeft: 0,
   };
   renderAmrapPlayer();
 }
@@ -1248,19 +1249,25 @@ function renderAmrapPlayer(){
   const ex = amrapExercise();
   const w = findWorkout(ex.workoutId);
   const target = ex.reps ? `${ex.reps} reps` : ex.seconds ? `${ex.seconds}s` : "";
+  const isRest = amrapState.phase === "rest" && !amrapState.finished;
+  const circleSeconds = amrapState.finished ? amrapState.secondsLeft : (isRest ? amrapState.restSecondsLeft : amrapState.secondsLeft);
   el.innerHTML = `<div class="card" style="text-align:center">
-    <div class="timer-circle ${amrapState.finished?"rest":""}" id="amrapCircle">
-      <div class="timer-num" id="amrapNum">${formatClock(amrapState.secondsLeft)}</div>
-      <div class="muted">${amrapState.finished ? "Time's up!" : "Time Cap Remaining"}</div>
+    ${isRest ? `<div class="muted">Time Cap Remaining: ${formatClock(amrapState.secondsLeft)}</div>` : ""}
+    <div class="timer-circle ${(amrapState.finished || isRest)?"rest":""}" id="amrapCircle">
+      <div class="timer-num" id="amrapNum">${formatClock(circleSeconds)}</div>
+      <div class="muted" id="amrapCircleLabel">${amrapState.finished ? "Time's up!" : isRest ? "Rest" : "Time Cap Remaining"}</div>
     </div>
     <div class="muted" style="margin-top:10px">Round ${amrapState.round}</div>
     <h3 style="margin:6px 0">${w.name}</h3>
-    <div class="muted">${target}</div>
+    <div class="muted">${target}${ex.restSeconds ? ` · rest ${ex.restSeconds}s after` : ""}</div>
     ${w.cue?`<div class="muted" style="margin-top:4px">${w.cue}</div>`:""}
     ${!amrapState.running && !amrapState.finished
       ? `<button class="primary" style="width:100%; margin-top:14px" onclick="amrapToggle()">Start AMRAP Clock</button>`
-      : `<button class="primary" style="width:100%; margin-top:14px" onclick="amrapNext()" ${amrapState.finished?"disabled":""}>Next Exercise ▸</button>
-         <button class="ghost" style="width:100%; margin-top:8px" onclick="amrapToggle()" ${amrapState.finished?"disabled":""}>${amrapState.running?"Pause":"Resume"}</button>`}
+      : isRest
+        ? `<button class="primary" style="width:100%; margin-top:14px" onclick="amrapSkipRest()" ${amrapState.finished?"disabled":""}>Skip Rest ▸</button>
+           <button class="ghost" style="width:100%; margin-top:8px" onclick="amrapToggle()" ${amrapState.finished?"disabled":""}>${amrapState.running?"Pause":"Resume"}</button>`
+        : `<button class="primary" style="width:100%; margin-top:14px" onclick="amrapNext()" ${amrapState.finished?"disabled":""}>Next Exercise ▸</button>
+           <button class="ghost" style="width:100%; margin-top:8px" onclick="amrapToggle()" ${amrapState.finished?"disabled":""}>${amrapState.running?"Pause":"Resume"}</button>`}
   </div>`;
   renderExerciseList();
 }
@@ -1277,6 +1284,14 @@ function amrapToggle(){
   amrapState.interval = setInterval(() => {
     if(!amrapState) return;
     amrapState.secondsLeft--;
+    if(amrapState.phase === "rest"){
+      amrapState.restSecondsLeft--;
+      if(amrapState.restSecondsLeft <= 0){
+        amrapAdvance();
+      } else {
+        renderAmrapPlayer();
+      }
+    }
     if(amrapState.secondsLeft<=0){
       amrapState.secondsLeft = 0;
       stopAmrapTimer();
@@ -1287,17 +1302,34 @@ function amrapToggle(){
       renderAmrapPlayer();
       return;
     }
-    const n = document.getElementById("amrapNum"); if(n) n.textContent = formatClock(amrapState.secondsLeft);
+    if(amrapState.phase !== "rest"){
+      const n = document.getElementById("amrapNum"); if(n) n.textContent = formatClock(amrapState.secondsLeft);
+    }
   }, 1000);
 }
-function amrapNext(){
-  if(!amrapState || amrapState.finished) return;
+function amrapAdvance(){
   amrapState.idx++;
   if(amrapState.idx >= amrapState.exercises.length){
     amrapState.idx = 0; amrapState.round++;
     if(navigator.vibrate) navigator.vibrate(150);
   }
+  amrapState.phase = "work";
   renderAmrapPlayer();
+}
+function amrapNext(){
+  if(!amrapState || amrapState.finished || amrapState.phase==="rest") return;
+  const ex = amrapExercise();
+  if(ex.restSeconds > 0){
+    amrapState.phase = "rest";
+    amrapState.restSecondsLeft = ex.restSeconds;
+    renderAmrapPlayer();
+    return;
+  }
+  amrapAdvance();
+}
+function amrapSkipRest(){
+  if(!amrapState || amrapState.phase !== "rest") return;
+  amrapAdvance();
 }
 function stopAmrapTimer(){ if(amrapState && amrapState.interval) clearInterval(amrapState.interval); }
 
@@ -1379,8 +1411,11 @@ function finishHuntLog(completed){
     log.gpsSeconds = gpsState.elapsedSeconds;
   }
   if(activeCustomHunt.type==="AMRAP" && amrapState){
-    log.roundsCompleted = amrapState.round - 1;
-    log.partialExercises = amrapState.idx;
+    let effectiveIdx = amrapState.idx + (amrapState.phase==="rest" ? 1 : 0);
+    let round = amrapState.round;
+    if(effectiveIdx >= amrapState.exercises.length){ effectiveIdx = 0; round++; }
+    log.roundsCompleted = round - 1;
+    log.partialExercises = effectiveIdx;
     log.exercisesPerRound = amrapState.exercises.length;
   }
   const logs = Store.logs; logs.push(log); Store.logs = logs;

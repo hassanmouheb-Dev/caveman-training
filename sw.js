@@ -1,8 +1,9 @@
-const CACHE_NAME = "caveman-v20";
+const CACHE_NAME = "caveman-v21";
 const SHELL_ASSETS = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
+  "./assets/CavemanLogo.png",
   "./assets/hero-logo.png",
   "./assets/hero-logo-2.png",
   "./assets/tier-scout.png",
