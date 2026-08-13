@@ -378,6 +378,7 @@ nav.tabs button.active img.tab-icon{opacity:1;}
       <div id="achDetailExercises"></div>
     </div>
     <div id="achDetailNotes" class="muted" style="margin-top:10px"></div>
+    <button class="danger" style="width:100%; margin-top:16px" onclick="deleteAchievement()">🗑 Delete Entry</button>
   </div>
 </div>
 
@@ -1236,9 +1237,11 @@ function renderAchievements(){
     </div>
   `).join("") || `<p class="muted">No missions logged yet.</p>`;
 }
+let openAchievementId = null;
 function openAchievementDetail(id){
   const log = Store.logs.find(l => l.id === id);
   if(!log){ toast("Details not available for this older entry"); return; }
+  openAchievementId = id;
   document.getElementById("achDetailTitle").textContent = log.huntName;
   document.getElementById("achDetailMeta").innerHTML =
     `<span class="pill ${log.category}">${log.category.replace("_"," ")}</span><span class="pill">${log.completed?"Completed":"Skipped"}</span>
@@ -1267,6 +1270,15 @@ function openAchievementDetail(id){
   }).join("") || `<p class="muted">No exercise detail recorded for this entry.</p>`;
   document.getElementById("achDetailNotes").textContent = log.notes ? `Notes: ${log.notes}` : "";
   openModal("modal-achievement-detail");
+}
+function deleteAchievement(){
+  if(!openAchievementId) return;
+  if(!confirm("Delete this achievement? This can't be undone.")) return;
+  Store.logs = Store.logs.filter(l => l.id !== openAchievementId);
+  openAchievementId = null;
+  closeModal("modal-achievement-detail");
+  renderProgress();
+  toast("Achievement deleted");
 }
 
 /* ===================== UI: Profile ===================== */
