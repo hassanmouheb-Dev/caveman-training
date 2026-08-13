@@ -74,6 +74,14 @@ nav.tabs .icon{font-size:18px;}
 .lock{opacity:0.45; position:relative;}
 .lock::after{content:"🔒 Premium"; position:absolute; top:8px; right:8px; font-size:10px; color:#fff; background:#3a3226; padding:3px 8px; border-radius:10px;}
 .toast{position:fixed; bottom:96px; left:50%; transform:translateX(-50%); background:var(--surface2); border:1px solid var(--border); padding:10px 18px; border-radius:20px; font-size:13px; z-index:60; display:none;}
+#splashScreen{position:fixed; inset:0; background:#15120f; z-index:1000; display:flex; align-items:center; justify-content:center; transition:opacity 0.5s ease;}
+#splashScreen img{max-width:92vw; max-height:88vh; width:auto; height:auto; opacity:0; transition:opacity 0.45s ease, transform 0.45s ease; transform:scale(0.94);}
+#splashScreen img.visible{opacity:1; transform:scale(1);}
+#splashScreen img.heartbeat{animation:heartbeat 1s ease-in-out infinite;}
+#splashScreen.fade-out{opacity:0; pointer-events:none;}
+@keyframes heartbeat{
+  0%{transform:scale(1);} 14%{transform:scale(1.1);} 28%{transform:scale(1);} 42%{transform:scale(1.1);} 70%{transform:scale(1);}
+}
 .hero-card{background:linear-gradient(160deg, #e8933f 0%, #c8622c 45%, #3a2416 100%); border:1px solid var(--border); border-radius:var(--radius); padding:28px 20px 24px; margin-bottom:14px; text-align:center;}
 .hero-card img.hero-logo{max-width:210px; width:100%; display:block; margin:0 auto 14px; filter:drop-shadow(0 6px 14px rgba(0,0,0,0.45));}
 .hero-card .hero-tag{color:#fff3e2; font-size:15px; font-weight:600; margin:0 0 18px;}
@@ -115,6 +123,9 @@ nav.tabs button.active img.tab-icon{opacity:1;}
 </style>
 </head>
 <body>
+<div id="splashScreen">
+  <img id="splashImg" src="" alt="" />
+</div>
 <div id="app">
 
   <header class="top">
@@ -703,9 +714,10 @@ function renderHome(){
     <button class="ghost" style="padding:5px 12px; font-size:11px" onclick="switchTab('program')">Full week & edit →</button>
   </div>
   ${weekStripHtml(plan, today)}`;
+  const chooseWorkoutBtn = `<button class="ghost" style="width:100%; margin-top:8px" onclick="openBuilderToStartNow()">Or Choose a Different Workout</button>`;
   let body = "";
   if(!day || day.slot!=="workout" || !day.hunt){
-    body = `<div class="card">${weekLink}<h3>${day && day.slot==="rest" ? "Rest Day" : "Mobility Day"}</h3><p class="muted">${day && day.slot==="rest" ? "Recovery is training too. No Mission today." : "Light mobility / walk. Listen to your body."}</p></div>`;
+    body = `<div class="card">${weekLink}<h3>${day && day.slot==="rest" ? "Rest Day" : "Mobility Day"}</h3><p class="muted">${day && day.slot==="rest" ? "Recovery is training too. No Mission today." : "Light mobility / walk. Listen to your body."}</p>${chooseWorkoutBtn}</div>`;
   } else {
     const h = day.hunt;
     body = `<div class="card">
@@ -717,7 +729,8 @@ function renderHome(){
         <div><div class="muted">Target RPE</div><div class="big">${h.targetRPE}</div></div>
         <div><div class="muted">Prescription</div><div>${huntPrescriptionLine(h)}</div></div>
       </div>
-      <button class="primary" style="margin-top:14px" onclick="openPreCheck('${day.day}')">Start Mission</button>
+      <button class="primary" style="margin-top:14px" onclick="openPreCheck('${day.day}')">Start Daily Mission</button>
+      ${chooseWorkoutBtn}
     </div>`;
   }
   el.innerHTML = `
@@ -744,18 +757,32 @@ function renderHome(){
   `;
 }
 let pendingDay = null;
+let pendingAdHocHunt = null;
 function openPreCheck(dayKey){
   pendingDay = dayKey;
+  pendingAdHocHunt = null;
   const plan = ensureWeekPlan();
   const day = plan.days.find(d=>d.day===dayKey);
   document.getElementById("checkHuntName").textContent = day.hunt.name;
   openModal("modal-check");
 }
+function openPreCheckForHunt(hunt){
+  pendingDay = null;
+  pendingAdHocHunt = hunt;
+  document.getElementById("checkHuntName").textContent = hunt.name;
+  openModal("modal-check");
+}
 function startMission(feeling){
   closeModal("modal-check");
-  const plan = ensureWeekPlan();
-  const day = plan.days.find(d=>d.day===pendingDay);
-  loadHuntIntoWorkoutScreen(day.hunt, feeling);
+  let hunt;
+  if(pendingAdHocHunt){
+    hunt = pendingAdHocHunt;
+    pendingAdHocHunt = null;
+  } else {
+    const plan = ensureWeekPlan();
+    hunt = plan.days.find(d=>d.day===pendingDay).hunt;
+  }
+  loadHuntIntoWorkoutScreen(hunt, feeling);
 }
 
 /* ===================== UI: Program (weekly view + builder) ===================== */
@@ -789,8 +816,10 @@ function regenerateWeek(){
 }
 let builderTargetDay = null;
 let builderPreselected = [];
+let builderMode = "save"; // "save" (Program tab: save into the weekly plan) or "start" (Home: do it right now)
 function openBuilder(dayKey){
   builderTargetDay = dayKey;
+  builderMode = "save";
   const plan = ensureWeekPlan();
   const existingDay = dayKey ? plan.days.find(d=>d.day===dayKey) : null;
   const existingHunt = existingDay && existingDay.slot==="workout" ? existingDay.hunt : null;
@@ -799,6 +828,17 @@ function openBuilder(dayKey){
   document.getElementById("b_modality").value = existingHunt ? existingHunt.category : "strength";
   document.getElementById("builderTitle").textContent = existingHunt ? "Edit Mission" : "Build a Mission";
   document.getElementById("builderSaveBtn").textContent = dayKey ? `Save to ${dayKey}` : "Save to Today";
+  renderBuilderList();
+  openModal("modal-builder");
+}
+function openBuilderToStartNow(){
+  builderTargetDay = null;
+  builderMode = "start";
+  builderPreselected = [];
+  document.getElementById("b_name").value = "";
+  document.getElementById("b_modality").value = "strength";
+  document.getElementById("builderTitle").textContent = "Choose a Workout";
+  document.getElementById("builderSaveBtn").textContent = "Start Now";
   renderBuilderList();
   openModal("modal-builder");
 }
@@ -820,6 +860,12 @@ function saveCustomHunt(){
   if(modality==="hiit") hunt = buildHiitHunt({name:customName, workoutIds:ids, source:"self_built"});
   else if(modality==="run_zone2") hunt = buildZone2Hunt({name:customName, workoutId:ids[0], source:"self_built"});
   else hunt = buildStrengthHunt({name:customName, workoutIds:ids, source:"self_built"});
+
+  if(builderMode === "start"){
+    closeModal("modal-builder");
+    openPreCheckForHunt(hunt);
+    return;
+  }
 
   const plan = ensureWeekPlan();
   const targetDay = builderTargetDay || todayWeekday();
@@ -1391,8 +1437,53 @@ async function toggleReminder(){
   updateReminderButton();
 }
 
+/* ===================== Opening splash sequence ===================== */
+const MOTIVATIONAL_RANDOM = Array.from({length:12}, (_,i) => `assets/motivational-${i+1}.png`);
+const MOTIVATIONAL_CLOSING = ["assets/motivational-closing-1.png", "assets/motivational-closing-2.png"];
+function pickRandomAsset(arr, exclude){
+  const pool = arr.filter(x => x !== exclude);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+function runSplashSequence(){
+  const splash = document.getElementById("splashScreen");
+  const img = document.getElementById("splashImg");
+  if(!splash || !img) return;
+  const pick1 = pickRandomAsset(MOTIVATIONAL_RANDOM);
+  const pick2 = pickRandomAsset(MOTIVATIONAL_RANDOM, pick1);
+  const closing = pickRandomAsset(MOTIVATIONAL_CLOSING);
+  const steps = [
+    {src:"assets/hero-logo-2.png", heartbeat:true, holdMs:1700},
+    {src:pick1, heartbeat:false, holdMs:1000},
+    {src:pick2, heartbeat:false, holdMs:1000},
+    {src:closing, heartbeat:false, holdMs:1300},
+  ];
+  let i = 0;
+  function nextStep(){
+    if(i >= steps.length){
+      splash.classList.add("fade-out");
+      setTimeout(() => splash.remove(), 500);
+      return;
+    }
+    const step = steps[i];
+    img.classList.remove("visible", "heartbeat");
+    img.src = step.src;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        img.classList.add("visible");
+        if(step.heartbeat) img.classList.add("heartbeat");
+      });
+    });
+    setTimeout(() => {
+      img.classList.remove("visible");
+      setTimeout(() => { i++; nextStep(); }, 450);
+    }, step.holdMs);
+  }
+  nextStep();
+}
+
 /* ===================== INIT ===================== */
 renderHome();
+runSplashSequence();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {

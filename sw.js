@@ -1,9 +1,10 @@
-const CACHE_NAME = "caveman-v17";
+const CACHE_NAME = "caveman-v18";
 const SHELL_ASSETS = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./assets/hero-logo.png",
+  "./assets/hero-logo-2.png",
   "./assets/icon-home.png",
   "./assets/icon-program.png",
   "./assets/icon-progress.png",
@@ -17,6 +18,20 @@ const SHELL_ASSETS = [
   "./assets/age-40-49.png",
   "./assets/age-50-59.png",
   "./assets/age-60plus.png",
+  "./assets/motivational-1.png",
+  "./assets/motivational-2.png",
+  "./assets/motivational-3.png",
+  "./assets/motivational-4.png",
+  "./assets/motivational-5.png",
+  "./assets/motivational-6.png",
+  "./assets/motivational-7.png",
+  "./assets/motivational-8.png",
+  "./assets/motivational-9.png",
+  "./assets/motivational-10.png",
+  "./assets/motivational-11.png",
+  "./assets/motivational-12.png",
+  "./assets/motivational-closing-1.png",
+  "./assets/motivational-closing-2.png",
 ];
 
 self.addEventListener("install", (event) => {
