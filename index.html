@@ -49,7 +49,7 @@ label{font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-sp
 .chip{padding:7px 12px; border-radius:20px; border:1px solid var(--border); background:var(--surface2); color:var(--text-dim); font-size:13px; cursor:pointer;}
 .chip.selected{background:var(--olive); color:#fff; border-color:var(--olive);}
 nav.tabs{position:fixed; bottom:0; left:0; right:0; max-width:480px; margin:0 auto; background:var(--surface); border-top:1px solid var(--border); display:flex;}
-nav.tabs button{flex:1; background:none; border-radius:0; color:var(--text-dim); font-size:11px; padding:10px 4px; display:flex; flex-direction:column; align-items:center; gap:3px;}
+nav.tabs button{flex:1; background:none; border-radius:0; color:var(--text-dim); font-size:11px; padding:8px 4px 10px; display:flex; flex-direction:column; align-items:center; gap:2px;}
 nav.tabs button.active{color:var(--orange);}
 nav.tabs .icon{font-size:18px;}
 .exercise-row{display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);}
@@ -78,7 +78,7 @@ nav.tabs .icon{font-size:18px;}
 .hero-card img.hero-logo{max-width:210px; width:100%; display:block; margin:0 auto 14px; filter:drop-shadow(0 6px 14px rgba(0,0,0,0.45));}
 .hero-card .hero-tag{color:#fff3e2; font-size:15px; font-weight:600; margin:0 0 18px;}
 .hero-card button{max-width:280px; margin:0 auto;}
-nav.tabs img.tab-icon{width:24px; height:24px; object-fit:contain; opacity:0.65;}
+nav.tabs img.tab-icon{width:38px; height:38px; object-fit:contain; opacity:0.7;}
 nav.tabs button.active img.tab-icon{opacity:1;}
 .progressbar{height:8px; background:var(--surface2); border-radius:6px; overflow:hidden; margin-top:10px;}
 .progressbar .fill{height:100%; background:var(--orange);}
@@ -104,6 +104,14 @@ nav.tabs button.active img.tab-icon{opacity:1;}
 .ag-chip .ag-stat{font-size:15px; font-weight:700; color:var(--heading); margin-top:2px;}
 .ach-stat-row{display:flex; justify-content:space-around; text-align:center; padding:14px 0;}
 .ach-stat-row .v{font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--orange);}
+.mini-hero{text-align:center; margin-bottom:14px;}
+.mini-hero img{max-height:110px; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.15));}
+.premium-cta{background:linear-gradient(135deg, #2c2318 0%, #4a3826 55%, #7a2e1c 130%); border:none; color:#f6f1e4; text-align:center;}
+.premium-cta .premium-badge{display:inline-block; background:var(--orange); color:#1a1310; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:0.5px; text-transform:uppercase;}
+.premium-cta h3{color:#fff; margin:10px 0 4px;}
+.premium-cta p{color:#e3d5b8; font-size:13px; margin:0 0 12px;}
+.premium-benefits{list-style:none; padding:0; margin:0 0 16px; text-align:left; display:inline-block;}
+.premium-benefits li{font-size:13px; color:#f0e6d0; margin-bottom:6px;}
 </style>
 </head>
 <body>
@@ -720,6 +728,18 @@ function renderHome(){
       </div>
     </div>
     ${body}
+    <div class="mini-hero"><img src="assets/hero-logo.png" alt="CaveMan Training" /></div>
+    <div class="card premium-cta">
+      <span class="premium-badge">Premium</span>
+      <h3>Unlock Your AI Coach</h3>
+      <p>A fully personalized diet + training plan built from your body composition, activity, and goals.</p>
+      <ul class="premium-benefits">
+        <li>✓ AI-generated weekly diet plan</li>
+        <li>✓ Training tuned to body fat / muscle %</li>
+        <li>✓ Smart Scale sync (Beurer, etc.)</li>
+      </ul>
+      <button class="primary" onclick="switchTab('profile')">Unlock Premium →</button>
+    </div>
   `;
 }
 let pendingDay = null;
