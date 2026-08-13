@@ -84,7 +84,7 @@ nav.tabs button.active img.tab-icon{opacity:1;}
 .progressbar .fill{height:100%; background:var(--orange);}
 .art-preview{text-align:center; margin-top:10px;}
 .art-preview img{max-height:320px; width:auto; max-width:100%; border-radius:10px;}
-.tier-badge-sm{width:48px; height:48px; object-fit:contain; vertical-align:middle; margin-right:6px;}
+.tier-badge-sm{width:60px; height:60px; object-fit:contain; vertical-align:middle; margin-right:6px;}
 .lib-row{padding:10px 0; border-bottom:1px solid var(--border);}
 .lib-row:last-child{border-bottom:none;}
 .lib-row .cue{color:var(--text-dim); font-size:12.5px; margin-top:3px;}
@@ -152,8 +152,8 @@ nav.tabs button.active img.tab-icon{opacity:1;}
     <div class="card">
       <div class="muted">Mission Score</div>
       <div class="row between" style="align-items:baseline">
-        <div class="big" style="font-size:44px" id="statHunterScore">0</div>
-        <div class="muted" style="font-size:14px"><img class="tier-badge-sm" id="statTierImg" src="assets/tier-scout.png" alt="" /><span id="statTier">Scout</span></div>
+        <div class="big" style="font-size:64px" id="statHunterScore">0</div>
+        <div class="muted" style="font-size:17px; font-weight:700"><img class="tier-badge-sm" id="statTierImg" src="assets/tier-scout.png" alt="" /><span id="statTier">Scout</span></div>
       </div>
     </div>
     <div class="card">
@@ -723,8 +723,8 @@ function renderHome(){
     <div class="card">
       <div class="muted">Mission Score</div>
       <div class="row between" style="align-items:baseline">
-        <div class="big" style="font-size:44px">${score}</div>
-        <div class="muted" style="font-size:14px"><img class="tier-badge-sm" src="${TIER_ART[tierName]}" alt="" /><span>${tierName}</span></div>
+        <div class="big" style="font-size:64px">${score}</div>
+        <div class="muted" style="font-size:17px; font-weight:700"><img class="tier-badge-sm" src="${TIER_ART[tierName]}" alt="" /><span>${tierName}</span></div>
       </div>
     </div>
     ${body}
