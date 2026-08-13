@@ -47,6 +47,11 @@ label{font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-sp
 .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
 .chip-group{display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;}
 .chip{padding:7px 12px; border-radius:20px; border:1px solid var(--border); background:var(--surface2); color:var(--text-dim); font-size:13px; cursor:pointer;}
+.builder-ex-row{border-bottom:1px solid var(--border);}
+.builder-ex-row:last-child{border-bottom:none;}
+.builder-ex-fields{display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:0 0 10px 32px;}
+.builder-ex-fields input{width:56px; padding:6px; font-size:13px;}
+.builder-ex-fields .muted{font-size:11px;}
 .chip.selected{background:var(--olive); color:#fff; border-color:var(--olive);}
 nav.tabs{position:fixed; bottom:0; left:0; right:0; max-width:480px; margin:0 auto; background:var(--surface); border-top:1px solid var(--border); display:flex;}
 nav.tabs button{flex:1; background:none; border-radius:0; color:var(--text-dim); font-size:11px; padding:8px 4px 10px; display:flex; flex-direction:column; align-items:center; gap:2px;}
@@ -335,14 +340,25 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
     </div>
     <label>Name (optional)</label>
     <input type="text" id="b_name" placeholder="e.g. Push Day, Leg Burner…" />
-    <label>Modality</label>
-    <select id="b_modality" onchange="builderPreselected=[]; renderBuilderList()">
-      <option value="strength">Strength</option>
-      <option value="hiit">HIIT (7x50s/15s)</option>
-      <option value="run_zone2">Zone 2</option>
+    <label>Format</label>
+    <select id="b_format" onchange="onBuilderFormatChange()">
+      <option value="standard">Standard (sets/reps as prescribed)</option>
+      <option value="amrap">AMRAP (as many rounds as possible in a time cap)</option>
     </select>
-    <label>Pick Exercises</label>
-    <div id="builderExerciseList" style="max-height:260px; overflow-y:auto; border:1px solid var(--border); border-radius:8px; padding:8px"></div>
+    <div id="b_modalityRow">
+      <label>Modality</label>
+      <select id="b_modality" onchange="builderPreselected=[]; builderOverrides={}; renderBuilderList()">
+        <option value="strength">Strength</option>
+        <option value="hiit">HIIT</option>
+        <option value="run_zone2">Zone 2</option>
+      </select>
+    </div>
+    <div id="b_timeCapRow" style="display:none">
+      <label>Time Cap (minutes)</label>
+      <input type="number" id="b_timecap" value="20" min="1" max="90" />
+    </div>
+    <label>Pick Exercises <span class="muted" style="text-transform:none">— tap to expand and edit sets/reps/rest</span></label>
+    <div id="builderExerciseList" style="max-height:320px; overflow-y:auto; border:1px solid var(--border); border-radius:8px; padding:8px"></div>
     <button class="primary" style="margin-top:16px" onclick="saveCustomHunt()" id="builderSaveBtn">Save to Today</button>
     <button class="ghost" style="width:100%; margin-top:10px" onclick="closeModal('modal-builder')">Cancel</button>
   </div>
@@ -482,16 +498,17 @@ function buildCustomHunt({name,type,category,workoutIds,exerciseOverrides={},sou
     source,
   };
 }
-function buildHiitHunt({name,workoutIds,source}){
+function buildHiitHunt({name,workoutIds,source,exerciseOverrides={}}){
   const rounds = workoutIds.slice(0,7);
-  const overrides = {}; rounds.forEach(id => overrides[id] = {seconds:50,restSeconds:15,sets:1});
+  const overrides = {};
+  rounds.forEach(id => overrides[id] = Object.assign({seconds:50,restSeconds:15,sets:1}, exerciseOverrides[id]||{}));
   return buildCustomHunt({name,type:"HIIT",category:"hiit",workoutIds:rounds,exerciseOverrides:overrides,source});
 }
-function buildStrengthHunt({name,workoutIds,source}){
-  return buildCustomHunt({name,type:"FOR_TIME",category:"strength",workoutIds,source});
+function buildStrengthHunt({name,workoutIds,source,exerciseOverrides}){
+  return buildCustomHunt({name,type:"FOR_TIME",category:"strength",workoutIds,exerciseOverrides,source});
 }
-function buildZone2Hunt({name,workoutId,source}){
-  return buildCustomHunt({name,type:"ZONE2",category:"run_zone2",workoutIds:[workoutId],source});
+function buildZone2Hunt({name,workoutId,source,exerciseOverrides}){
+  return buildCustomHunt({name,type:"ZONE2",category:"run_zone2",workoutIds:[workoutId],exerciseOverrides,source});
 }
 
 /* ===================== ENGINE: Age-Adaptive Scaling ===================== */
@@ -650,6 +667,7 @@ let activeCategory = null;
 let currentScalingLabel = "standard";
 let timerState = null; // {mode:'work'|'rest', idx, secondsLeft, interval}
 let playerState = null; // {exercises, idx, setNum, phase:'ready'|'work'|'rest', secondsLeft, interval}
+let amrapState = null; // {exercises, idx, round, secondsLeft, interval}
 
 const GOALS = ["fat_loss","build_muscle","performance","longevity","mobility","independence","muscle_preservation"];
 const INJURIES = ["knee","lower_back","shoulder","hip","ankle","wrist","none"];
@@ -670,7 +688,7 @@ function switchTab(tab){
   if(tab==="profile") renderProfileForm();
 }
 function openModal(id){ document.getElementById(id).classList.add("active"); }
-function closeModal(id){ document.getElementById(id).classList.remove("active"); stopTimer(); stopGpsTrackingHard(); stopPlayerTimer(); }
+function closeModal(id){ document.getElementById(id).classList.remove("active"); stopTimer(); stopGpsTrackingHard(); stopPlayerTimer(); stopAmrapTimer(); }
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.style.display="block"; setTimeout(()=>t.style.display="none", 2200); }
 
 /* ===================== UI: Home ===================== */
@@ -816,50 +834,133 @@ function regenerateWeek(){
 }
 let builderTargetDay = null;
 let builderPreselected = [];
+let builderOverrides = {}; // {workoutId: {sets, reps, seconds, restSeconds}} — only fields the user actually edited
 let builderMode = "save"; // "save" (Program tab: save into the weekly plan) or "start" (Home: do it right now)
+function updateBuilderVisibility(){
+  const isAmrap = document.getElementById("b_format").value === "amrap";
+  document.getElementById("b_modalityRow").style.display = isAmrap ? "none" : "block";
+  document.getElementById("b_timeCapRow").style.display = isAmrap ? "block" : "none";
+}
+function onBuilderFormatChange(){
+  updateBuilderVisibility();
+  builderPreselected = [];
+  builderOverrides = {};
+  renderBuilderList();
+}
+function loadBuilderFromHunt(hunt){
+  builderPreselected = hunt ? hunt.exercises.map(e=>e.workoutId) : [];
+  builderOverrides = {};
+  if(hunt){
+    hunt.exercises.forEach(e => {
+      builderOverrides[e.workoutId] = {sets:e.sets, reps:e.reps, seconds:e.seconds, restSeconds:e.restSeconds};
+    });
+  }
+  document.getElementById("b_name").value = hunt && hunt.source==="self_built" ? hunt.name : "";
+  document.getElementById("b_format").value = hunt && hunt.type==="AMRAP" ? "amrap" : "standard";
+  document.getElementById("b_modality").value = hunt && hunt.type!=="AMRAP" ? hunt.category : "strength";
+  document.getElementById("b_timecap").value = hunt && hunt.timeCapSeconds ? Math.round(hunt.timeCapSeconds/60) : 20;
+  updateBuilderVisibility();
+  renderBuilderList();
+}
 function openBuilder(dayKey){
   builderTargetDay = dayKey;
   builderMode = "save";
   const plan = ensureWeekPlan();
   const existingDay = dayKey ? plan.days.find(d=>d.day===dayKey) : null;
   const existingHunt = existingDay && existingDay.slot==="workout" ? existingDay.hunt : null;
-  builderPreselected = existingHunt ? existingHunt.exercises.map(e=>e.workoutId) : [];
-  document.getElementById("b_name").value = existingHunt && existingHunt.source==="self_built" ? existingHunt.name : "";
-  document.getElementById("b_modality").value = existingHunt ? existingHunt.category : "strength";
+  loadBuilderFromHunt(existingHunt);
   document.getElementById("builderTitle").textContent = existingHunt ? "Edit Mission" : "Build a Mission";
   document.getElementById("builderSaveBtn").textContent = dayKey ? `Save to ${dayKey}` : "Save to Today";
-  renderBuilderList();
   openModal("modal-builder");
 }
 function openBuilderToStartNow(){
   builderTargetDay = null;
   builderMode = "start";
-  builderPreselected = [];
-  document.getElementById("b_name").value = "";
-  document.getElementById("b_modality").value = "strength";
+  loadBuilderFromHunt(null);
   document.getElementById("builderTitle").textContent = "Choose a Workout";
   document.getElementById("builderSaveBtn").textContent = "Start Now";
-  renderBuilderList();
   openModal("modal-builder");
 }
+function toggleBuilderExercise(id, checked){
+  if(checked){ if(!builderPreselected.includes(id)) builderPreselected.push(id); }
+  else { builderPreselected = builderPreselected.filter(x => x !== id); }
+  renderBuilderList();
+}
+function updateBuilderOverride(id, field, value){
+  if(!builderOverrides[id]) builderOverrides[id] = {};
+  builderOverrides[id][field] = value === "" ? undefined : Number(value);
+}
 function renderBuilderList(){
+  const format = document.getElementById("b_format").value;
+  const isAmrap = format === "amrap";
   const modality = document.getElementById("b_modality").value;
-  const pool = workoutsByModality(modality);
-  document.getElementById("builderExerciseList").innerHTML = pool.map(w => `
-    <label style="display:flex; align-items:center; gap:8px; padding:6px 0; text-transform:none; color:var(--text); font-size:14px">
-      <input type="checkbox" value="${w.id}" ${builderPreselected.includes(w.id)?"checked":""} style="width:auto" /> ${w.name} <span class="muted">(${w.pattern})</span>
-    </label>
-  `).join("");
+  const pool = isAmrap
+    ? [...workoutsByModality("strength"), ...workoutsByModality("hiit")]
+    : workoutsByModality(modality);
+  document.getElementById("builderExerciseList").innerHTML = pool.map(w => {
+    const checked = builderPreselected.includes(w.id);
+    const ov = builderOverrides[w.id] || {};
+    const timeBased = w.defaultSeconds != null && w.defaultReps == null;
+    const sets = ov.sets ?? w.defaultSets ?? 3;
+    const reps = ov.reps ?? w.defaultReps ?? 10;
+    const seconds = ov.seconds ?? w.defaultSeconds ?? 30;
+    const rest = ov.restSeconds ?? w.defaultRestSeconds ?? 30;
+    let fields = "";
+    if(checked){
+      if(modality === "run_zone2" && !isAmrap){
+        const mins = Math.round(seconds/60);
+        fields = `<span class="muted">Duration (min)</span><input type="number" value="${mins}" oninput="updateBuilderOverride('${w.id}','seconds', Number(this.value)*60)" style="width:64px" />`;
+      } else if(isAmrap){
+        fields = timeBased
+          ? `<span class="muted">Seconds</span><input type="number" value="${seconds}" oninput="updateBuilderOverride('${w.id}','seconds',this.value)" style="width:64px" />`
+          : `<span class="muted">Reps</span><input type="number" value="${reps}" oninput="updateBuilderOverride('${w.id}','reps',this.value)" style="width:64px" />`;
+      } else {
+        fields = `<span class="muted">Sets</span><input type="number" value="${sets}" oninput="updateBuilderOverride('${w.id}','sets',this.value)" style="width:48px" />`
+          + (timeBased
+            ? `<span class="muted">Sec</span><input type="number" value="${seconds}" oninput="updateBuilderOverride('${w.id}','seconds',this.value)" style="width:56px" />`
+            : `<span class="muted">Reps</span><input type="number" value="${reps}" oninput="updateBuilderOverride('${w.id}','reps',this.value)" style="width:56px" />`)
+          + `<span class="muted">Rest(s)</span><input type="number" value="${rest}" oninput="updateBuilderOverride('${w.id}','restSeconds',this.value)" style="width:56px" />`;
+      }
+    }
+    return `<div class="builder-ex-row">
+      <label style="display:flex; align-items:center; gap:8px; padding:6px 0; text-transform:none; color:var(--text); font-size:14px">
+        <input type="checkbox" value="${w.id}" ${checked?"checked":""} onchange="toggleBuilderExercise('${w.id}', this.checked)" style="width:auto" />
+        <span style="flex:1">${w.name} <span class="muted">(${w.pattern})</span></span>
+      </label>
+      ${fields ? `<div class="builder-ex-fields">${fields}</div>` : ""}
+    </div>`;
+  }).join("");
 }
 function saveCustomHunt(){
-  const modality = document.getElementById("b_modality").value;
-  const ids = Array.from(document.querySelectorAll("#builderExerciseList input:checked")).map(i=>i.value);
+  const format = document.getElementById("b_format").value;
+  const ids = builderPreselected.slice();
   if(ids.length===0){ toast("Pick at least one exercise"); return; }
   const customName = document.getElementById("b_name").value.trim() || undefined;
+
+  const exerciseOverrides = {};
+  ids.forEach(id => {
+    const ov = builderOverrides[id] || {};
+    const clean = {};
+    if(format!=="amrap" && ov.sets !== undefined) clean.sets = ov.sets;
+    if(ov.reps !== undefined) clean.reps = ov.reps;
+    if(ov.seconds !== undefined) clean.seconds = ov.seconds;
+    if(format==="amrap") clean.restSeconds = 0;
+    else if(ov.restSeconds !== undefined) clean.restSeconds = ov.restSeconds;
+    exerciseOverrides[id] = clean;
+  });
+
   let hunt;
-  if(modality==="hiit") hunt = buildHiitHunt({name:customName, workoutIds:ids, source:"self_built"});
-  else if(modality==="run_zone2") hunt = buildZone2Hunt({name:customName, workoutId:ids[0], source:"self_built"});
-  else hunt = buildStrengthHunt({name:customName, workoutIds:ids, source:"self_built"});
+  if(format === "amrap"){
+    const capMin = parseInt(document.getElementById("b_timecap").value,10) || 20;
+    hunt = buildCustomHunt({name:customName, type:"AMRAP", category:"hiit", workoutIds:ids, exerciseOverrides, source:"self_built"});
+    hunt.timeCapSeconds = capMin*60;
+    hunt.duration = capMin;
+  } else {
+    const modality = document.getElementById("b_modality").value;
+    if(modality==="hiit") hunt = buildHiitHunt({name:customName, workoutIds:ids, exerciseOverrides, source:"self_built"});
+    else if(modality==="run_zone2") hunt = buildZone2Hunt({name:customName, workoutId:ids[0], exerciseOverrides, source:"self_built"});
+    else hunt = buildStrengthHunt({name:customName, workoutIds:ids, exerciseOverrides, source:"self_built"});
+  }
 
   if(builderMode === "start"){
     closeModal("modal-builder");
@@ -919,6 +1020,7 @@ function loadHuntIntoWorkoutScreen(hunt, feeling){
   currentScalingLabel = "standard";
   stopGpsTrackingHard(); gpsState = null;
   stopPlayerTimer(); playerState = null;
+  stopAmrapTimer(); amrapState = null;
   const scaled = scaleHuntForToday({hunt, ageGroup:profile.ageGroup, feeling, last3Logs:last3});
   activeCustomHunt = hunt;
   activeScaled = scaled;
@@ -936,11 +1038,15 @@ function applyScalingMultiplier(exercises, label){
 }
 function renderExerciseList(){
   const exercises = applyScalingMultiplier(activeScaled.exercises, currentScalingLabel);
-  const activeIdx = (playerState && activeCustomHunt.type==="FOR_TIME" && playerState.idx < playerState.exercises.length) ? playerState.idx : -1;
+  const isAmrap = activeCustomHunt.type==="AMRAP";
+  const activeIdx = (playerState && activeCustomHunt.type==="FOR_TIME" && playerState.idx < playerState.exercises.length) ? playerState.idx
+    : (amrapState && isAmrap && amrapState.idx < amrapState.exercises.length) ? amrapState.idx
+    : -1;
   document.getElementById("exerciseList").innerHTML = exercises.map((ex,i) => {
     const w = findWorkout(ex.workoutId);
     let presc = "";
-    if(ex.sets && ex.reps) presc = `${ex.sets} x ${ex.reps} · rest ${ex.restSeconds||0}s`;
+    if(isAmrap) presc = ex.reps ? `${ex.reps} reps` : ex.seconds ? `${ex.seconds}s` : "";
+    else if(ex.sets && ex.reps) presc = `${ex.sets} x ${ex.reps} · rest ${ex.restSeconds||0}s`;
     else if(ex.sets && ex.seconds) presc = `${ex.sets} x ${ex.seconds}s · rest ${ex.restSeconds||0}s`;
     else if(ex.seconds) presc = `${Math.round(ex.seconds/60)} min`;
     return `<div class="exercise-row ${i===activeIdx?"active-exercise":""}"><div style="flex:1"><div class="name">${w.name}</div><div class="presc">${presc}</div>${w.cue?`<div class="muted" style="margin-top:3px">${w.cue}</div>`:""}</div>${i===activeIdx?'<span class="pill" style="background:var(--orange); color:#1a1310">NOW</span>':""}</div>`;
@@ -948,7 +1054,7 @@ function renderExerciseList(){
 }
 function renderWorkoutScreen(){
   document.getElementById("workoutTitle").textContent = activeCustomHunt.name;
-  document.getElementById("workoutMeta").innerHTML = `<span class="pill ${activeCustomHunt.category}">${activeCustomHunt.category.replace("_"," ")}</span><span class="pill">RPE ${activeScaled.targetRPE}</span>`;
+  document.getElementById("workoutMeta").innerHTML = `<span class="pill ${activeCustomHunt.category}">${activeCustomHunt.category.replace("_"," ")}</span><span class="pill">RPE ${activeScaled.targetRPE}</span>${activeCustomHunt.type==="AMRAP"?`<span class="pill" style="background:var(--olive)">AMRAP · ${Math.round(activeCustomHunt.timeCapSeconds/60)} min</span>`:""}`;
   document.getElementById("workoutNotes").textContent = activeScaled.notes.join(" · ");
   document.getElementById("scalingToggle").innerHTML = ["beginner","standard","advanced"].map(l =>
     `<span class="chip ${l===currentScalingLabel?"selected":""}" onclick="setScaling('${l}')">${l}</span>`
@@ -976,6 +1082,9 @@ function renderWorkoutScreen(){
   } else if(activeCustomHunt.type==="FOR_TIME"){
     document.getElementById("timerBlock").innerHTML = `<div id="playerBlock"></div>`;
     if(!playerState) initPlayer(); else renderPlayer();
+  } else if(activeCustomHunt.type==="AMRAP"){
+    document.getElementById("timerBlock").innerHTML = `<div id="amrapBlock"></div>`;
+    if(!amrapState) initAmrapPlayer(); else renderAmrapPlayer();
   } else {
     document.getElementById("timerBlock").innerHTML = `<p class="muted">Tap an exercise's rest time, or just work through the list at your own pace.</p>`;
   }
@@ -1117,6 +1226,81 @@ function advancePlayer(){
 }
 function stopPlayerTimer(){ if(playerState && playerState.interval) clearInterval(playerState.interval); }
 
+/* ===================== UI: AMRAP player (as many rounds as possible in a time cap) ===================== */
+function formatClock(sec){
+  const s = Math.max(0, Math.round(sec));
+  const mins = Math.floor(s/60), secs = s%60;
+  return `${mins}:${String(secs).padStart(2,"0")}`;
+}
+function initAmrapPlayer(){
+  amrapState = {
+    exercises: applyScalingMultiplier(activeScaled.exercises, currentScalingLabel),
+    idx: 0, round: 1,
+    secondsLeft: activeCustomHunt.timeCapSeconds || 1200,
+    running: false, finished: false, interval: null,
+  };
+  renderAmrapPlayer();
+}
+function amrapExercise(){ return amrapState.exercises[amrapState.idx]; }
+function renderAmrapPlayer(){
+  const el = document.getElementById("amrapBlock");
+  if(!el || !amrapState) return;
+  const ex = amrapExercise();
+  const w = findWorkout(ex.workoutId);
+  const target = ex.reps ? `${ex.reps} reps` : ex.seconds ? `${ex.seconds}s` : "";
+  el.innerHTML = `<div class="card" style="text-align:center">
+    <div class="timer-circle ${amrapState.finished?"rest":""}" id="amrapCircle">
+      <div class="timer-num" id="amrapNum">${formatClock(amrapState.secondsLeft)}</div>
+      <div class="muted">${amrapState.finished ? "Time's up!" : "Time Cap Remaining"}</div>
+    </div>
+    <div class="muted" style="margin-top:10px">Round ${amrapState.round}</div>
+    <h3 style="margin:6px 0">${w.name}</h3>
+    <div class="muted">${target}</div>
+    ${w.cue?`<div class="muted" style="margin-top:4px">${w.cue}</div>`:""}
+    ${!amrapState.running && !amrapState.finished
+      ? `<button class="primary" style="width:100%; margin-top:14px" onclick="amrapToggle()">Start AMRAP Clock</button>`
+      : `<button class="primary" style="width:100%; margin-top:14px" onclick="amrapNext()" ${amrapState.finished?"disabled":""}>Next Exercise ▸</button>
+         <button class="ghost" style="width:100%; margin-top:8px" onclick="amrapToggle()" ${amrapState.finished?"disabled":""}>${amrapState.running?"Pause":"Resume"}</button>`}
+  </div>`;
+  renderExerciseList();
+}
+function amrapToggle(){
+  if(!amrapState || amrapState.finished) return;
+  if(amrapState.running){
+    stopAmrapTimer();
+    amrapState.running = false;
+    renderAmrapPlayer();
+    return;
+  }
+  amrapState.running = true;
+  renderAmrapPlayer();
+  amrapState.interval = setInterval(() => {
+    if(!amrapState) return;
+    amrapState.secondsLeft--;
+    if(amrapState.secondsLeft<=0){
+      amrapState.secondsLeft = 0;
+      stopAmrapTimer();
+      amrapState.running = false;
+      amrapState.finished = true;
+      if(navigator.vibrate) navigator.vibrate([200,100,200]);
+      toast("Time's up! Tap Complete Mission to log it.");
+      renderAmrapPlayer();
+      return;
+    }
+    const n = document.getElementById("amrapNum"); if(n) n.textContent = formatClock(amrapState.secondsLeft);
+  }, 1000);
+}
+function amrapNext(){
+  if(!amrapState || amrapState.finished) return;
+  amrapState.idx++;
+  if(amrapState.idx >= amrapState.exercises.length){
+    amrapState.idx = 0; amrapState.round++;
+    if(navigator.vibrate) navigator.vibrate(150);
+  }
+  renderAmrapPlayer();
+}
+function stopAmrapTimer(){ if(amrapState && amrapState.interval) clearInterval(amrapState.interval); }
+
 /* ===================== UI: GPS tracking (Expedition / Zone-2) ===================== */
 let gpsState = null; // {watchId, tickInterval, tickStart, elapsedSeconds, distanceMeters, lastPos, tracking}
 function haversineMeters(lat1,lon1,lat2,lon2){
@@ -1194,8 +1378,14 @@ function finishHuntLog(completed){
     log.distanceKm = +(gpsState.distanceMeters/1000).toFixed(2);
     log.gpsSeconds = gpsState.elapsedSeconds;
   }
+  if(activeCustomHunt.type==="AMRAP" && amrapState){
+    log.roundsCompleted = amrapState.round - 1;
+    log.partialExercises = amrapState.idx;
+    log.exercisesPerRound = amrapState.exercises.length;
+  }
   const logs = Store.logs; logs.push(log); Store.logs = logs;
   gpsState = null;
+  stopAmrapTimer(); amrapState = null;
   closeModal("modal-complete"); closeModal("modal-workout");
   document.getElementById("log_notes").value="";
   toast(completed ? "Mission logged 🔥" : "Marked as skipped");
@@ -1278,7 +1468,7 @@ function renderAchievements(){
   const logs = Store.logs;
   document.getElementById("historyList").innerHTML = logs.slice().reverse().slice(0,20).map(l => `
     <div class="exercise-row" onclick="openAchievementDetail('${l.id||""}')" style="cursor:pointer">
-      <div><div class="name">${l.huntName}</div><div class="presc">${new Date(l.date).toLocaleDateString()} · RPE ${l.actualRPE}${l.distanceKm?` · ${l.distanceKm} km`:""}</div></div>
+      <div><div class="name">${l.huntName}</div><div class="presc">${new Date(l.date).toLocaleDateString()} · RPE ${l.actualRPE}${l.distanceKm?` · ${l.distanceKm} km`:""}${l.roundsCompleted!=null?` · ${l.roundsCompleted} rounds`:""}</div></div>
       <span class="pill ${l.category}">${l.completed?"done":"skipped"}</span>
     </div>
   `).join("") || `<p class="muted">No missions logged yet.</p>`;
@@ -1302,6 +1492,9 @@ function openAchievementDetail(id){
       const paceSec = (log.gpsSeconds||0)/log.distanceKm;
       stats.push({v: `${Math.floor(paceSec/60)}:${String(Math.round(paceSec%60)).padStart(2,"0")}`, l: "Pace /km"});
     }
+  } else if(log.roundsCompleted != null){
+    stats.push({v: log.partialExercises>0 ? `${log.roundsCompleted} + ${log.partialExercises}/${log.exercisesPerRound}` : `${log.roundsCompleted}`, l: "Rounds"});
+    stats.push({v: log.duration+" min", l: "Time Cap"});
   } else {
     stats.push({v: log.duration+" min", l: "Duration"});
   }
