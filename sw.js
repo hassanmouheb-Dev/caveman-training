@@ -1,4 +1,4 @@
-const CACHE_NAME = "caveman-v16";
+const CACHE_NAME = "caveman-v17";
 const SHELL_ASSETS = [
   "./",
   "./index.html",
@@ -47,6 +47,27 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => cached);
+    }),
+  );
+});
+
+self.addEventListener("push", (event) => {
+  let data = { title: "CaveMan Training", body: "Your mission awaits." };
+  try { data = event.data.json(); } catch (e) {}
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: "./assets/icon-home.png",
+    }),
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(
+    self.clients.matchAll({ type: "window" }).then((clients) => {
+      if (clients.length > 0) return clients[0].focus();
+      return self.clients.openWindow("./");
     }),
   );
 });

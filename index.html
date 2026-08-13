@@ -248,8 +248,8 @@ nav.tabs button.active img.tab-icon{opacity:1;}
 
     <div class="card">
       <h3>Reminders</h3>
-      <p class="muted">Local notification stub — "Your mission awaits."</p>
-      <button class="secondary" onclick="stubReminder()">Enable Daily Reminder</button>
+      <p class="muted">A real daily notification (~8am), one of a rotating set of motivational nudges.</p>
+      <button class="secondary" id="reminderBtn" onclick="toggleReminder()">Enable Daily Reminder</button>
     </div>
   </section>
 
@@ -1301,6 +1301,7 @@ function renderProfileForm(){
   renderChipGroup("p_injuries", INJURIES, p.injuries||[]);
   updateBmiPreview();
   updateTierPreview();
+  updateReminderButton();
   document.getElementById("p_height").oninput = updateBmiPreview;
   document.getElementById("p_weight").oninput = updateBmiPreview;
   document.getElementById("p_age").oninput = updateBmiPreview;
@@ -1346,12 +1347,48 @@ function saveProfile(){
   toast("Profile saved");
   switchTab("home");
 }
-function stubReminder(){
-  if(!("Notification" in window)){ toast("Notifications not supported here"); return; }
-  Notification.requestPermission().then(perm => {
-    if(perm==="granted"){ new Notification("CaveMan Training", {body:"Your mission awaits."}); toast("Reminder stub fired"); }
-    else toast("Permission denied");
-  });
+const REMINDER_API = "https://caveman-reminders.hassanmouheb.workers.dev";
+const VAPID_PUBLIC_KEY = "BL-YNMG3WC--MoiLEjTJQqqSr1Ewlhmh1KUYLmPtXdIiXtk_37r8kBiMv384Nwa1_A7ah0WQr3fG5JgCq0Uorh0";
+function urlBase64ToUint8Array(base64String){
+  const padding = "=".repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const raw = atob(base64);
+  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+}
+async function updateReminderButton(){
+  const btn = document.getElementById("reminderBtn");
+  if(!btn || !("serviceWorker" in navigator) || !("PushManager" in window)){
+    if(btn){ btn.textContent = "Not supported on this browser"; btn.disabled = true; }
+    return;
+  }
+  const reg = await navigator.serviceWorker.ready;
+  const sub = await reg.pushManager.getSubscription();
+  btn.textContent = sub ? "Disable Daily Reminder" : "Enable Daily Reminder";
+}
+async function toggleReminder(){
+  if(!("serviceWorker" in navigator) || !("PushManager" in window)){ toast("Push notifications not supported on this browser"); return; }
+  const reg = await navigator.serviceWorker.ready;
+  const existing = await reg.pushManager.getSubscription();
+  if(existing){
+    try { await fetch(REMINDER_API+"/unsubscribe", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({endpoint: existing.endpoint})}); } catch(e){}
+    await existing.unsubscribe();
+    toast("Daily reminder disabled");
+    updateReminderButton();
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  if(perm !== "granted"){ toast("Permission denied"); return; }
+  try {
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+    });
+    await fetch(REMINDER_API+"/subscribe", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(sub.toJSON())});
+    toast("Daily reminder enabled");
+  } catch(e){
+    toast("Couldn't enable reminders: "+e.message);
+  }
+  updateReminderButton();
 }
 
 /* ===================== INIT ===================== */
