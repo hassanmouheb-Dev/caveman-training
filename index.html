@@ -144,10 +144,14 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
   <!-- PROGRAM -->
   <section class="screen" id="screen-program">
     <div class="card">
-      <div class="row between"><h3>Weekly Mission</h3><button class="ghost" style="padding:6px 10px;font-size:12px" onclick="regenerateWeek()">Regenerate</button></div>
+      <div class="row between"><h3>Weekly Mission</h3><button class="ghost" style="padding:6px 10px;font-size:12px" id="editWeekBtn" onclick="toggleEditWeek()">Edit Week</button></div>
       <p class="muted" id="weeklyMissionProgress"></p>
       <div class="progressbar"><div class="fill" id="weeklyMissionFill" style="width:0%"></div></div>
       <div id="weekList" style="margin-top:10px"></div>
+      <div class="row" id="weekActionsRow" style="gap:8px; margin-top:12px">
+        <button class="ghost" style="flex:1; padding:8px; font-size:12px" onclick="shuffleWeek()">Shuffle Variation</button>
+        <button class="ghost" style="flex:1; padding:8px; font-size:12px" onclick="resetWeek()">Reset Week</button>
+      </div>
     </div>
     <div class="card">
       <h3>Build Your Own Mission</h3>
@@ -617,7 +621,7 @@ function composeWeeklyPlan({userId,weekStart,ageGroup,recoveryProfile,rotationIn
     consecutiveHigh=0;
     days.push({day,slot:"workout",hunt,highIntensity:false});
   }
-  return {userId, weekStart, days, source:"composer", generatedAt:new Date()};
+  return {userId, weekStart, days, source:"composer", generatedAt:new Date(), rotationIndex};
 }
 
 /* ===================== STORE ===================== */
@@ -816,7 +820,26 @@ function renderProgram(){
   const completedThisWeek = weeklySessionsCompleted();
   document.getElementById("weeklyMissionProgress").textContent = `${completedThisWeek} of 3–5 sessions completed this week`;
   document.getElementById("weeklyMissionFill").style.width = `${Math.min(100, Math.round((completedThisWeek/5)*100))}%`;
-  el.innerHTML = plan.days.map(d => {
+  document.getElementById("editWeekBtn").textContent = programEditMode ? "Done" : "Edit Week";
+  document.getElementById("weekActionsRow").style.display = programEditMode ? "none" : "flex";
+  el.innerHTML = plan.days.map((d,i) => {
+    if(programEditMode){
+      const slotToggle = [["workout","Workout"],["rest","Rest"],["mobility","Mobility"]].map(([v,l]) =>
+        `<span class="chip ${d.slot===v?"selected":""}" style="padding:5px 10px;font-size:12px" onclick="setDaySlot(${i},'${v}')">${l}</span>`
+      ).join("");
+      const missionLine = d.slot==="workout" ? `<div class="row between" style="margin-top:8px"><div class="muted" style="font-size:13px">${d.hunt ? d.hunt.name : "No Mission set"}</div><button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">${d.hunt?"Edit":"Build"}</button></div>` : "";
+      return `<div class="week-day" style="flex-direction:column; align-items:stretch; gap:8px">
+        <div class="row between">
+          <div class="dayname">${d.day}</div>
+          <div class="row" style="gap:4px">
+            <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="swapDaySlot(${i},${i-1})" ${i===0?"disabled":""}>▲</button>
+            <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="swapDaySlot(${i},${i+1})" ${i===plan.days.length-1?"disabled":""}>▼</button>
+          </div>
+        </div>
+        <div class="chip-group" style="margin-top:0">${slotToggle}</div>
+        ${missionLine}
+      </div>`;
+    }
     const label = d.slot==="workout" && d.hunt ? `${d.hunt.name} <span class="pill ${d.hunt.category}" style="margin-left:6px">${d.hunt.category.replace("_"," ")}</span>` : (d.slot==="rest" ? "Rest" : "Mobility");
     return `<div class="week-day">
       <div class="dayname">${d.day}</div>
@@ -825,6 +848,34 @@ function renderProgram(){
     </div>`;
   }).join("");
   renderMyMissions();
+}
+let programEditMode = false;
+function toggleEditWeek(){
+  programEditMode = !programEditMode;
+  renderProgram();
+}
+function setDaySlot(i, newSlot){
+  const plan = Store.plan; if(!plan) return;
+  const d = plan.days[i];
+  if(d.slot === newSlot) return;
+  const becameWorkout = newSlot === "workout";
+  d.slot = newSlot;
+  d.hunt = null;
+  d.highIntensity = false;
+  Store.plan = plan;
+  renderProgram();
+  if(becameWorkout) openBuilder(d.day);
+}
+function swapDaySlot(i, j){
+  const plan = Store.plan; if(!plan) return;
+  if(j<0 || j>=plan.days.length) return;
+  const a = plan.days[i], b = plan.days[j];
+  const aData = {slot:a.slot, hunt:a.hunt, highIntensity:a.highIntensity};
+  const bData = {slot:b.slot, hunt:b.hunt, highIntensity:b.highIntensity};
+  Object.assign(a, bData);
+  Object.assign(b, aData);
+  Store.plan = plan;
+  renderProgram();
 }
 function renderMyMissions(){
   const el = document.getElementById("myMissionsList");
@@ -856,12 +907,23 @@ function deleteSavedMission(id){
   renderMyMissions();
   toast("Mission deleted");
 }
-function regenerateWeek(){
+function resetWeek(){
+  if(!confirm("Reset this week to the default plan? Any custom Missions or reordering will be lost.")) return;
   const profile = Store.profile; if(!profile) return;
   const weekStart = mondayOf(new Date());
-  const plan = composeWeeklyPlan({userId:"local", weekStart, ageGroup:profile.ageGroup, recoveryProfile:profile.recovery, rotationIndex: weekRotationIndex(weekStart)+1});
+  const plan = composeWeeklyPlan({userId:"local", weekStart, ageGroup:profile.ageGroup, recoveryProfile:profile.recovery, rotationIndex: weekRotationIndex(weekStart)});
   Store.plan = plan;
-  renderProgram(); toast("Week regenerated");
+  renderProgram(); toast("Week reset to default");
+}
+function shuffleWeek(){
+  if(!confirm("Shuffle in a different mix for this week? Any custom Missions or reordering will be lost.")) return;
+  const profile = Store.profile; if(!profile) return;
+  const weekStart = mondayOf(new Date());
+  const current = Store.plan;
+  const baseIndex = (current && current.rotationIndex!=null) ? current.rotationIndex : weekRotationIndex(weekStart);
+  const plan = composeWeeklyPlan({userId:"local", weekStart, ageGroup:profile.ageGroup, recoveryProfile:profile.recovery, rotationIndex: baseIndex+1});
+  Store.plan = plan;
+  renderProgram(); toast("Week shuffled");
 }
 let builderTargetDay = null;
 let builderPreselected = [];
