@@ -851,7 +851,19 @@ function renderProgram(){
       const slotToggle = [["workout","Workout"],["rest","Rest"],["mobility","Mobility"]].map(([v,l]) =>
         `<span class="chip ${d.slot===v?"selected":""}" style="padding:5px 10px;font-size:12px" onclick="setDaySlot(${i},'${v}')">${l}</span>`
       ).join("");
-      const missionLine = d.slot==="workout" ? `<div class="row between" style="margin-top:8px"><div class="muted" style="font-size:13px">${d.hunt ? `${d.hunt.name} · ${d.hunt.duration} min` : "No Mission set"}</div><button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">${d.hunt?"Edit":"Build"}</button></div>` : "";
+      const missionLine = d.slot!=="workout" ? "" : (d.hunt
+        ? `<div class="row between" style="margin-top:8px">
+             <div style="flex:1">
+               <div class="name" style="font-size:14px">${d.hunt.name}</div>
+               <div class="presc" style="margin-top:4px">
+                 <span class="pill ${d.hunt.category}">${d.hunt.category.replace("_"," ")}</span>
+                 ${d.hunt.type==="AMRAP" ? `<span class="pill" style="background:var(--olive)">AMRAP</span>` : ""}
+                 <span class="muted" style="font-size:12px; margin-left:4px">${d.hunt.duration} min · RPE ${d.hunt.targetRPE}</span>
+               </div>
+             </div>
+             <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">Edit</button>
+           </div>`
+        : `<div class="row between" style="margin-top:8px"><div class="muted" style="font-size:13px">No Mission set</div><button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">Build</button></div>`);
       return `<div class="week-day" style="flex-direction:column; align-items:stretch; gap:8px">
         <div class="row between">
           <div class="dayname">${d.day}</div>
