@@ -694,6 +694,22 @@ function switchTab(tab){
 function openModal(id){ document.getElementById(id).classList.add("active"); }
 function closeModal(id){ document.getElementById(id).classList.remove("active"); stopTimer(); stopGpsTrackingHard(); stopPlayerTimer(); stopAmrapTimer(); }
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.style.display="block"; setTimeout(()=>t.style.display="none", 2200); }
+let audioCtx = null;
+function playTick(){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const t = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "square";
+    osc.frequency.value = 1000;
+    gain.gain.setValueAtTime(0.2, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t);
+    osc.stop(t + 0.08);
+  } catch(e){}
+}
 function speak(text){
   if(!("speechSynthesis" in window)) return;
   try{
@@ -835,7 +851,7 @@ function renderProgram(){
       const slotToggle = [["workout","Workout"],["rest","Rest"],["mobility","Mobility"]].map(([v,l]) =>
         `<span class="chip ${d.slot===v?"selected":""}" style="padding:5px 10px;font-size:12px" onclick="setDaySlot(${i},'${v}')">${l}</span>`
       ).join("");
-      const missionLine = d.slot==="workout" ? `<div class="row between" style="margin-top:8px"><div class="muted" style="font-size:13px">${d.hunt ? d.hunt.name : "No Mission set"}</div><button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">${d.hunt?"Edit":"Build"}</button></div>` : "";
+      const missionLine = d.slot==="workout" ? `<div class="row between" style="margin-top:8px"><div class="muted" style="font-size:13px">${d.hunt ? `${d.hunt.name} · ${d.hunt.duration} min` : "No Mission set"}</div><button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">${d.hunt?"Edit":"Build"}</button></div>` : "";
       return `<div class="week-day" style="flex-direction:column; align-items:stretch; gap:8px">
         <div class="row between">
           <div class="dayname">${d.day}</div>
@@ -848,7 +864,9 @@ function renderProgram(){
         ${missionLine}
       </div>`;
     }
-    const label = d.slot==="workout" && d.hunt ? `${d.hunt.name} <span class="pill ${d.hunt.category}" style="margin-left:6px">${d.hunt.category.replace("_"," ")}</span>` : (d.slot==="rest" ? "Rest" : "Mobility");
+    const label = d.slot==="workout"
+      ? (d.hunt ? `${d.hunt.name} <span class="muted" style="font-size:12px">· ${d.hunt.duration} min</span> <span class="pill ${d.hunt.category}" style="margin-left:6px">${d.hunt.category.replace("_"," ")}</span>` : `<span class="muted">No Mission set — tap Edit</span>`)
+      : (d.slot==="rest" ? "Rest" : "Mobility");
     return `<div class="week-day">
       <div class="dayname">${d.day}</div>
       <div style="flex:1">${label}</div>
@@ -1280,7 +1298,10 @@ function runTimerTick(){
   timerState.interval = setInterval(()=>{
     if(!timerState) return;
     timerState.secondsLeft--;
-    if(timerState.mode==="countdown" && timerState.secondsLeft>0 && timerState.secondsLeft<=3) speak(String(timerState.secondsLeft));
+    if(timerState.mode==="countdown"){
+      playTick();
+      if(timerState.secondsLeft>0 && timerState.secondsLeft<=3) speak(String(timerState.secondsLeft));
+    }
     if(timerState.secondsLeft<0){
       if(navigator.vibrate) navigator.vibrate(200);
       if(timerState.mode==="countdown"){
@@ -1377,6 +1398,7 @@ function beginPlayerCountdown(){
   speak(`Next: ${w.name}. ${target}. Get ready.`);
   playerState.interval = setInterval(() => {
     playerState.secondsLeft--;
+    playTick();
     if(playerState.secondsLeft>0 && playerState.secondsLeft<=3) speak(String(playerState.secondsLeft));
     if(playerState.secondsLeft<=0){
       clearInterval(playerState.interval);
@@ -1499,12 +1521,16 @@ function amrapToggle(){
     if(!amrapState) return;
     if(amrapState.phase === "countdown"){
       amrapState.countdownSecondsLeft--;
+      playTick();
       if(amrapState.countdownSecondsLeft>0 && amrapState.countdownSecondsLeft<=3) speak(String(amrapState.countdownSecondsLeft));
       if(amrapState.countdownSecondsLeft<=0){
         amrapState.phase = "work";
         speak("Go!");
       }
-    } else if(amrapState.phase === "rest"){
+      renderAmrapPlayer();
+      return; // get-ready countdown doesn't cost time-cap seconds
+    }
+    if(amrapState.phase === "rest"){
       amrapState.restSecondsLeft--;
       if(amrapState.restSecondsLeft <= 0){
         amrapAdvance();
