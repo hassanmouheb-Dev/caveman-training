@@ -155,6 +155,11 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
       <button class="primary" onclick="openBuilder(null)">+ New Custom Mission</button>
     </div>
     <div class="card">
+      <div class="row between"><h3>My Missions</h3><button class="ghost" style="padding:6px 10px;font-size:12px" onclick="openBuilderToCreateMission()">+ New</button></div>
+      <p class="muted">Save a custom Mission here to reuse it anytime, on any day.</p>
+      <div id="myMissionsList" style="margin-top:10px"></div>
+    </div>
+    <div class="card">
       <h3>Exercise Library</h3>
       <p class="muted">Browse every exercise — pattern, prescription, and how to do it.</p>
       <button class="secondary" onclick="openLibrary()">Browse All Exercises</button>
@@ -339,17 +344,12 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
     <label>Name (optional)</label>
     <input type="text" id="b_name" placeholder="e.g. Push Day, Leg Burner…" />
     <label>Format</label>
-    <select id="b_format" onchange="onBuilderFormatChange()">
-      <option value="standard">Standard (sets/reps as prescribed)</option>
-      <option value="amrap">AMRAP (as many rounds as possible in a time cap)</option>
-    </select>
+    <input type="hidden" id="b_format" value="standard" />
+    <div class="chip-group" id="b_formatToggle"></div>
     <div id="b_modalityRow">
       <label>Modality</label>
-      <select id="b_modality" onchange="builderPreselected=[]; builderOverrides={}; renderBuilderList()">
-        <option value="strength">Strength</option>
-        <option value="hiit">HIIT</option>
-        <option value="run_zone2">Zone 2</option>
-      </select>
+      <input type="hidden" id="b_modality" value="strength" />
+      <div class="chip-group" id="b_modalityToggle"></div>
     </div>
     <div id="b_timeCapRow" style="display:none">
       <label>Time Cap (minutes)</label>
@@ -628,6 +628,8 @@ const Store = {
   set plan(v){ localStorage.setItem("cm_plan", JSON.stringify(v)); },
   get logs(){ return JSON.parse(localStorage.getItem("cm_logs")||"[]"); },
   set logs(v){ localStorage.setItem("cm_logs", JSON.stringify(v)); },
+  get savedMissions(){ return JSON.parse(localStorage.getItem("cm_saved_missions")||"[]"); },
+  set savedMissions(v){ localStorage.setItem("cm_saved_missions", JSON.stringify(v)); },
 };
 
 function ageGroupFromAge(age){
@@ -809,7 +811,7 @@ function weeklySessionsCompleted(){
 function renderProgram(){
   const profile = Store.profile;
   const el = document.getElementById("weekList");
-  if(!profile){ el.innerHTML = `<p class="muted">Set up your profile first.</p>`; return; }
+  if(!profile){ el.innerHTML = `<p class="muted">Set up your profile first.</p>`; renderMyMissions(); return; }
   const plan = ensureWeekPlan();
   const completedThisWeek = weeklySessionsCompleted();
   document.getElementById("weeklyMissionProgress").textContent = `${completedThisWeek} of 3–5 sessions completed this week`;
@@ -822,6 +824,37 @@ function renderProgram(){
       ${d.slot==="workout" ? `<button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">Edit</button>` : ""}
     </div>`;
   }).join("");
+  renderMyMissions();
+}
+function renderMyMissions(){
+  const el = document.getElementById("myMissionsList");
+  if(!el) return;
+  const saved = Store.savedMissions;
+  el.innerHTML = saved.length ? saved.map(m => `
+    <div class="lib-row">
+      <div class="row between">
+        <div class="name">${m.hunt.name}</div>
+        <span class="pill ${m.hunt.category}">${m.hunt.category.replace("_"," ")}</span>
+      </div>
+      <div class="presc">${m.hunt.type==="AMRAP" ? `AMRAP · ${Math.round(m.hunt.timeCapSeconds/60)} min` : `${m.hunt.exercises.length} exercises`}</div>
+      <div class="row" style="gap:6px; margin-top:10px">
+        <button class="secondary" style="flex:1; padding:8px; font-size:13px" onclick="startSavedMission('${m.id}')">Start</button>
+        <button class="ghost" style="flex:1; padding:8px; font-size:13px" onclick="openBuilderToEditSavedMission('${m.id}')">Edit</button>
+        <button class="ghost" style="flex:1; padding:8px; font-size:13px" onclick="deleteSavedMission('${m.id}')">Delete</button>
+      </div>
+    </div>
+  `).join("") : `<p class="muted">No saved missions yet. Build one and save it here to reuse anytime.</p>`;
+}
+function startSavedMission(id){
+  const saved = Store.savedMissions.find(m=>m.id===id);
+  if(!saved) return;
+  openPreCheckForHunt(saved.hunt);
+}
+function deleteSavedMission(id){
+  if(!confirm("Delete this saved mission? This can't be undone.")) return;
+  Store.savedMissions = Store.savedMissions.filter(m=>m.id!==id);
+  renderMyMissions();
+  toast("Mission deleted");
 }
 function regenerateWeek(){
   const profile = Store.profile; if(!profile) return;
@@ -833,7 +866,30 @@ function regenerateWeek(){
 let builderTargetDay = null;
 let builderPreselected = [];
 let builderOverrides = {}; // {workoutId: {sets, reps, seconds, restSeconds}} — only fields the user actually edited
-let builderMode = "save"; // "save" (Program tab: save into the weekly plan) or "start" (Home: do it right now)
+let builderMode = "save"; // "save" (Program tab: save into the weekly plan), "start" (Home: do it right now), or "library" (Program tab: save to My Missions)
+let builderEditingSavedId = null; // My Missions entry id being edited, or null when creating new
+function renderFormatToggle(){
+  const val = document.getElementById("b_format").value;
+  document.getElementById("b_formatToggle").innerHTML = [["standard","Standard"],["amrap","AMRAP"]].map(([v,l]) =>
+    `<span class="chip ${v===val?"selected":""}" onclick="setBuilderFormat('${v}')">${l}</span>`
+  ).join("");
+}
+function setBuilderFormat(v){
+  document.getElementById("b_format").value = v;
+  renderFormatToggle();
+  onBuilderFormatChange();
+}
+function renderModalityToggle(){
+  const val = document.getElementById("b_modality").value;
+  document.getElementById("b_modalityToggle").innerHTML = [["strength","Strength"],["hiit","HIIT"],["run_zone2","Zone 2"]].map(([v,l]) =>
+    `<span class="chip ${v===val?"selected":""}" onclick="setBuilderModality('${v}')">${l}</span>`
+  ).join("");
+}
+function setBuilderModality(v){
+  document.getElementById("b_modality").value = v;
+  renderModalityToggle();
+  builderPreselected=[]; builderOverrides={}; renderBuilderList();
+}
 function updateBuilderVisibility(){
   const isAmrap = document.getElementById("b_format").value === "amrap";
   document.getElementById("b_modalityRow").style.display = isAmrap ? "none" : "block";
@@ -857,12 +913,15 @@ function loadBuilderFromHunt(hunt){
   document.getElementById("b_format").value = hunt && hunt.type==="AMRAP" ? "amrap" : "standard";
   document.getElementById("b_modality").value = hunt && hunt.type!=="AMRAP" ? hunt.category : "strength";
   document.getElementById("b_timecap").value = hunt && hunt.timeCapSeconds ? Math.round(hunt.timeCapSeconds/60) : 20;
+  renderFormatToggle();
+  renderModalityToggle();
   updateBuilderVisibility();
   renderBuilderList();
 }
 function openBuilder(dayKey){
   builderTargetDay = dayKey;
   builderMode = "save";
+  builderEditingSavedId = null;
   const plan = ensureWeekPlan();
   const existingDay = dayKey ? plan.days.find(d=>d.day===dayKey) : null;
   const existingHunt = existingDay && existingDay.slot==="workout" ? existingDay.hunt : null;
@@ -874,9 +933,30 @@ function openBuilder(dayKey){
 function openBuilderToStartNow(){
   builderTargetDay = null;
   builderMode = "start";
+  builderEditingSavedId = null;
   loadBuilderFromHunt(null);
   document.getElementById("builderTitle").textContent = "Choose a Workout";
   document.getElementById("builderSaveBtn").textContent = "Start Now";
+  openModal("modal-builder");
+}
+function openBuilderToCreateMission(){
+  builderTargetDay = null;
+  builderMode = "library";
+  builderEditingSavedId = null;
+  loadBuilderFromHunt(null);
+  document.getElementById("builderTitle").textContent = "Build a Mission";
+  document.getElementById("builderSaveBtn").textContent = "Save to My Missions";
+  openModal("modal-builder");
+}
+function openBuilderToEditSavedMission(id){
+  const saved = Store.savedMissions.find(m=>m.id===id);
+  if(!saved) return;
+  builderTargetDay = null;
+  builderMode = "library";
+  builderEditingSavedId = id;
+  loadBuilderFromHunt(saved.hunt);
+  document.getElementById("builderTitle").textContent = "Edit Mission";
+  document.getElementById("builderSaveBtn").textContent = "Save to My Missions";
   openModal("modal-builder");
 }
 function toggleBuilderExercise(id, checked){
@@ -965,6 +1045,21 @@ function saveCustomHunt(){
   if(builderMode === "start"){
     closeModal("modal-builder");
     openPreCheckForHunt(hunt);
+    return;
+  }
+
+  if(builderMode === "library"){
+    const saved = Store.savedMissions;
+    if(builderEditingSavedId){
+      const idx = saved.findIndex(m=>m.id===builderEditingSavedId);
+      if(idx>=0) saved[idx] = {...saved[idx], hunt};
+    } else {
+      saved.push({id:`saved_${Date.now()}_${Math.random().toString(36).slice(2,7)}`, hunt, createdAt:new Date().toISOString()});
+    }
+    Store.savedMissions = saved;
+    closeModal("modal-builder");
+    renderMyMissions();
+    toast("Saved to My Missions");
     return;
   }
 
