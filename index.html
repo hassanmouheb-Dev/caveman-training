@@ -137,7 +137,7 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
   <img id="splashImg" src="" alt="" />
 </div>
 <div class="intro-overlay" id="introScreen">
-  <img src="assets/Hero2Logo.png" alt="CaveMan Training" />
+  <img src="assets/hero-logo.png" alt="CaveMan Training" />
   <p class="muted" style="margin:0 0 20px; max-width:280px" data-i18n="intro_subtitle">Here's what you're getting into.</p>
   <div style="max-width:300px; margin-bottom:8px">
     <div class="intro-item" data-i18n-html="intro_bullet1_html"><b>Daily adaptive Missions</b> — built around your age, recovery, and fitness level.</div>
@@ -2217,8 +2217,8 @@ async function toggleReminder(){
 }
 
 /* ===================== Opening splash sequence ===================== */
-const MOTIVATIONAL_RANDOM = Array.from({length:12}, (_,i) => `assets/motivational-${i+1}.png`);
-const MOTIVATIONAL_CLOSING = ["assets/motivational-closing-1.png", "assets/motivational-closing-2.png"];
+const MOTIVATIONAL_RANDOM = Array.from({length:11}, (_,i) => `assets/Motivational_random${i+1}.png`);
+const MOTIVATIONAL_CLOSING = ["assets/Motivational_closing1.png", "assets/Motivational_closing2.png", "assets/Motivational_closing3.png"];
 function pickRandomAsset(arr, exclude){
   const pool = arr.filter(x => x !== exclude);
   return pool[Math.floor(Math.random() * pool.length)];
@@ -2231,7 +2231,7 @@ function runSplashSequence(){
   const pick2 = pickRandomAsset(MOTIVATIONAL_RANDOM, pick1);
   const closing = pickRandomAsset(MOTIVATIONAL_CLOSING);
   const steps = [
-    {src:"assets/hero-logo-2.png", heartbeat:true, holdMs:1700},
+    {src:"assets/hero-logo.png", heartbeat:true, holdMs:1700},
     {src:pick1, heartbeat:false, holdMs:1000},
     {src:pick2, heartbeat:false, holdMs:1000},
     {src:closing, heartbeat:false, holdMs:1300},
