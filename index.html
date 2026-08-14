@@ -137,15 +137,20 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
   <img id="splashImg" src="" alt="" />
 </div>
 <div class="intro-overlay" id="introScreen">
-  <img src="assets/hero-logo.png" alt="CaveMan Training" />
-  <h2 style="margin:0 0 6px; color:var(--heading)">Welcome, Caveman.</h2>
-  <p class="muted" style="margin:0 0 24px; max-width:280px">Here's what you're getting into.</p>
-  <div style="max-width:300px; margin-bottom:12px">
-    <div class="intro-item">🎯 <b>Daily adaptive Missions</b> — built around your age, recovery, and fitness level.</div>
-    <div class="intro-item">🔥 <b>Four formats</b> — Strength, HIIT, AMRAP, and GPS-tracked Zone-2 cardio.</div>
-    <div class="intro-item">📈 <b>Track everything</b> — Mission Score and full history, no gimmicks.</div>
+  <img src="assets/Hero2Logo.png" alt="CaveMan Training" />
+  <p class="muted" style="margin:0 0 20px; max-width:280px" data-i18n="intro_subtitle">Here's what you're getting into.</p>
+  <div style="max-width:300px; margin-bottom:8px">
+    <div class="intro-item" data-i18n-html="intro_bullet1_html"><b>Daily adaptive Missions</b> — built around your age, recovery, and fitness level.</div>
+    <div class="intro-item" data-i18n-html="intro_bullet2_html"><b>Four formats</b> — Strength, HIIT, AMRAP, and GPS-tracked Zone-2 cardio.</div>
+    <div class="intro-item" data-i18n-html="intro_bullet3_html"><b>Track everything</b> — Mission Score and full history, no gimmicks.</div>
   </div>
-  <button class="primary" style="width:100%; max-width:300px" onclick="dismissIntro()">Let's Go</button>
+  <div style="width:100%; max-width:300px; text-align:left; margin-bottom:8px">
+    <label style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim)" data-i18n="intro_country_label">Country</label>
+    <select id="intro_country" style="width:100%; margin-bottom:12px"></select>
+    <label style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim)" data-i18n="intro_language_label">Language</label>
+    <select id="intro_language" style="width:100%"></select>
+  </div>
+  <button class="primary" style="width:100%; max-width:300px; margin-top:16px" onclick="dismissIntro()" data-i18n="intro_lets_go">Let's Go</button>
 </div>
 <div id="app">
 
@@ -160,44 +165,44 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
 
   <!-- PROGRAM -->
   <section class="screen" id="screen-program">
-    <div class="section-eyebrow">This Week</div>
+    <div class="section-eyebrow" data-i18n="program_eyebrow_this_week">This Week</div>
     <div class="card">
-      <div class="row between"><h3>Weekly Mission</h3><button class="ghost" style="padding:6px 10px;font-size:12px" id="editWeekBtn" onclick="toggleEditWeek()">Edit Week</button></div>
+      <div class="row between"><h3 data-i18n="program_weekly_mission">Weekly Mission</h3><button class="ghost" style="padding:6px 10px;font-size:12px" id="editWeekBtn" onclick="toggleEditWeek()">Edit Week</button></div>
       <p class="muted" id="weeklyMissionProgress"></p>
       <div class="progressbar"><div class="fill" id="weeklyMissionFill" style="width:0%"></div></div>
       <div id="weekList" style="margin-top:10px"></div>
       <div class="row" id="weekActionsRow" style="gap:8px; margin-top:12px">
-        <button class="ghost" style="flex:1; padding:8px; font-size:12px" onclick="shuffleWeek()">Shuffle Variation</button>
-        <button class="ghost" style="flex:1; padding:8px; font-size:12px" onclick="resetWeek()">Reset Week</button>
+        <button class="ghost" style="flex:1; padding:8px; font-size:12px" onclick="shuffleWeek()" data-i18n="program_shuffle_variation">Shuffle Variation</button>
+        <button class="ghost" style="flex:1; padding:8px; font-size:12px" onclick="resetWeek()" data-i18n="program_reset_week">Reset Week</button>
       </div>
     </div>
 
-    <div class="section-eyebrow">Quick Build</div>
+    <div class="section-eyebrow" data-i18n="program_eyebrow_quick_build">Quick Build</div>
     <div class="card">
-      <h3>Build Your Own Mission</h3>
-      <p class="muted">Free tier: mix strength, HIIT, or Zone-2 exercises into your own session.</p>
-      <button class="primary" onclick="openBuilder(null)">+ New Custom Mission</button>
+      <h3 data-i18n="program_build_own_title">Build Your Own Mission</h3>
+      <p class="muted" data-i18n="program_build_own_desc">Free tier: mix strength, HIIT, or Zone-2 exercises into your own session.</p>
+      <button class="primary" onclick="openBuilder(null)" data-i18n="program_new_custom_mission">+ New Custom Mission</button>
     </div>
 
-    <div class="section-eyebrow">Your Library</div>
+    <div class="section-eyebrow" data-i18n="program_eyebrow_your_library">Your Library</div>
     <div class="card">
-      <div class="row between"><h3>My Missions</h3><button class="ghost" style="padding:6px 10px;font-size:12px" onclick="openBuilderToCreateMission()">+ New</button></div>
-      <p class="muted">Save a custom Mission here to reuse it anytime, on any day.</p>
+      <div class="row between"><h3 data-i18n="program_my_missions_title">My Missions</h3><button class="ghost" style="padding:6px 10px;font-size:12px" onclick="openBuilderToCreateMission()" data-i18n="program_my_missions_new">+ New</button></div>
+      <p class="muted" data-i18n="program_my_missions_desc">Save a custom Mission here to reuse it anytime, on any day.</p>
       <div id="myMissionsList" style="margin-top:10px"></div>
     </div>
 
-    <div class="section-eyebrow">Reference</div>
+    <div class="section-eyebrow" data-i18n="program_eyebrow_reference">Reference</div>
     <div class="card">
-      <h3>Exercise Library</h3>
-      <p class="muted">Browse every exercise — pattern, prescription, and how to do it.</p>
-      <button class="secondary" onclick="openLibrary()">Browse All Exercises</button>
+      <h3 data-i18n="program_exercise_library_title">Exercise Library</h3>
+      <p class="muted" data-i18n="program_exercise_library_desc">Browse every exercise — pattern, prescription, and how to do it.</p>
+      <button class="secondary" onclick="openLibrary()" data-i18n="program_browse_all_exercises">Browse All Exercises</button>
     </div>
   </section>
 
   <!-- PROGRESS -->
   <section class="screen" id="screen-progress">
     <div class="card">
-      <div class="muted">Mission Score</div>
+      <div class="muted" data-i18n="progress_mission_score">Mission Score</div>
       <div class="row between" style="align-items:baseline">
         <div class="big" style="font-size:44px" id="statHunterScore">0</div>
         <div class="muted" style="font-size:14px"><img class="tier-badge-sm" id="statTierImg" src="assets/tier-scout.png" alt="" /><span id="statTier">Scout</span></div>
@@ -205,27 +210,27 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
     </div>
     <div class="card">
       <div class="row between">
-        <h3>30-Day Mission</h3>
+        <h3 data-i18n="progress_thirty_day_title">30-Day Mission</h3>
         <div class="row" style="gap:8px">
           <span class="muted" id="thirtyDayCycle"></span>
-          <button class="ghost" style="padding:4px 10px;font-size:11px" onclick="openMissionStartEdit()">Edit</button>
+          <button class="ghost" style="padding:4px 10px;font-size:11px" onclick="openMissionStartEdit()" data-i18n="common_edit">Edit</button>
         </div>
       </div>
       <p class="muted" id="thirtyDayLabel"></p>
       <div class="progressbar"><div class="fill" id="thirtyDayFill" style="width:0%"></div></div>
     </div>
     <div class="card">
-      <h3>Last 7 Days</h3>
+      <h3 data-i18n="progress_last_seven_days">Last 7 Days</h3>
       <div class="bars" id="progressBars"></div>
     </div>
     <div class="card">
       <div class="grid2">
-        <div><div class="big" id="statCompleted" style="font-size:24px">0</div><div class="muted">Completed</div></div>
-        <div><div class="big" id="statAvgRpe" style="font-size:24px">–</div><div class="muted">Avg RPE</div></div>
+        <div><div class="big" id="statCompleted" style="font-size:24px">0</div><div class="muted" data-i18n="progress_completed">Completed</div></div>
+        <div><div class="big" id="statAvgRpe" style="font-size:24px">–</div><div class="muted" data-i18n="progress_avg_rpe">Avg RPE</div></div>
       </div>
     </div>
     <div class="card">
-      <h3>My Achievements</h3>
+      <h3 data-i18n="progress_achievements_title">My Achievements</h3>
       <div id="historyList"></div>
     </div>
   </section>
@@ -233,92 +238,99 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
   <!-- PROFILE -->
   <section class="screen" id="screen-profile">
     <div class="card">
-      <h3>About You</h3>
-      <label>Age</label><input type="number" id="p_age" min="16" max="100" />
+      <h3 data-i18n="profile_region_language_title">Region &amp; Language</h3>
       <div class="grid2">
-        <div><label>Height (cm)</label><input type="number" id="p_height" /></div>
-        <div><label>Weight (kg)</label><input type="number" id="p_weight" /></div>
+        <div><label data-i18n="profile_country_label">Country</label><select id="p_country" onchange="saveLocaleFrom('p_country','p_language')"></select></div>
+        <div><label data-i18n="profile_language_label">Language</label><select id="p_language" onchange="saveLocaleFrom('p_country','p_language')"></select></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 data-i18n="profile_about_you_title">About You</h3>
+      <label data-i18n="profile_age_label">Age</label><input type="number" id="p_age" min="16" max="100" />
+      <div class="grid2">
+        <div><label data-i18n="profile_height_label">Height (cm)</label><input type="number" id="p_height" /></div>
+        <div><label data-i18n="profile_weight_label">Weight (kg)</label><input type="number" id="p_weight" /></div>
       </div>
       <div class="muted" id="p_bmi" style="margin-top:8px"></div>
       <div class="art-preview" id="ageArtPreview"></div>
-      <label>Recovery Profile</label>
+      <label data-i18n="profile_recovery_label">Recovery Profile</label>
       <select id="p_recovery">
-        <option value="fast">Fast</option>
-        <option value="moderate">Moderate</option>
-        <option value="conservative">Conservative</option>
+        <option value="fast" data-i18n="profile_recovery_fast">Fast</option>
+        <option value="moderate" data-i18n="profile_recovery_moderate">Moderate</option>
+        <option value="conservative" data-i18n="profile_recovery_conservative">Conservative</option>
       </select>
-      <label>Fitness Level</label>
+      <label data-i18n="profile_fitness_level_label">Fitness Level</label>
       <select id="p_level" onchange="updateTierPreview()">
-        <option>Scout</option><option>Hunter</option><option>Alpha</option><option>Apex</option>
+        <option value="Scout">Scout</option><option value="Hunter">Hunter</option><option value="Alpha">Alpha</option><option value="Apex">Apex</option>
       </select>
       <div class="art-preview" id="tierArtPreview"></div>
-      <label>Activity Level</label>
+      <label data-i18n="profile_activity_level_label">Activity Level</label>
       <select id="p_activity">
-        <option value="sedentary">Sedentary</option>
-        <option value="light">Light</option>
-        <option value="moderate">Moderate</option>
-        <option value="active">Active</option>
-        <option value="very_active">Very Active</option>
+        <option value="sedentary" data-i18n="profile_activity_sedentary">Sedentary</option>
+        <option value="light" data-i18n="profile_activity_light">Light</option>
+        <option value="moderate" data-i18n="profile_activity_moderate">Moderate</option>
+        <option value="active" data-i18n="profile_activity_active">Active</option>
+        <option value="very_active" data-i18n="profile_activity_very_active">Very Active</option>
       </select>
-      <label>Diet Type</label>
+      <label data-i18n="profile_diet_type_label">Diet Type</label>
       <select id="p_diet">
-        <option value="omnivore">Omnivore</option>
-        <option value="vegetarian">Vegetarian</option>
-        <option value="vegan">Vegan</option>
-        <option value="pescatarian">Pescatarian</option>
-        <option value="keto">Keto</option>
-        <option value="other">Other</option>
+        <option value="omnivore" data-i18n="profile_diet_omnivore">Omnivore</option>
+        <option value="vegetarian" data-i18n="profile_diet_vegetarian">Vegetarian</option>
+        <option value="vegan" data-i18n="profile_diet_vegan">Vegan</option>
+        <option value="pescatarian" data-i18n="profile_diet_pescatarian">Pescatarian</option>
+        <option value="keto" data-i18n="profile_diet_keto">Keto</option>
+        <option value="other" data-i18n="profile_diet_other">Other</option>
       </select>
       <div class="grid2">
-        <div><label>Smoker</label><select id="p_smoker"><option value="false">No</option><option value="true">Yes</option></select></div>
-        <div><label>Alcohol</label><select id="p_alcohol">
-          <option value="none">None</option><option value="occasional">Occasional</option>
-          <option value="moderate">Moderate</option><option value="frequent">Frequent</option>
+        <div><label data-i18n="profile_smoker_label">Smoker</label><select id="p_smoker"><option value="false" data-i18n="profile_smoker_no">No</option><option value="true" data-i18n="profile_smoker_yes">Yes</option></select></div>
+        <div><label data-i18n="profile_alcohol_label">Alcohol</label><select id="p_alcohol">
+          <option value="none" data-i18n="profile_alcohol_none">None</option><option value="occasional" data-i18n="profile_alcohol_occasional">Occasional</option>
+          <option value="moderate" data-i18n="profile_alcohol_moderate">Moderate</option><option value="frequent" data-i18n="profile_alcohol_frequent">Frequent</option>
         </select></div>
       </div>
-      <label>Goals</label>
+      <label data-i18n="profile_goals_label">Goals</label>
       <div class="chip-group" id="p_goals"></div>
-      <label>Injuries</label>
+      <label data-i18n="profile_injuries_label">Injuries</label>
       <div class="chip-group" id="p_injuries"></div>
-      <button class="primary" style="margin-top:16px" onclick="saveProfile()">Save Profile</button>
+      <button class="primary" style="margin-top:16px" onclick="saveProfile()" data-i18n="profile_save_profile">Save Profile</button>
     </div>
 
     <div class="card lock">
-      <h3>Smart Scale Data</h3>
-      <p class="muted">Body fat %, muscle %, water % — unlocks the AI-generated diet + training plan.</p>
+      <h3 data-i18n="profile_smart_scale_title">Smart Scale Data</h3>
+      <p class="muted" data-i18n="profile_smart_scale_desc">Body fat %, muscle %, water % — unlocks the AI-generated diet + training plan.</p>
       <div class="grid2">
-        <div><label>Body Fat %</label><input disabled /></div>
-        <div><label>Muscle %</label><input disabled /></div>
+        <div><label data-i18n="profile_body_fat_label">Body Fat %</label><input disabled /></div>
+        <div><label data-i18n="profile_muscle_percent_label">Muscle %</label><input disabled /></div>
       </div>
-      <button class="secondary" style="margin-top:12px" disabled>Upgrade to Premium</button>
+      <button class="secondary" style="margin-top:12px" disabled data-i18n="profile_upgrade_premium">Upgrade to Premium</button>
     </div>
 
     <div class="card">
-      <h3>Reminders</h3>
-      <p class="muted">A real daily notification (~8am), one of a rotating set of motivational nudges.</p>
-      <button class="secondary" id="reminderBtn" onclick="toggleReminder()">Enable Daily Reminder</button>
+      <h3 data-i18n="profile_reminders_title">Reminders</h3>
+      <p class="muted" data-i18n="profile_reminders_desc">A real daily notification (~8am), one of a rotating set of motivational nudges.</p>
+      <button class="secondary" id="reminderBtn" onclick="toggleReminder()" data-i18n="profile_enable_reminder">Enable Daily Reminder</button>
     </div>
   </section>
 
   <nav class="tabs">
-    <button class="tab-btn active" data-tab="home" onclick="switchTab('home')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>Home</button>
-    <button class="tab-btn" data-tab="program" onclick="switchTab('program')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M8 14h2"/><path d="M14 14h2"/><path d="M8 17h2"/><path d="M14 17h2"/></svg>Program</button>
-    <button class="tab-btn" data-tab="progress" onclick="switchTab('progress')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V10"/><path d="M12 19V5"/><path d="M20 19v-7"/><path d="M4 19h16"/></svg>Progress</button>
-    <button class="tab-btn" data-tab="profile" onclick="switchTab('profile')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Profile</button>
+    <button class="tab-btn active" data-tab="home" onclick="switchTab('home')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg><span data-i18n="nav_home">Home</span></button>
+    <button class="tab-btn" data-tab="program" onclick="switchTab('program')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M8 14h2"/><path d="M14 14h2"/><path d="M8 17h2"/><path d="M14 17h2"/></svg><span data-i18n="nav_program">Program</span></button>
+    <button class="tab-btn" data-tab="progress" onclick="switchTab('progress')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V10"/><path d="M12 19V5"/><path d="M20 19v-7"/><path d="M4 19h16"/></svg><span data-i18n="nav_progress">Progress</span></button>
+    <button class="tab-btn" data-tab="profile" onclick="switchTab('profile')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><span data-i18n="nav_profile">Profile</span></button>
   </nav>
 </div>
 
 <!-- PRE-WORKOUT CHECK MODAL -->
 <div class="modal-overlay" id="modal-check">
   <div class="modal">
-    <h3>How do you feel today?</h3>
+    <h3 data-i18n="modal_check_title">How do you feel today?</h3>
     <p class="muted" id="checkHuntName"></p>
     <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px">
-      <button class="secondary" onclick="startMission('strong')">💪 Strong</button>
-      <button class="secondary" onclick="startMission('normal')">🙂 Normal</button>
-      <button class="secondary" onclick="startMission('fatigued')">😴 Fatigued</button>
+      <button class="secondary" onclick="startMission('strong')" data-i18n="modal_check_strong">💪 Strong</button>
+      <button class="secondary" onclick="startMission('normal')" data-i18n="modal_check_normal">🙂 Normal</button>
+      <button class="secondary" onclick="startMission('fatigued')" data-i18n="modal_check_fatigued">😴 Fatigued</button>
     </div>
-    <button class="ghost" style="width:100%; margin-top:16px" onclick="closeModal('modal-check')">Cancel</button>
+    <button class="ghost" style="width:100%; margin-top:16px" onclick="closeModal('modal-check')" data-i18n="common_cancel">Cancel</button>
   </div>
 </div>
 
@@ -328,7 +340,7 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
     <div class="row between">
       <div class="row" style="gap:8px">
         <h3 id="workoutTitle">Mission</h3>
-        <button class="ghost" style="padding:4px 8px; font-size:12px" onclick="renameActiveMission()">✎ Rename</button>
+        <button class="ghost" style="padding:4px 8px; font-size:12px" onclick="renameActiveMission()" data-i18n="modal_workout_rename">✎ Rename</button>
       </div>
       <button class="ghost" style="padding:6px 10px" onclick="closeModal('modal-workout')">✕</button>
     </div>
@@ -336,7 +348,7 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
     <div id="workoutModeHint" class="muted" style="font-size:12px; margin-bottom:8px"></div>
     <div id="workoutNotes" class="muted" style="margin-bottom:10px"></div>
     <div class="row between" style="margin-bottom:10px">
-      <span class="muted">Scaling</span>
+      <span class="muted" data-i18n="modal_workout_scaling">Scaling</span>
       <div class="chip-group" id="scalingToggle"></div>
     </div>
 
@@ -346,20 +358,20 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
       <div id="exerciseList"></div>
     </div>
 
-    <button class="primary" onclick="openCompleteHunt()">Complete Mission</button>
+    <button class="primary" onclick="openCompleteHunt()" data-i18n="modal_workout_complete_mission">Complete Mission</button>
   </div>
 </div>
 
 <!-- COMPLETE MISSION MODAL -->
 <div class="modal-overlay" id="modal-complete">
   <div class="modal">
-    <h3>Log Your Mission</h3>
-    <label>Actual RPE (1-10)</label>
+    <h3 data-i18n="modal_complete_title">Log Your Mission</h3>
+    <label data-i18n="modal_complete_rpe_label">Actual RPE (1-10)</label>
     <input type="number" id="log_rpe" min="1" max="10" value="7" />
-    <label>Notes (optional)</label>
+    <label data-i18n="modal_complete_notes_label">Notes (optional)</label>
     <textarea id="log_notes" rows="3"></textarea>
-    <button class="primary" style="margin-top:16px" onclick="finishHuntLog(true)">Save — Completed</button>
-    <button class="ghost" style="width:100%; margin-top:10px" onclick="finishHuntLog(false)">Mark as Skipped</button>
+    <button class="primary" style="margin-top:16px" onclick="finishHuntLog(true)" data-i18n="modal_complete_save_completed">Save — Completed</button>
+    <button class="ghost" style="width:100%; margin-top:10px" onclick="finishHuntLog(false)" data-i18n="modal_complete_mark_skipped">Mark as Skipped</button>
   </div>
 </div>
 
@@ -371,24 +383,24 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
       <button class="ghost" style="padding:6px 10px" onclick="closeModal('modal-builder')">✕</button>
     </div>
     <span class="pill" id="builderModeBadge" style="display:inline-block; margin-bottom:12px"></span>
-    <label>Name (optional)</label>
-    <input type="text" id="b_name" placeholder="e.g. Push Day, Leg Burner…" />
-    <label>Format</label>
+    <label data-i18n="modal_builder_name_label">Name (optional)</label>
+    <input type="text" id="b_name" placeholder="e.g. Push Day, Leg Burner…" data-i18n-placeholder="modal_builder_name_placeholder" />
+    <label data-i18n="modal_builder_format_label">Format</label>
     <input type="hidden" id="b_format" value="standard" />
     <div class="chip-group" id="b_formatToggle"></div>
     <div id="b_modalityRow">
-      <label>Modality</label>
+      <label data-i18n="modal_builder_modality_label">Modality</label>
       <input type="hidden" id="b_modality" value="strength" />
       <div class="chip-group" id="b_modalityToggle"></div>
     </div>
     <div id="b_timeCapRow" style="display:none">
-      <label>Time Cap (minutes)</label>
+      <label data-i18n="modal_builder_time_cap_label">Time Cap (minutes)</label>
       <input type="number" id="b_timecap" value="20" min="1" max="90" />
     </div>
-    <label>Pick Exercises <span class="muted" style="text-transform:none">— tap to expand and edit sets/reps/rest</span></label>
+    <label><span data-i18n="modal_builder_pick_exercises">Pick Exercises</span> <span class="muted" style="text-transform:none" data-i18n="modal_builder_pick_exercises_hint">— tap to expand and edit sets/reps/rest</span></label>
     <div id="builderExerciseList" style="max-height:320px; overflow-y:auto; border:1px solid var(--border); border-radius:8px; padding:8px"></div>
     <button class="primary" style="margin-top:16px" onclick="saveCustomHunt()" id="builderSaveBtn">Save to Today</button>
-    <button class="ghost" style="width:100%; margin-top:10px" onclick="closeModal('modal-builder')">Cancel</button>
+    <button class="ghost" style="width:100%; margin-top:10px" onclick="closeModal('modal-builder')" data-i18n="common_cancel">Cancel</button>
   </div>
 </div>
 
@@ -396,14 +408,14 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
 <div class="modal-overlay" id="modal-mission-start">
   <div class="modal">
     <div class="row between">
-      <h3>Edit 30-Day Mission</h3>
+      <h3 data-i18n="modal_mission_start_title">Edit 30-Day Mission</h3>
       <button class="ghost" style="padding:6px 10px" onclick="closeModal('modal-mission-start')">✕</button>
     </div>
-    <p class="muted">Set which day your 30-Day Mission started. Useful if you were already training before setting this up, or want to restart the cycle.</p>
-    <label>Start Date</label>
+    <p class="muted" data-i18n="modal_mission_start_desc">Set which day your 30-Day Mission started. Useful if you were already training before setting this up, or want to restart the cycle.</p>
+    <label data-i18n="modal_mission_start_date_label">Start Date</label>
     <input type="date" id="mission_start_date" />
-    <button class="primary" style="margin-top:16px" onclick="saveMissionStart()">Save</button>
-    <button class="ghost" style="width:100%; margin-top:10px" onclick="restartMission()">Restart at Day 1 (Today)</button>
+    <button class="primary" style="margin-top:16px" onclick="saveMissionStart()" data-i18n="modal_mission_start_save">Save</button>
+    <button class="ghost" style="width:100%; margin-top:10px" onclick="restartMission()" data-i18n="modal_mission_start_restart">Restart at Day 1 (Today)</button>
   </div>
 </div>
 
@@ -411,7 +423,7 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
 <div class="modal-overlay" id="modal-library">
   <div class="modal">
     <div class="row between">
-      <h3>Exercise Library</h3>
+      <h3 data-i18n="program_exercise_library_title">Exercise Library</h3>
       <button class="ghost" style="padding:6px 10px" onclick="closeModal('modal-library')">✕</button>
     </div>
     <div class="chip-group" id="libraryFilter" style="margin-bottom:12px"></div>
@@ -429,11 +441,11 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
     <div id="achDetailMeta" style="margin-bottom:10px"></div>
     <div id="achDetailStats" class="card" style="background:var(--surface2)"></div>
     <div class="card" style="margin-top:10px">
-      <h3 style="font-size:16px">Exercises</h3>
+      <h3 style="font-size:16px" data-i18n="modal_achievement_detail_exercises">Exercises</h3>
       <div id="achDetailExercises"></div>
     </div>
     <div id="achDetailNotes" class="muted" style="margin-top:10px"></div>
-    <button class="danger" style="width:100%; margin-top:16px" onclick="deleteAchievement()">Delete</button>
+    <button class="danger" style="width:100%; margin-top:16px" onclick="deleteAchievement()" data-i18n="common_delete">Delete</button>
   </div>
 </div>
 
@@ -662,6 +674,8 @@ const Store = {
   set savedMissions(v){ localStorage.setItem("cm_saved_missions", JSON.stringify(v)); },
   get hasSeenIntro(){ return localStorage.getItem("cm_seen_intro")==="1"; },
   set hasSeenIntro(v){ localStorage.setItem("cm_seen_intro", v ? "1" : "0"); },
+  get locale(){ return JSON.parse(localStorage.getItem("cm_locale")||"null"); },
+  set locale(v){ localStorage.setItem("cm_locale", JSON.stringify(v)); },
 };
 
 function ageGroupFromAge(age){
@@ -703,6 +717,227 @@ let amrapState = null; // {exercises, idx, round, secondsLeft, interval}
 
 const GOALS = ["fat_loss","build_muscle","performance","longevity","mobility","independence","muscle_preservation"];
 const INJURIES = ["knee","lower_back","shoulder","hip","ankle","wrist","none"];
+const LANGUAGES = [
+  ["English","en"], ["Deutsch","de"], ["Français","fr"], ["Italiano","it"], ["Español","es"], ["Português","pt"],
+];
+const COUNTRIES = [
+  ["United States","US"], ["United Kingdom","GB"], ["Germany","DE"], ["France","FR"], ["Italy","IT"], ["Spain","ES"], ["Brazil","BR"],
+  ["Afghanistan","AF"], ["Åland Islands","AX"], ["Albania","AL"], ["Algeria","DZ"], ["American Samoa","AS"], ["Andorra","AD"], ["Angola","AO"],
+  ["Anguilla","AI"], ["Antarctica","AQ"], ["Antigua and Barbuda","AG"], ["Argentina","AR"], ["Armenia","AM"], ["Aruba","AW"], ["Australia","AU"],
+  ["Austria","AT"], ["Azerbaijan","AZ"], ["Bahamas","BS"], ["Bahrain","BH"], ["Bangladesh","BD"], ["Barbados","BB"], ["Belarus","BY"],
+  ["Belgium","BE"], ["Belize","BZ"], ["Benin","BJ"], ["Bermuda","BM"], ["Bhutan","BT"], ["Bolivia","BO"], ["Bonaire, Sint Eustatius and Saba","BQ"],
+  ["Bosnia and Herzegovina","BA"], ["Botswana","BW"], ["Bouvet Island","BV"], ["British Indian Ocean Territory","IO"], ["Brunei Darussalam","BN"],
+  ["Bulgaria","BG"], ["Burkina Faso","BF"], ["Burundi","BI"], ["Cabo Verde","CV"], ["Cambodia","KH"], ["Cameroon","CM"], ["Canada","CA"],
+  ["Cayman Islands","KY"], ["Central African Republic","CF"], ["Chad","TD"], ["Chile","CL"], ["China","CN"], ["Christmas Island","CX"],
+  ["Cocos (Keeling) Islands","CC"], ["Colombia","CO"], ["Comoros","KM"], ["Congo","CG"], ["Congo, Democratic Republic of the","CD"],
+  ["Cook Islands","CK"], ["Costa Rica","CR"], ["Côte d'Ivoire","CI"], ["Croatia","HR"], ["Cuba","CU"], ["Curaçao","CW"], ["Cyprus","CY"],
+  ["Czechia","CZ"], ["Denmark","DK"], ["Djibouti","DJ"], ["Dominica","DM"], ["Dominican Republic","DO"], ["Ecuador","EC"], ["Egypt","EG"],
+  ["El Salvador","SV"], ["Equatorial Guinea","GQ"], ["Eritrea","ER"], ["Estonia","EE"], ["Eswatini","SZ"], ["Ethiopia","ET"],
+  ["Falkland Islands","FK"], ["Faroe Islands","FO"], ["Fiji","FJ"], ["Finland","FI"], ["French Guiana","GF"], ["French Polynesia","PF"],
+  ["French Southern Territories","TF"], ["Gabon","GA"], ["Gambia","GM"], ["Georgia","GE"], ["Ghana","GH"], ["Gibraltar","GI"], ["Greece","GR"],
+  ["Greenland","GL"], ["Grenada","GD"], ["Guadeloupe","GP"], ["Guam","GU"], ["Guatemala","GT"], ["Guernsey","GG"], ["Guinea","GN"],
+  ["Guinea-Bissau","GW"], ["Guyana","GY"], ["Haiti","HT"], ["Heard Island and McDonald Islands","HM"], ["Holy See (Vatican City)","VA"],
+  ["Honduras","HN"], ["Hong Kong","HK"], ["Hungary","HU"], ["Iceland","IS"], ["India","IN"], ["Indonesia","ID"], ["Iran","IR"], ["Iraq","IQ"],
+  ["Ireland","IE"], ["Isle of Man","IM"], ["Israel","IL"], ["Jamaica","JM"], ["Japan","JP"], ["Jersey","JE"], ["Jordan","JO"],
+  ["Kazakhstan","KZ"], ["Kenya","KE"], ["Kiribati","KI"], ["Korea, North","KP"], ["Korea, South","KR"], ["Kuwait","KW"], ["Kyrgyzstan","KG"],
+  ["Laos","LA"], ["Latvia","LV"], ["Lebanon","LB"], ["Lesotho","LS"], ["Liberia","LR"], ["Libya","LY"], ["Liechtenstein","LI"],
+  ["Lithuania","LT"], ["Luxembourg","LU"], ["Macao","MO"], ["Madagascar","MG"], ["Malawi","MW"], ["Malaysia","MY"], ["Maldives","MV"],
+  ["Mali","ML"], ["Malta","MT"], ["Marshall Islands","MH"], ["Martinique","MQ"], ["Mauritania","MR"], ["Mauritius","MU"], ["Mayotte","YT"],
+  ["Mexico","MX"], ["Micronesia","FM"], ["Moldova","MD"], ["Monaco","MC"], ["Mongolia","MN"], ["Montenegro","ME"], ["Montserrat","MS"],
+  ["Morocco","MA"], ["Mozambique","MZ"], ["Myanmar","MM"], ["Namibia","NA"], ["Nauru","NR"], ["Nepal","NP"], ["Netherlands","NL"],
+  ["New Caledonia","NC"], ["New Zealand","NZ"], ["Nicaragua","NI"], ["Niger","NE"], ["Nigeria","NG"], ["Niue","NU"], ["Norfolk Island","NF"],
+  ["North Macedonia","MK"], ["Northern Mariana Islands","MP"], ["Norway","NO"], ["Oman","OM"], ["Pakistan","PK"], ["Palau","PW"],
+  ["Palestine, State of","PS"], ["Panama","PA"], ["Papua New Guinea","PG"], ["Paraguay","PY"], ["Peru","PE"], ["Philippines","PH"],
+  ["Pitcairn","PN"], ["Poland","PL"], ["Portugal","PT"], ["Puerto Rico","PR"], ["Qatar","QA"], ["Réunion","RE"], ["Romania","RO"],
+  ["Russia","RU"], ["Rwanda","RW"], ["Saint Barthélemy","BL"], ["Saint Helena, Ascension and Tristan da Cunha","SH"],
+  ["Saint Kitts and Nevis","KN"], ["Saint Lucia","LC"], ["Saint Martin (French part)","MF"], ["Saint Pierre and Miquelon","PM"],
+  ["Saint Vincent and the Grenadines","VC"], ["Samoa","WS"], ["San Marino","SM"], ["Sao Tome and Principe","ST"], ["Saudi Arabia","SA"],
+  ["Senegal","SN"], ["Serbia","RS"], ["Seychelles","SC"], ["Sierra Leone","SL"], ["Singapore","SG"], ["Sint Maarten (Dutch part)","SX"],
+  ["Slovakia","SK"], ["Slovenia","SI"], ["Solomon Islands","SB"], ["Somalia","SO"], ["South Africa","ZA"],
+  ["South Georgia and the South Sandwich Islands","GS"], ["South Sudan","SS"], ["Sri Lanka","LK"], ["Sudan","SD"], ["Suriname","SR"],
+  ["Svalbard and Jan Mayen","SJ"], ["Sweden","SE"], ["Switzerland","CH"], ["Syria","SY"], ["Taiwan","TW"], ["Tajikistan","TJ"],
+  ["Tanzania","TZ"], ["Thailand","TH"], ["Timor-Leste","TL"], ["Togo","TG"], ["Tokelau","TK"], ["Tonga","TO"],
+  ["Trinidad and Tobago","TT"], ["Tunisia","TN"], ["Türkiye","TR"], ["Turkmenistan","TM"], ["Turks and Caicos Islands","TC"], ["Tuvalu","TV"],
+  ["Uganda","UG"], ["Ukraine","UA"], ["United Arab Emirates","AE"], ["United States Minor Outlying Islands","UM"], ["Uruguay","UY"],
+  ["Uzbekistan","UZ"], ["Vanuatu","VU"], ["Venezuela","VE"], ["Viet Nam","VN"], ["Virgin Islands, British","VG"], ["Virgin Islands, U.S.","VI"],
+  ["Wallis and Futuna","WF"], ["Western Sahara","EH"], ["Yemen","YE"], ["Zambia","ZM"], ["Zimbabwe","ZW"],
+];
+
+/* ===================== I18N ===================== */
+// Infra-only for now: every UI string flows through t(key), but only "en" is populated.
+// Add "de"/"fr"/"it"/"es"/"pt" objects with the same keys once the app's text has stabilized —
+// no other code needs to change when that happens.
+const I18N = {
+  en: {
+    intro_subtitle: "Here's what you're getting into.",
+    intro_bullet1_html: "<b>Daily adaptive Missions</b> — built around your age, recovery, and fitness level.",
+    intro_bullet2_html: "<b>Four formats</b> — Strength, HIIT, AMRAP, and GPS-tracked Zone-2 cardio.",
+    intro_bullet3_html: "<b>Track everything</b> — Mission Score and full history, no gimmicks.",
+    intro_country_label: "Country",
+    intro_language_label: "Language",
+    intro_lets_go: "Let's Go",
+
+    nav_home: "Home", nav_program: "Program", nav_progress: "Progress", nav_profile: "Profile",
+
+    program_eyebrow_this_week: "This Week",
+    program_eyebrow_quick_build: "Quick Build",
+    program_eyebrow_your_library: "Your Library",
+    program_eyebrow_reference: "Reference",
+    program_weekly_mission: "Weekly Mission",
+    program_edit_week: "Edit Week",
+    program_edit_week_done: "Done",
+    program_shuffle_variation: "Shuffle Variation",
+    program_reset_week: "Reset Week",
+    program_build_own_title: "Build Your Own Mission",
+    program_build_own_desc: "Free tier: mix strength, HIIT, or Zone-2 exercises into your own session.",
+    program_new_custom_mission: "+ New Custom Mission",
+    program_my_missions_title: "My Missions",
+    program_my_missions_new: "+ New",
+    program_my_missions_desc: "Save a custom Mission here to reuse it anytime, on any day.",
+    program_exercise_library_title: "Exercise Library",
+    program_exercise_library_desc: "Browse every exercise — pattern, prescription, and how to do it.",
+    program_browse_all_exercises: "Browse All Exercises",
+
+    progress_mission_score: "Mission Score",
+    progress_thirty_day_title: "30-Day Mission",
+    progress_last_seven_days: "Last 7 Days",
+    progress_completed: "Completed",
+    progress_avg_rpe: "Avg RPE",
+    progress_achievements_title: "My Achievements",
+
+    profile_region_language_title: "Region & Language",
+    profile_country_label: "Country",
+    profile_language_label: "Language",
+    profile_about_you_title: "About You",
+    profile_age_label: "Age",
+    profile_height_label: "Height (cm)",
+    profile_weight_label: "Weight (kg)",
+    profile_recovery_label: "Recovery Profile",
+    profile_recovery_fast: "Fast", profile_recovery_moderate: "Moderate", profile_recovery_conservative: "Conservative",
+    profile_fitness_level_label: "Fitness Level",
+    profile_activity_level_label: "Activity Level",
+    profile_activity_sedentary: "Sedentary", profile_activity_light: "Light", profile_activity_moderate: "Moderate",
+    profile_activity_active: "Active", profile_activity_very_active: "Very Active",
+    profile_diet_type_label: "Diet Type",
+    profile_diet_omnivore: "Omnivore", profile_diet_vegetarian: "Vegetarian", profile_diet_vegan: "Vegan",
+    profile_diet_pescatarian: "Pescatarian", profile_diet_keto: "Keto", profile_diet_other: "Other",
+    profile_smoker_label: "Smoker", profile_smoker_no: "No", profile_smoker_yes: "Yes",
+    profile_alcohol_label: "Alcohol", profile_alcohol_none: "None", profile_alcohol_occasional: "Occasional",
+    profile_alcohol_moderate: "Moderate", profile_alcohol_frequent: "Frequent",
+    profile_goals_label: "Goals", profile_injuries_label: "Injuries",
+    profile_save_profile: "Save Profile",
+    profile_smart_scale_title: "Smart Scale Data",
+    profile_smart_scale_desc: "Body fat %, muscle %, water % — unlocks the AI-generated diet + training plan.",
+    profile_body_fat_label: "Body Fat %", profile_muscle_percent_label: "Muscle %",
+    profile_upgrade_premium: "Upgrade to Premium",
+    profile_reminders_title: "Reminders",
+    profile_reminders_desc: "A real daily notification (~8am), one of a rotating set of motivational nudges.",
+    profile_enable_reminder: "Enable Daily Reminder",
+    profile_disable_reminder: "Disable Daily Reminder",
+    profile_reminder_not_supported: "Not supported on this browser",
+
+    modal_check_title: "How do you feel today?",
+    modal_check_strong: "💪 Strong", modal_check_normal: "🙂 Normal", modal_check_fatigued: "😴 Fatigued",
+    modal_workout_rename: "✎ Rename",
+    modal_workout_scaling: "Scaling",
+    modal_workout_complete_mission: "Complete Mission",
+    modal_complete_title: "Log Your Mission",
+    modal_complete_rpe_label: "Actual RPE (1-10)",
+    modal_complete_notes_label: "Notes (optional)",
+    modal_complete_save_completed: "Save — Completed",
+    modal_complete_mark_skipped: "Mark as Skipped",
+    modal_builder_name_label: "Name (optional)",
+    modal_builder_name_placeholder: "e.g. Push Day, Leg Burner…",
+    modal_builder_format_label: "Format",
+    modal_builder_modality_label: "Modality",
+    modal_builder_time_cap_label: "Time Cap (minutes)",
+    modal_builder_pick_exercises: "Pick Exercises",
+    modal_builder_pick_exercises_hint: "— tap to expand and edit sets/reps/rest",
+    modal_mission_start_title: "Edit 30-Day Mission",
+    modal_mission_start_desc: "Set which day your 30-Day Mission started. Useful if you were already training before setting this up, or want to restart the cycle.",
+    modal_mission_start_date_label: "Start Date",
+    modal_mission_start_save: "Save",
+    modal_mission_start_restart: "Restart at Day 1 (Today)",
+    modal_achievement_detail_exercises: "Exercises",
+
+    common_edit: "Edit", common_cancel: "Cancel", common_save: "Save", common_delete: "Delete",
+    common_start: "Start", common_done: "Done", common_build: "Build",
+
+    format_standard: "Standard", format_amrap: "AMRAP",
+    modality_strength: "Strength", modality_hiit: "HIIT", modality_zone2: "Zone 2",
+    slot_workout: "Workout", slot_rest: "Rest", slot_mobility: "Mobility",
+
+    day_mon: "Mon", day_tue: "Tue", day_wed: "Wed", day_thu: "Thu", day_fri: "Fri", day_sat: "Sat", day_sun: "Sun",
+
+    common_completed: "Completed", common_skipped: "Skipped",
+    stat_rpe: "RPE", stat_distance: "Distance", stat_time: "Time", stat_pace: "Pace /km",
+    stat_rounds: "Rounds", stat_time_cap: "Time Cap", stat_duration: "Duration",
+    achievement_no_exercise_detail: "No exercise detail recorded for this entry.",
+    achievement_notes_prefix: "Notes:",
+    confirm_delete_achievement: "Delete this achievement? This can't be undone.",
+    toast_achievement_deleted: "Achievement deleted",
+
+    common_today: "Today",
+    builder_badge_save_template: "📅 Saving to {day}'s schedule",
+    builder_badge_start: "▶️ Starting right now — not saved anywhere",
+    builder_badge_editing_saved: "📚 Editing a saved Mission",
+    builder_badge_saving_library: "📚 Saving to My Missions",
+    hint_amrap: "Get-ready countdown is free — rest between exercises costs clock time.",
+    hint_hiit: "Fixed intervals run automatically once started — no manual pacing needed.",
+    hint_zone2: "Keep this screen open — distance and pace track live via GPS.",
+    hint_for_time: "Work through sets at your own pace — the timer only runs during timed exercises and rest.",
+
+    builder_edit_mission: "Edit Mission",
+    builder_build_a_mission: "Build a Mission",
+    builder_choose_workout: "Choose a Workout",
+    builder_save_to_template: "Save to {day}",
+    builder_save_to_today: "Save to Today",
+    builder_start_now: "Start Now",
+    builder_save_to_my_missions: "Save to My Missions",
+
+    home_first_mission_waiting: "Your first Mission is waiting.",
+    home_set_up_profile: "Set Up Profile",
+    home_your_weekly_mission: "Your Weekly Mission",
+    home_full_week_edit: "Full week & edit →",
+    home_choose_different_workout: "Or Choose a Different Workout",
+    home_rest_day_title: "Rest Day",
+    home_rest_day_desc: "Recovery is training too. No Mission today.",
+    home_mobility_day_title: "Mobility Day",
+    home_mobility_day_desc: "Light mobility / walk. Listen to your body.",
+    home_target_rpe: "Target RPE",
+    home_prescription: "Prescription",
+    home_start_daily_mission: "Start Daily Mission",
+    home_premium_badge: "Premium",
+    home_premium_title: "Unlock Your AI Coach",
+    home_premium_desc: "A fully personalized diet + training plan built from your body composition, activity, and goals.",
+    home_premium_benefit1: "✓ AI-generated weekly diet plan",
+    home_premium_benefit2: "✓ Training tuned to body fat / muscle %",
+    home_premium_benefit3: "✓ Smart Scale sync (Beurer, etc.)",
+    home_unlock_premium: "Unlock Premium →",
+
+    profile_setup_required: "Set up your profile first.",
+    program_no_mission_set: "No Mission set",
+    program_no_missions_saved: "No saved missions yet. Build one and save it here to reuse anytime.",
+    progress_no_missions_logged: "No missions logged yet.",
+    achievement_pill_done: "done", achievement_pill_skipped: "skipped",
+    achievement_rounds_template: "{n} rounds",
+    program_sessions_completed_template: "{completed} of 3–5 sessions completed this week",
+    program_no_mission_set_tap_edit: "No Mission set — tap Edit",
+    program_exercises_count_template: "{n} exercises",
+  },
+};
+function t(key){
+  const lang = (Store.locale && Store.locale.language) || "en";
+  return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key;
+}
+function applyTranslations(){
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+}
+const CATEGORY_KEYS = {strength:"modality_strength", hiit:"modality_hiit", run_zone2:"modality_zone2"};
+function categoryLabel(cat){ return CATEGORY_KEYS[cat] ? t(CATEGORY_KEYS[cat]) : cat.replace("_"," "); }
+
 const TIER_ART = {Scout:"assets/tier-scout.png", Hunter:"assets/tier-hunter.png", Alpha:"assets/tier-alpha.png", Apex:"assets/tier-apex.png"};
 const AGE_ART = {
   "18-29":"assets/age-18-29.png", "30-39":"assets/age-30-39.png", "40-49":"assets/age-40-49.png",
@@ -773,8 +1008,8 @@ function renderHome(){
   if(!profile){
     el.innerHTML = `<div class="hero-card">
       <img class="hero-logo" src="assets/hero-logo.png" alt="CaveMan Training" />
-      <p class="hero-tag">Your first Mission is waiting.</p>
-      <button class="primary" onclick="switchTab('profile')">Set Up Profile</button>
+      <p class="hero-tag">${t("home_first_mission_waiting")}</p>
+      <button class="primary" onclick="switchTab('profile')">${t("home_set_up_profile")}</button>
     </div>`;
     return;
   }
@@ -784,32 +1019,32 @@ function renderHome(){
   const score = missionScore();
   const tierName = tierFromScore(score);
   const weekLink = `<div class="row between" style="margin-bottom:8px">
-    <span class="muted" style="text-transform:uppercase; font-size:11px; letter-spacing:0.5px">Your Weekly Mission</span>
-    <button class="ghost" style="padding:5px 12px; font-size:11px" onclick="switchTab('program')">Full week & edit →</button>
+    <span class="muted" style="text-transform:uppercase; font-size:11px; letter-spacing:0.5px">${t("home_your_weekly_mission")}</span>
+    <button class="ghost" style="padding:5px 12px; font-size:11px" onclick="switchTab('program')">${t("home_full_week_edit")}</button>
   </div>
   ${weekStripHtml(plan, today)}`;
-  const chooseWorkoutBtn = `<button class="ghost" style="width:100%; margin-top:8px" onclick="openBuilderToStartNow()">Or Choose a Different Workout</button>`;
+  const chooseWorkoutBtn = `<button class="ghost" style="width:100%; margin-top:8px" onclick="openBuilderToStartNow()">${t("home_choose_different_workout")}</button>`;
   let body = "";
   if(!day || day.slot!=="workout" || !day.hunt){
-    body = `<div class="card">${weekLink}<h3>${day && day.slot==="rest" ? "Rest Day" : "Mobility Day"}</h3><p class="muted">${day && day.slot==="rest" ? "Recovery is training too. No Mission today." : "Light mobility / walk. Listen to your body."}</p>${chooseWorkoutBtn}</div>`;
+    body = `<div class="card">${weekLink}<h3>${day && day.slot==="rest" ? t("home_rest_day_title") : t("home_mobility_day_title")}</h3><p class="muted">${day && day.slot==="rest" ? t("home_rest_day_desc") : t("home_mobility_day_desc")}</p>${chooseWorkoutBtn}</div>`;
   } else {
     const h = day.hunt;
     body = `<div class="card">
       ${weekLink}
-      <span class="pill ${h.category}">${h.category.replace("_"," ").toUpperCase()}</span>
+      <span class="pill ${h.category}">${categoryLabel(h.category).toUpperCase()}</span>
       <span class="pill">${h.type}</span>
       <h3 style="margin-top:10px">${h.name}</h3>
       <div class="row between">
-        <div><div class="muted">Target RPE</div><div class="big">${h.targetRPE}</div></div>
-        <div><div class="muted">Prescription</div><div>${huntPrescriptionLine(h)}</div></div>
+        <div><div class="muted">${t("home_target_rpe")}</div><div class="big">${h.targetRPE}</div></div>
+        <div><div class="muted">${t("home_prescription")}</div><div>${huntPrescriptionLine(h)}</div></div>
       </div>
-      <button class="primary" style="margin-top:14px" onclick="openPreCheck('${day.day}')">Start Daily Mission</button>
+      <button class="primary" style="margin-top:14px" onclick="openPreCheck('${day.day}')">${t("home_start_daily_mission")}</button>
       ${chooseWorkoutBtn}
     </div>`;
   }
   el.innerHTML = `
     <div class="card">
-      <div class="muted">Mission Score</div>
+      <div class="muted">${t("progress_mission_score")}</div>
       <div class="row between" style="align-items:baseline">
         <div class="big" style="font-size:44px">${score}</div>
         <div class="muted" style="font-size:14px"><img class="tier-badge-sm" src="${TIER_ART[tierName]}" alt="" /><span>${tierName}</span></div>
@@ -818,15 +1053,15 @@ function renderHome(){
     ${body}
     <div class="mini-hero"><img src="assets/hero-logo.png" alt="CaveMan Training" /></div>
     <div class="card premium-cta">
-      <span class="premium-badge">Premium</span>
-      <h3>Unlock Your AI Coach</h3>
-      <p>A fully personalized diet + training plan built from your body composition, activity, and goals.</p>
+      <span class="premium-badge">${t("home_premium_badge")}</span>
+      <h3>${t("home_premium_title")}</h3>
+      <p>${t("home_premium_desc")}</p>
       <ul class="premium-benefits">
-        <li>✓ AI-generated weekly diet plan</li>
-        <li>✓ Training tuned to body fat / muscle %</li>
-        <li>✓ Smart Scale sync (Beurer, etc.)</li>
+        <li>${t("home_premium_benefit1")}</li>
+        <li>${t("home_premium_benefit2")}</li>
+        <li>${t("home_premium_benefit3")}</li>
       </ul>
-      <button class="primary" onclick="switchTab('profile')">Unlock Premium →</button>
+      <button class="primary" onclick="switchTab('profile')">${t("home_unlock_premium")}</button>
     </div>
   `;
 }
@@ -874,32 +1109,32 @@ function weeklySessionsCompleted(){
 function renderProgram(){
   const profile = Store.profile;
   const el = document.getElementById("weekList");
-  if(!profile){ el.innerHTML = `<p class="muted">Set up your profile first.</p>`; renderMyMissions(); return; }
+  if(!profile){ el.innerHTML = `<p class="muted">${t("profile_setup_required")}</p>`; renderMyMissions(); return; }
   const plan = ensureWeekPlan();
   const completedThisWeek = weeklySessionsCompleted();
-  document.getElementById("weeklyMissionProgress").textContent = `${completedThisWeek} of 3–5 sessions completed this week`;
+  document.getElementById("weeklyMissionProgress").textContent = t("program_sessions_completed_template").replace("{completed}", completedThisWeek);
   document.getElementById("weeklyMissionFill").style.width = `${Math.min(100, Math.round((completedThisWeek/5)*100))}%`;
-  document.getElementById("editWeekBtn").textContent = programEditMode ? "Done" : "Edit Week";
+  document.getElementById("editWeekBtn").textContent = programEditMode ? t("program_edit_week_done") : t("program_edit_week");
   document.getElementById("weekActionsRow").style.display = programEditMode ? "none" : "flex";
   el.innerHTML = plan.days.map((d,i) => {
     if(programEditMode){
-      const slotToggle = [["workout","Workout"],["rest","Rest"],["mobility","Mobility"]].map(([v,l]) =>
-        `<span class="chip ${d.slot===v?"selected":""}" style="padding:5px 10px;font-size:12px" onclick="setDaySlot(${i},'${v}')">${l}</span>`
+      const slotToggle = [["workout","slot_workout"],["rest","slot_rest"],["mobility","slot_mobility"]].map(([v,k]) =>
+        `<span class="chip ${d.slot===v?"selected":""}" style="padding:5px 10px;font-size:12px" onclick="setDaySlot(${i},'${v}')">${t(k)}</span>`
       ).join("");
       const missionLine = d.slot!=="workout" ? "" : (d.hunt
         ? `<div class="row between" style="margin-top:8px">
              <div style="flex:1">
                <div class="name" style="font-size:14px">${d.hunt.name}</div>
                <div class="presc" style="margin-top:4px">
-                 <span class="pill ${d.hunt.category}">${d.hunt.category.replace("_"," ")}</span>
+                 <span class="pill ${d.hunt.category}">${categoryLabel(d.hunt.category)}</span>
                  ${d.hunt.type==="AMRAP" ? `<span class="pill" style="background:var(--olive)">AMRAP</span>` : ""}
                  <span class="muted" style="font-size:12px; margin-left:4px">${d.hunt.duration} min · RPE ${d.hunt.targetRPE}</span>
                </div>
                <div class="muted" style="font-size:11px; margin-top:3px">${exercisePreview(d.hunt)}</div>
              </div>
-             <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">Edit</button>
+             <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">${t("common_edit")}</button>
            </div>`
-        : `<div class="row between" style="margin-top:8px"><div class="muted" style="font-size:13px">No Mission set</div><button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">Build</button></div>`);
+        : `<div class="row between" style="margin-top:8px"><div class="muted" style="font-size:13px">${t("program_no_mission_set")}</div><button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">${t("common_build")}</button></div>`);
       return `<div class="week-day" style="flex-direction:column; align-items:stretch; gap:8px">
         <div class="row between">
           <div class="dayname">${d.day}</div>
@@ -913,12 +1148,12 @@ function renderProgram(){
       </div>`;
     }
     const label = d.slot==="workout"
-      ? (d.hunt ? `${d.hunt.name} <span class="muted" style="font-size:12px">· ${d.hunt.duration} min</span> <span class="pill ${d.hunt.category}" style="margin-left:6px">${d.hunt.category.replace("_"," ")}</span><div class="muted" style="font-size:11px; margin-top:3px">${exercisePreview(d.hunt)}</div>` : `<span class="muted">No Mission set — tap Edit</span>`)
-      : (d.slot==="rest" ? "Rest" : "Mobility");
+      ? (d.hunt ? `${d.hunt.name} <span class="muted" style="font-size:12px">· ${d.hunt.duration} min</span> <span class="pill ${d.hunt.category}" style="margin-left:6px">${categoryLabel(d.hunt.category)}</span><div class="muted" style="font-size:11px; margin-top:3px">${exercisePreview(d.hunt)}</div>` : `<span class="muted">${t("program_no_mission_set_tap_edit")}</span>`)
+      : (d.slot==="rest" ? t("slot_rest") : t("slot_mobility"));
     return `<div class="week-day">
       <div class="dayname">${d.day}</div>
       <div style="flex:1">${label}</div>
-      ${d.slot==="workout" ? `<button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">Edit</button>` : ""}
+      ${d.slot==="workout" ? `<button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">${t("common_edit")}</button>` : ""}
     </div>`;
   }).join("");
   renderMyMissions();
@@ -959,16 +1194,16 @@ function renderMyMissions(){
     <div class="lib-row">
       <div class="row between">
         <div class="name">${m.hunt.name}</div>
-        <span class="pill ${m.hunt.category}">${m.hunt.category.replace("_"," ")}</span>
+        <span class="pill ${m.hunt.category}">${categoryLabel(m.hunt.category)}</span>
       </div>
-      <div class="presc">${m.hunt.type==="AMRAP" ? `AMRAP · ${Math.round(m.hunt.timeCapSeconds/60)} min` : `${m.hunt.exercises.length} exercises`}</div>
+      <div class="presc">${m.hunt.type==="AMRAP" ? `${t("format_amrap")} · ${Math.round(m.hunt.timeCapSeconds/60)} min` : t("program_exercises_count_template").replace("{n}", m.hunt.exercises.length)}</div>
       <div class="row" style="gap:6px; margin-top:10px">
-        <button class="secondary" style="flex:1; padding:8px; font-size:13px" onclick="startSavedMission('${m.id}')">Start</button>
-        <button class="ghost" style="flex:1; padding:8px; font-size:13px" onclick="openBuilderToEditSavedMission('${m.id}')">Edit</button>
-        <button class="ghost" style="flex:1; padding:8px; font-size:13px" onclick="deleteSavedMission('${m.id}')">Delete</button>
+        <button class="secondary" style="flex:1; padding:8px; font-size:13px" onclick="startSavedMission('${m.id}')">${t("common_start")}</button>
+        <button class="ghost" style="flex:1; padding:8px; font-size:13px" onclick="openBuilderToEditSavedMission('${m.id}')">${t("common_edit")}</button>
+        <button class="ghost" style="flex:1; padding:8px; font-size:13px" onclick="deleteSavedMission('${m.id}')">${t("common_delete")}</button>
       </div>
     </div>
-  `).join("") : `<p class="muted">No saved missions yet. Build one and save it here to reuse anytime.</p>`;
+  `).join("") : `<p class="muted">${t("program_no_missions_saved")}</p>`;
 }
 function startSavedMission(id){
   const saved = Store.savedMissions.find(m=>m.id===id);
@@ -1006,8 +1241,8 @@ let builderMode = "save"; // "save" (Program tab: save into the weekly plan), "s
 let builderEditingSavedId = null; // My Missions entry id being edited, or null when creating new
 function renderFormatToggle(){
   const val = document.getElementById("b_format").value;
-  document.getElementById("b_formatToggle").innerHTML = [["standard","Standard"],["amrap","AMRAP"]].map(([v,l]) =>
-    `<span class="chip ${v===val?"selected":""}" onclick="setBuilderFormat('${v}')">${l}</span>`
+  document.getElementById("b_formatToggle").innerHTML = [["standard","format_standard"],["amrap","format_amrap"]].map(([v,k]) =>
+    `<span class="chip ${v===val?"selected":""}" onclick="setBuilderFormat('${v}')">${t(k)}</span>`
   ).join("");
 }
 function setBuilderFormat(v){
@@ -1017,8 +1252,8 @@ function setBuilderFormat(v){
 }
 function renderModalityToggle(){
   const val = document.getElementById("b_modality").value;
-  document.getElementById("b_modalityToggle").innerHTML = [["strength","Strength"],["hiit","HIIT"],["run_zone2","Zone 2"]].map(([v,l]) =>
-    `<span class="chip ${v===val?"selected":""}" onclick="setBuilderModality('${v}')">${l}</span>`
+  document.getElementById("b_modalityToggle").innerHTML = [["strength","modality_strength"],["hiit","modality_hiit"],["run_zone2","modality_zone2"]].map(([v,k]) =>
+    `<span class="chip ${v===val?"selected":""}" onclick="setBuilderModality('${v}')">${t(k)}</span>`
   ).join("");
 }
 function setBuilderModality(v){
@@ -1058,9 +1293,9 @@ function updateBuilderModeBadge(){
   const el = document.getElementById("builderModeBadge");
   if(!el) return;
   let text, color;
-  if(builderMode==="save"){ text = `📅 Saving to ${builderTargetDay || "Today"}'s schedule`; color = "var(--orange)"; }
-  else if(builderMode==="start"){ text = "▶️ Starting right now — not saved anywhere"; color = "var(--red)"; }
-  else { text = builderEditingSavedId ? "📚 Editing a saved Mission" : "📚 Saving to My Missions"; color = "var(--olive)"; }
+  if(builderMode==="save"){ text = t("builder_badge_save_template").replace("{day}", builderTargetDay || t("common_today")); color = "var(--orange)"; }
+  else if(builderMode==="start"){ text = t("builder_badge_start"); color = "var(--red)"; }
+  else { text = builderEditingSavedId ? t("builder_badge_editing_saved") : t("builder_badge_saving_library"); color = "var(--olive)"; }
   el.textContent = text;
   el.style.background = color;
 }
@@ -1072,8 +1307,8 @@ function openBuilder(dayKey){
   const existingDay = dayKey ? plan.days.find(d=>d.day===dayKey) : null;
   const existingHunt = existingDay && existingDay.slot==="workout" ? existingDay.hunt : null;
   loadBuilderFromHunt(existingHunt);
-  document.getElementById("builderTitle").textContent = existingHunt ? "Edit Mission" : "Build a Mission";
-  document.getElementById("builderSaveBtn").textContent = dayKey ? `Save to ${dayKey}` : "Save to Today";
+  document.getElementById("builderTitle").textContent = existingHunt ? t("builder_edit_mission") : t("builder_build_a_mission");
+  document.getElementById("builderSaveBtn").textContent = dayKey ? t("builder_save_to_template").replace("{day}", dayKey) : t("builder_save_to_today");
   updateBuilderModeBadge();
   openModal("modal-builder");
 }
@@ -1082,8 +1317,8 @@ function openBuilderToStartNow(){
   builderMode = "start";
   builderEditingSavedId = null;
   loadBuilderFromHunt(null);
-  document.getElementById("builderTitle").textContent = "Choose a Workout";
-  document.getElementById("builderSaveBtn").textContent = "Start Now";
+  document.getElementById("builderTitle").textContent = t("builder_choose_workout");
+  document.getElementById("builderSaveBtn").textContent = t("builder_start_now");
   updateBuilderModeBadge();
   openModal("modal-builder");
 }
@@ -1092,8 +1327,8 @@ function openBuilderToCreateMission(){
   builderMode = "library";
   builderEditingSavedId = null;
   loadBuilderFromHunt(null);
-  document.getElementById("builderTitle").textContent = "Build a Mission";
-  document.getElementById("builderSaveBtn").textContent = "Save to My Missions";
+  document.getElementById("builderTitle").textContent = t("builder_build_a_mission");
+  document.getElementById("builderSaveBtn").textContent = t("builder_save_to_my_missions");
   updateBuilderModeBadge();
   openModal("modal-builder");
 }
@@ -1104,8 +1339,8 @@ function openBuilderToEditSavedMission(id){
   builderMode = "library";
   builderEditingSavedId = id;
   loadBuilderFromHunt(saved.hunt);
-  document.getElementById("builderTitle").textContent = "Edit Mission";
-  document.getElementById("builderSaveBtn").textContent = "Save to My Missions";
+  document.getElementById("builderTitle").textContent = t("builder_edit_mission");
+  document.getElementById("builderSaveBtn").textContent = t("builder_save_to_my_missions");
   updateBuilderModeBadge();
   openModal("modal-builder");
 }
@@ -1298,15 +1533,15 @@ function renderExerciseList(){
   }).join("");
 }
 function workoutModeHint(hunt){
-  if(hunt.type==="AMRAP") return "Get-ready countdown is free — rest between exercises costs clock time.";
-  if(hunt.type==="HIIT") return "Fixed intervals run automatically once started — no manual pacing needed.";
-  if(hunt.category==="run_zone2") return "Keep this screen open — distance and pace track live via GPS.";
-  if(hunt.type==="FOR_TIME") return "Work through sets at your own pace — the timer only runs during timed exercises and rest.";
+  if(hunt.type==="AMRAP") return t("hint_amrap");
+  if(hunt.type==="HIIT") return t("hint_hiit");
+  if(hunt.category==="run_zone2") return t("hint_zone2");
+  if(hunt.type==="FOR_TIME") return t("hint_for_time");
   return "";
 }
 function renderWorkoutScreen(){
   document.getElementById("workoutTitle").textContent = activeCustomHunt.name;
-  document.getElementById("workoutMeta").innerHTML = `<span class="pill ${activeCustomHunt.category}">${activeCustomHunt.category.replace("_"," ")}</span><span class="pill">RPE ${activeScaled.targetRPE}</span>${activeCustomHunt.type==="AMRAP"?`<span class="pill" style="background:var(--olive)">AMRAP · ${Math.round(activeCustomHunt.timeCapSeconds/60)} min</span>`:""}`;
+  document.getElementById("workoutMeta").innerHTML = `<span class="pill ${activeCustomHunt.category}">${categoryLabel(activeCustomHunt.category)}</span><span class="pill">RPE ${activeScaled.targetRPE}</span>${activeCustomHunt.type==="AMRAP"?`<span class="pill" style="background:var(--olive)">${t("format_amrap")} · ${Math.round(activeCustomHunt.timeCapSeconds/60)} min</span>`:""}`;
   document.getElementById("workoutNotes").textContent = activeScaled.notes.join(" · ");
   document.getElementById("workoutModeHint").textContent = workoutModeHint(activeCustomHunt);
   document.getElementById("scalingToggle").innerHTML = ["beginner","standard","advanced"].map(l =>
@@ -1818,10 +2053,10 @@ function renderAchievements(){
   const logs = Store.logs;
   document.getElementById("historyList").innerHTML = logs.slice().reverse().slice(0,20).map(l => `
     <div class="exercise-row" onclick="openAchievementDetail('${l.id||""}')" style="cursor:pointer">
-      <div><div class="name">${l.huntName}</div><div class="presc">${new Date(l.date).toLocaleDateString()} · RPE ${l.actualRPE}${l.distanceKm?` · ${l.distanceKm} km`:""}${l.roundsCompleted!=null?` · ${l.roundsCompleted} rounds`:""}</div></div>
-      <span class="pill ${l.category}">${l.completed?"done":"skipped"}</span>
+      <div><div class="name">${l.huntName}</div><div class="presc">${new Date(l.date).toLocaleDateString()} · RPE ${l.actualRPE}${l.distanceKm?` · ${l.distanceKm} km`:""}${l.roundsCompleted!=null?` · ${t("achievement_rounds_template").replace("{n}", l.roundsCompleted)}`:""}</div></div>
+      <span class="pill ${l.category}">${l.completed?t("achievement_pill_done"):t("achievement_pill_skipped")}</span>
     </div>
-  `).join("") || `<p class="muted">No missions logged yet.</p>`;
+  `).join("") || `<p class="muted">${t("progress_no_missions_logged")}</p>`;
 }
 let openAchievementId = null;
 function openAchievementDetail(id){
@@ -1830,23 +2065,23 @@ function openAchievementDetail(id){
   openAchievementId = id;
   document.getElementById("achDetailTitle").textContent = log.huntName;
   document.getElementById("achDetailMeta").innerHTML =
-    `<span class="pill ${log.category}">${log.category.replace("_"," ")}</span><span class="pill">${log.completed?"Completed":"Skipped"}</span>
+    `<span class="pill ${log.category}">${categoryLabel(log.category)}</span><span class="pill">${log.completed?t("common_completed"):t("common_skipped")}</span>
      <div class="muted" style="margin-top:6px">${new Date(log.date).toLocaleDateString(undefined,{weekday:"long", day:"numeric", month:"long", year:"numeric"})}</div>`;
   const stats = [];
-  stats.push({v: log.actualRPE, l: "RPE"});
+  stats.push({v: log.actualRPE, l: t("stat_rpe")});
   if(log.distanceKm){
-    stats.push({v: log.distanceKm+" km", l: "Distance"});
+    stats.push({v: log.distanceKm+" km", l: t("stat_distance")});
     const mins = Math.floor((log.gpsSeconds||0)/60), secs = (log.gpsSeconds||0)%60;
-    stats.push({v: `${mins}:${String(secs).padStart(2,"0")}`, l: "Time"});
+    stats.push({v: `${mins}:${String(secs).padStart(2,"0")}`, l: t("stat_time")});
     if(log.distanceKm>0){
       const paceSec = (log.gpsSeconds||0)/log.distanceKm;
-      stats.push({v: `${Math.floor(paceSec/60)}:${String(Math.round(paceSec%60)).padStart(2,"0")}`, l: "Pace /km"});
+      stats.push({v: `${Math.floor(paceSec/60)}:${String(Math.round(paceSec%60)).padStart(2,"0")}`, l: t("stat_pace")});
     }
   } else if(log.roundsCompleted != null){
-    stats.push({v: log.partialExercises>0 ? `${log.roundsCompleted} + ${log.partialExercises}/${log.exercisesPerRound}` : `${log.roundsCompleted}`, l: "Rounds"});
-    stats.push({v: log.duration+" min", l: "Time Cap"});
+    stats.push({v: log.partialExercises>0 ? `${log.roundsCompleted} + ${log.partialExercises}/${log.exercisesPerRound}` : `${log.roundsCompleted}`, l: t("stat_rounds")});
+    stats.push({v: log.duration+" min", l: t("stat_time_cap")});
   } else {
-    stats.push({v: log.duration+" min", l: "Duration"});
+    stats.push({v: log.duration+" min", l: t("stat_duration")});
   }
   document.getElementById("achDetailStats").innerHTML = `<div class="ach-stat-row">${stats.map(s=>`<div><div class="v">${s.v}</div><div class="muted">${s.l}</div></div>`).join("")}</div>`;
   document.getElementById("achDetailExercises").innerHTML = (log.exercises||[]).map(e => {
@@ -1856,18 +2091,18 @@ function openAchievementDetail(id){
     else if(e.sets && e.seconds) presc = `${e.sets} x ${e.seconds}s`;
     else if(e.seconds) presc = `${Math.round(e.seconds/60)} min`;
     return `<div class="exercise-row"><div><div class="name">${w?w.name:e.workoutId}</div>${presc?`<div class="presc">${presc}</div>`:""}</div></div>`;
-  }).join("") || `<p class="muted">No exercise detail recorded for this entry.</p>`;
-  document.getElementById("achDetailNotes").textContent = log.notes ? `Notes: ${log.notes}` : "";
+  }).join("") || `<p class="muted">${t("achievement_no_exercise_detail")}</p>`;
+  document.getElementById("achDetailNotes").textContent = log.notes ? `${t("achievement_notes_prefix")} ${log.notes}` : "";
   openModal("modal-achievement-detail");
 }
 function deleteAchievement(){
   if(!openAchievementId) return;
-  if(!confirm("Delete this achievement? This can't be undone.")) return;
+  if(!confirm(t("confirm_delete_achievement"))) return;
   Store.logs = Store.logs.filter(l => l.id !== openAchievementId);
   openAchievementId = null;
   closeModal("modal-achievement-detail");
   renderProgress();
-  toast("Achievement deleted");
+  toast(t("toast_achievement_deleted"));
 }
 
 /* ===================== UI: Profile ===================== */
@@ -1888,6 +2123,7 @@ function renderProfileForm(){
   document.getElementById("p_alcohol").value = p.alcohol;
   renderChipGroup("p_goals", GOALS, p.goals||[]);
   renderChipGroup("p_injuries", INJURIES, p.injuries||[]);
+  populateLocaleSelects("p_country", "p_language");
   updateBmiPreview();
   updateTierPreview();
   updateReminderButton();
@@ -1947,12 +2183,12 @@ function urlBase64ToUint8Array(base64String){
 async function updateReminderButton(){
   const btn = document.getElementById("reminderBtn");
   if(!btn || !("serviceWorker" in navigator) || !("PushManager" in window)){
-    if(btn){ btn.textContent = "Not supported on this browser"; btn.disabled = true; }
+    if(btn){ btn.textContent = t("profile_reminder_not_supported"); btn.disabled = true; }
     return;
   }
   const reg = await navigator.serviceWorker.ready;
   const sub = await reg.pushManager.getSubscription();
-  btn.textContent = sub ? "Disable Daily Reminder" : "Enable Daily Reminder";
+  btn.textContent = sub ? t("profile_disable_reminder") : t("profile_enable_reminder");
 }
 async function toggleReminder(){
   if(!("serviceWorker" in navigator) || !("PushManager" in window)){ toast("Push notifications not supported on this browser"); return; }
@@ -2023,16 +2259,55 @@ function runSplashSequence(){
   }
   nextStep();
 }
+function detectDefaultCountry(){
+  try{
+    const region = new Intl.Locale(navigator.language).maximize().region;
+    if(region) return region;
+  } catch(e){}
+  const parts = (navigator.language||"").split("-");
+  return parts.length>1 ? parts[1].toUpperCase() : "US";
+}
+function detectDefaultLanguage(){
+  const supported = LANGUAGES.map(l=>l[1]);
+  const lang = (navigator.language||"en").split("-")[0].toLowerCase();
+  return supported.includes(lang) ? lang : "en";
+}
+function populateLocaleSelects(countryId, langId){
+  const existing = Store.locale;
+  const country = existing?.country || detectDefaultCountry();
+  const language = existing?.language || detectDefaultLanguage();
+  const countryEl = document.getElementById(countryId);
+  const langEl = document.getElementById(langId);
+  if(countryEl){
+    countryEl.innerHTML = COUNTRIES.map(([name,code]) => `<option value="${code}">${name}</option>`).join("");
+    countryEl.value = country;
+    if(!countryEl.value) countryEl.value = "US";
+  }
+  if(langEl){
+    langEl.innerHTML = LANGUAGES.map(([name,code]) => `<option value="${code}">${name}</option>`).join("");
+    langEl.value = language;
+  }
+}
+function saveLocaleFrom(countryId, langId){
+  Store.locale = {
+    country: document.getElementById(countryId).value,
+    language: document.getElementById(langId).value,
+  };
+  applyTranslations();
+}
 function showIntroIfNeeded(){
   if(Store.hasSeenIntro) return;
+  populateLocaleSelects("intro_country", "intro_language");
   document.getElementById("introScreen").classList.add("active");
 }
 function dismissIntro(){
+  saveLocaleFrom("intro_country", "intro_language");
   Store.hasSeenIntro = true;
   document.getElementById("introScreen").classList.remove("active");
 }
 
 /* ===================== INIT ===================== */
+applyTranslations();
 renderHome();
 runSplashSequence();
 

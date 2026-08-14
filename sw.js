@@ -1,4 +1,4 @@
-const CACHE_NAME = "caveman-v28";
+const CACHE_NAME = "caveman-v29";
 const SHELL_ASSETS = [
   "./",
   "./index.html",
@@ -6,6 +6,7 @@ const SHELL_ASSETS = [
   "./assets/CavemanLogo.png",
   "./assets/hero-logo.png",
   "./assets/hero-logo-2.png",
+  "./assets/Hero2Logo.png",
   "./assets/tier-scout.png",
   "./assets/tier-hunter.png",
   "./assets/tier-alpha.png",
