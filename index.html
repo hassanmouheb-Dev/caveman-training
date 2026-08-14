@@ -83,6 +83,12 @@ nav.tabs .icon{font-size:18px;}
 #splashScreen img.visible{opacity:1; transform:scale(1);}
 #splashScreen img.heartbeat{animation:heartbeat 1s ease-in-out infinite;}
 #splashScreen.fade-out{opacity:0; pointer-events:none;}
+.intro-overlay{position:fixed; inset:0; background:var(--bg); z-index:999; display:none; flex-direction:column; align-items:center; justify-content:center; padding:32px; text-align:center;}
+.intro-overlay.active{display:flex;}
+.intro-overlay img{width:120px; margin-bottom:20px;}
+.intro-item{margin-bottom:16px; font-size:14px; line-height:1.4; color:var(--text); text-align:left;}
+.section-eyebrow{font-size:11px; font-weight:700; letter-spacing:0.8px; color:var(--orange); text-transform:uppercase; margin:20px 4px 6px;}
+.section-eyebrow:first-child{margin-top:2px;}
 @keyframes heartbeat{
   0%{transform:scale(1);} 14%{transform:scale(1.1);} 28%{transform:scale(1);} 42%{transform:scale(1.1);} 70%{transform:scale(1);}
 }
@@ -130,6 +136,17 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
 <div id="splashScreen">
   <img id="splashImg" src="" alt="" />
 </div>
+<div class="intro-overlay" id="introScreen">
+  <img src="assets/hero-logo.png" alt="CaveMan Training" />
+  <h2 style="margin:0 0 6px; color:var(--heading)">Welcome, Caveman.</h2>
+  <p class="muted" style="margin:0 0 24px; max-width:280px">Here's what you're getting into.</p>
+  <div style="max-width:300px; margin-bottom:12px">
+    <div class="intro-item">🎯 <b>Daily adaptive Missions</b> — built around your age, recovery, and fitness level.</div>
+    <div class="intro-item">🔥 <b>Four formats</b> — Strength, HIIT, AMRAP, and GPS-tracked Zone-2 cardio.</div>
+    <div class="intro-item">📈 <b>Track everything</b> — Mission Score and full history, no gimmicks.</div>
+  </div>
+  <button class="primary" style="width:100%; max-width:300px" onclick="dismissIntro()">Let's Go</button>
+</div>
 <div id="app">
 
   <header class="top">
@@ -143,6 +160,7 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
 
   <!-- PROGRAM -->
   <section class="screen" id="screen-program">
+    <div class="section-eyebrow">This Week</div>
     <div class="card">
       <div class="row between"><h3>Weekly Mission</h3><button class="ghost" style="padding:6px 10px;font-size:12px" id="editWeekBtn" onclick="toggleEditWeek()">Edit Week</button></div>
       <p class="muted" id="weeklyMissionProgress"></p>
@@ -153,16 +171,22 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
         <button class="ghost" style="flex:1; padding:8px; font-size:12px" onclick="resetWeek()">Reset Week</button>
       </div>
     </div>
+
+    <div class="section-eyebrow">Quick Build</div>
     <div class="card">
       <h3>Build Your Own Mission</h3>
       <p class="muted">Free tier: mix strength, HIIT, or Zone-2 exercises into your own session.</p>
       <button class="primary" onclick="openBuilder(null)">+ New Custom Mission</button>
     </div>
+
+    <div class="section-eyebrow">Your Library</div>
     <div class="card">
       <div class="row between"><h3>My Missions</h3><button class="ghost" style="padding:6px 10px;font-size:12px" onclick="openBuilderToCreateMission()">+ New</button></div>
       <p class="muted">Save a custom Mission here to reuse it anytime, on any day.</p>
       <div id="myMissionsList" style="margin-top:10px"></div>
     </div>
+
+    <div class="section-eyebrow">Reference</div>
     <div class="card">
       <h3>Exercise Library</h3>
       <p class="muted">Browse every exercise — pattern, prescription, and how to do it.</p>
@@ -309,6 +333,7 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
       <button class="ghost" style="padding:6px 10px" onclick="closeModal('modal-workout')">✕</button>
     </div>
     <div class="row" id="workoutMeta" style="margin-bottom:8px"></div>
+    <div id="workoutModeHint" class="muted" style="font-size:12px; margin-bottom:8px"></div>
     <div id="workoutNotes" class="muted" style="margin-bottom:10px"></div>
     <div class="row between" style="margin-bottom:10px">
       <span class="muted">Scaling</span>
@@ -345,6 +370,7 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
       <h3 id="builderTitle">Build a Mission</h3>
       <button class="ghost" style="padding:6px 10px" onclick="closeModal('modal-builder')">✕</button>
     </div>
+    <span class="pill" id="builderModeBadge" style="display:inline-block; margin-bottom:12px"></span>
     <label>Name (optional)</label>
     <input type="text" id="b_name" placeholder="e.g. Push Day, Leg Burner…" />
     <label>Format</label>
@@ -634,6 +660,8 @@ const Store = {
   set logs(v){ localStorage.setItem("cm_logs", JSON.stringify(v)); },
   get savedMissions(){ return JSON.parse(localStorage.getItem("cm_saved_missions")||"[]"); },
   set savedMissions(v){ localStorage.setItem("cm_saved_missions", JSON.stringify(v)); },
+  get hasSeenIntro(){ return localStorage.getItem("cm_seen_intro")==="1"; },
+  set hasSeenIntro(v){ localStorage.setItem("cm_seen_intro", v ? "1" : "0"); },
 };
 
 function ageGroupFromAge(age){
@@ -1018,6 +1046,16 @@ function loadBuilderFromHunt(hunt){
   updateBuilderVisibility();
   renderBuilderList();
 }
+function updateBuilderModeBadge(){
+  const el = document.getElementById("builderModeBadge");
+  if(!el) return;
+  let text, color;
+  if(builderMode==="save"){ text = `📅 Saving to ${builderTargetDay || "Today"}'s schedule`; color = "var(--orange)"; }
+  else if(builderMode==="start"){ text = "▶️ Starting right now — not saved anywhere"; color = "var(--red)"; }
+  else { text = builderEditingSavedId ? "📚 Editing a saved Mission" : "📚 Saving to My Missions"; color = "var(--olive)"; }
+  el.textContent = text;
+  el.style.background = color;
+}
 function openBuilder(dayKey){
   builderTargetDay = dayKey;
   builderMode = "save";
@@ -1028,6 +1066,7 @@ function openBuilder(dayKey){
   loadBuilderFromHunt(existingHunt);
   document.getElementById("builderTitle").textContent = existingHunt ? "Edit Mission" : "Build a Mission";
   document.getElementById("builderSaveBtn").textContent = dayKey ? `Save to ${dayKey}` : "Save to Today";
+  updateBuilderModeBadge();
   openModal("modal-builder");
 }
 function openBuilderToStartNow(){
@@ -1037,6 +1076,7 @@ function openBuilderToStartNow(){
   loadBuilderFromHunt(null);
   document.getElementById("builderTitle").textContent = "Choose a Workout";
   document.getElementById("builderSaveBtn").textContent = "Start Now";
+  updateBuilderModeBadge();
   openModal("modal-builder");
 }
 function openBuilderToCreateMission(){
@@ -1046,6 +1086,7 @@ function openBuilderToCreateMission(){
   loadBuilderFromHunt(null);
   document.getElementById("builderTitle").textContent = "Build a Mission";
   document.getElementById("builderSaveBtn").textContent = "Save to My Missions";
+  updateBuilderModeBadge();
   openModal("modal-builder");
 }
 function openBuilderToEditSavedMission(id){
@@ -1057,6 +1098,7 @@ function openBuilderToEditSavedMission(id){
   loadBuilderFromHunt(saved.hunt);
   document.getElementById("builderTitle").textContent = "Edit Mission";
   document.getElementById("builderSaveBtn").textContent = "Save to My Missions";
+  updateBuilderModeBadge();
   openModal("modal-builder");
 }
 function toggleBuilderExercise(id, checked){
@@ -1247,10 +1289,18 @@ function renderExerciseList(){
     return `<div class="exercise-row ${i===activeIdx?"active-exercise":""}"><div style="flex:1"><div class="name">${w.name}</div><div class="presc">${presc}</div>${w.cue?`<div class="muted" style="margin-top:3px">${w.cue}</div>`:""}</div>${i===activeIdx?'<span class="pill" style="background:var(--orange); color:#1a1310">NOW</span>':""}</div>`;
   }).join("");
 }
+function workoutModeHint(hunt){
+  if(hunt.type==="AMRAP") return "Get-ready countdown is free — rest between exercises costs clock time.";
+  if(hunt.type==="HIIT") return "Fixed intervals run automatically once started — no manual pacing needed.";
+  if(hunt.category==="run_zone2") return "Keep this screen open — distance and pace track live via GPS.";
+  if(hunt.type==="FOR_TIME") return "Work through sets at your own pace — the timer only runs during timed exercises and rest.";
+  return "";
+}
 function renderWorkoutScreen(){
   document.getElementById("workoutTitle").textContent = activeCustomHunt.name;
   document.getElementById("workoutMeta").innerHTML = `<span class="pill ${activeCustomHunt.category}">${activeCustomHunt.category.replace("_"," ")}</span><span class="pill">RPE ${activeScaled.targetRPE}</span>${activeCustomHunt.type==="AMRAP"?`<span class="pill" style="background:var(--olive)">AMRAP · ${Math.round(activeCustomHunt.timeCapSeconds/60)} min</span>`:""}`;
   document.getElementById("workoutNotes").textContent = activeScaled.notes.join(" · ");
+  document.getElementById("workoutModeHint").textContent = workoutModeHint(activeCustomHunt);
   document.getElementById("scalingToggle").innerHTML = ["beginner","standard","advanced"].map(l =>
     `<span class="chip ${l===currentScalingLabel?"selected":""}" onclick="setScaling('${l}')">${l}</span>`
   ).join("");
@@ -1946,7 +1996,7 @@ function runSplashSequence(){
   function nextStep(){
     if(i >= steps.length){
       splash.classList.add("fade-out");
-      setTimeout(() => splash.remove(), 500);
+      setTimeout(() => { splash.remove(); showIntroIfNeeded(); }, 500);
       return;
     }
     const step = steps[i];
@@ -1964,6 +2014,14 @@ function runSplashSequence(){
     }, step.holdMs);
   }
   nextStep();
+}
+function showIntroIfNeeded(){
+  if(Store.hasSeenIntro) return;
+  document.getElementById("introScreen").classList.add("active");
+}
+function dismissIntro(){
+  Store.hasSeenIntro = true;
+  document.getElementById("introScreen").classList.remove("active");
 }
 
 /* ===================== INIT ===================== */
