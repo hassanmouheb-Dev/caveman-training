@@ -1,4 +1,4 @@
-const CACHE_NAME = "caveman-v27";
+const CACHE_NAME = "caveman-v28";
 const SHELL_ASSETS = [
   "./",
   "./index.html",

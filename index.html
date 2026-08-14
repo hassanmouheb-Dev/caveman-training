@@ -860,6 +860,13 @@ function startMission(feeling){
 }
 
 /* ===================== UI: Program (weekly view + builder) ===================== */
+function exercisePreview(hunt){
+  const names = hunt.exercises.map(e => findWorkout(e.workoutId)?.name).filter(Boolean);
+  if(names.length === 0) return "";
+  const shown = names.slice(0, 2).join(", ");
+  const more = names.length > 2 ? ` +${names.length - 2} more` : "";
+  return shown + more;
+}
 function weeklySessionsCompleted(){
   const weekStart = mondayOf(new Date());
   return Store.logs.filter(l=>l.completed && new Date(l.date) >= weekStart).length;
@@ -888,6 +895,7 @@ function renderProgram(){
                  ${d.hunt.type==="AMRAP" ? `<span class="pill" style="background:var(--olive)">AMRAP</span>` : ""}
                  <span class="muted" style="font-size:12px; margin-left:4px">${d.hunt.duration} min · RPE ${d.hunt.targetRPE}</span>
                </div>
+               <div class="muted" style="font-size:11px; margin-top:3px">${exercisePreview(d.hunt)}</div>
              </div>
              <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">Edit</button>
            </div>`
@@ -905,7 +913,7 @@ function renderProgram(){
       </div>`;
     }
     const label = d.slot==="workout"
-      ? (d.hunt ? `${d.hunt.name} <span class="muted" style="font-size:12px">· ${d.hunt.duration} min</span> <span class="pill ${d.hunt.category}" style="margin-left:6px">${d.hunt.category.replace("_"," ")}</span>` : `<span class="muted">No Mission set — tap Edit</span>`)
+      ? (d.hunt ? `${d.hunt.name} <span class="muted" style="font-size:12px">· ${d.hunt.duration} min</span> <span class="pill ${d.hunt.category}" style="margin-left:6px">${d.hunt.category.replace("_"," ")}</span><div class="muted" style="font-size:11px; margin-top:3px">${exercisePreview(d.hunt)}</div>` : `<span class="muted">No Mission set — tap Edit</span>`)
       : (d.slot==="rest" ? "Rest" : "Mobility");
     return `<div class="week-day">
       <div class="dayname">${d.day}</div>
