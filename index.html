@@ -694,6 +694,14 @@ function switchTab(tab){
 function openModal(id){ document.getElementById(id).classList.add("active"); }
 function closeModal(id){ document.getElementById(id).classList.remove("active"); stopTimer(); stopGpsTrackingHard(); stopPlayerTimer(); stopAmrapTimer(); }
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.style.display="block"; setTimeout(()=>t.style.display="none", 2200); }
+function speak(text){
+  if(!("speechSynthesis" in window)) return;
+  try{
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(u);
+  } catch(e){}
+}
 
 /* ===================== UI: Home ===================== */
 function huntPrescriptionLine(hunt){
@@ -1258,24 +1266,34 @@ function renameActiveMission(){
 function toggleHiitTimer(){
   if(timerState){ stopTimer(); document.getElementById("timerBtn").textContent="Start Timer"; return; }
   const exercises = applyScalingMultiplier(activeScaled.exercises, currentScalingLabel);
-  timerState = {idx:0, mode:"work", secondsLeft: exercises[0].seconds||50, exercises};
+  timerState = {idx:0, mode:"countdown", secondsLeft:10, exercises};
   document.getElementById("timerBtn").textContent="Pause";
+  announceHiitUpcoming();
   runTimerTick();
+}
+function announceHiitUpcoming(){
+  const w = findWorkout(timerState.exercises[timerState.idx].workoutId);
+  speak(`Next: ${w.name}. Get ready.`);
 }
 function runTimerTick(){
   updateTimerDisplay();
   timerState.interval = setInterval(()=>{
     if(!timerState) return;
     timerState.secondsLeft--;
+    if(timerState.mode==="countdown" && timerState.secondsLeft>0 && timerState.secondsLeft<=3) speak(String(timerState.secondsLeft));
     if(timerState.secondsLeft<0){
       if(navigator.vibrate) navigator.vibrate(200);
-      if(timerState.mode==="work"){
+      if(timerState.mode==="countdown"){
+        speak("Go!");
+        timerState.mode="work"; timerState.secondsLeft = timerState.exercises[timerState.idx].seconds||50;
+      } else if(timerState.mode==="work"){
         const restSec = timerState.exercises[timerState.idx].restSeconds||15;
         timerState.mode="rest"; timerState.secondsLeft=restSec;
       } else {
         timerState.idx++;
         if(timerState.idx>=timerState.exercises.length){ stopTimer(); toast("Hunt complete! Log it below."); return; }
-        timerState.mode="work"; timerState.secondsLeft = timerState.exercises[timerState.idx].seconds||50;
+        timerState.mode="countdown"; timerState.secondsLeft=10;
+        announceHiitUpcoming();
       }
     }
     updateTimerDisplay();
@@ -1287,10 +1305,10 @@ function updateTimerDisplay(){
   const num = document.getElementById("timerNum");
   const label = document.getElementById("timerLabel");
   if(!circle) return;
-  circle.classList.toggle("rest", timerState.mode==="rest");
+  circle.classList.toggle("rest", timerState.mode!=="work");
   num.textContent = timerState.secondsLeft;
   const w = findWorkout(timerState.exercises[timerState.idx].workoutId);
-  label.textContent = (timerState.mode==="work" ? "WORK: " : "REST → next: ") + w.name;
+  label.textContent = timerState.mode==="work" ? "WORK: " + w.name : timerState.mode==="countdown" ? "GET READY: " + w.name : "REST → next: " + w.name;
 }
 function stopTimer(){ if(timerState && timerState.interval) clearInterval(timerState.interval); timerState=null; }
 
@@ -1317,7 +1335,9 @@ function renderPlayer(){
   const target = ex.reps ? `${ex.reps} reps` : ex.seconds ? `${ex.seconds}s` : "";
   const timed = playerIsTimed(ex);
   let circleNum = target, label = "Ready", disabled = false, btnLabel = "Start Set";
-  if(playerState.phase==="work"){
+  if(playerState.phase==="countdown"){
+    circleNum = playerState.secondsLeft; label = "Get Ready"; disabled = true; btnLabel = "Get ready…";
+  } else if(playerState.phase==="work"){
     if(timed){ circleNum = playerState.secondsLeft; label = "Go!"; disabled = true; btnLabel = "In progress…"; }
     else { label = "Perform your reps"; btnLabel = "Done — Next"; }
   } else if(playerState.phase==="rest"){
@@ -1327,7 +1347,7 @@ function renderPlayer(){
     <div class="muted">Exercise ${playerState.idx+1} of ${playerState.exercises.length} · Set ${playerState.setNum} of ${playerTotalSets()}</div>
     <h3 style="margin:6px 0">${w.name}</h3>
     ${w.cue?`<div class="muted" style="margin-bottom:8px">${w.cue}</div>`:""}
-    <div class="timer-circle ${playerState.phase==="rest"?"rest":""}" id="playerCircle">
+    <div class="timer-circle ${(playerState.phase==="rest"||playerState.phase==="countdown")?"rest":""}" id="playerCircle">
       <div class="timer-num" id="playerNum">${circleNum}</div>
       <div class="muted" id="playerLabel">${label}</div>
     </div>
@@ -1340,22 +1360,46 @@ function playerAction(){
   if(!playerState || playerState.idx >= playerState.exercises.length) return;
   const ex = playerExercise();
   if(playerState.phase==="ready"){
-    playerState.phase = "work";
-    if(playerIsTimed(ex)){
-      playerState.secondsLeft = ex.seconds;
-      renderPlayer();
-      playerState.interval = setInterval(() => {
-        playerState.secondsLeft--;
-        if(playerState.secondsLeft<=0){ clearInterval(playerState.interval); beginPlayerRest(); return; }
-        const n = document.getElementById("playerNum"); if(n) n.textContent = playerState.secondsLeft;
-      }, 1000);
-    } else {
-      renderPlayer();
-    }
+    beginPlayerCountdown();
     return;
   }
   if(playerState.phase==="work" && !playerIsTimed(ex)){
     beginPlayerRest();
+  }
+}
+function beginPlayerCountdown(){
+  const ex = playerExercise();
+  const w = findWorkout(ex.workoutId);
+  const target = ex.reps ? `${ex.reps} reps` : ex.seconds ? `${ex.seconds} seconds` : "";
+  playerState.phase = "countdown";
+  playerState.secondsLeft = 10;
+  renderPlayer();
+  speak(`Next: ${w.name}. ${target}. Get ready.`);
+  playerState.interval = setInterval(() => {
+    playerState.secondsLeft--;
+    if(playerState.secondsLeft>0 && playerState.secondsLeft<=3) speak(String(playerState.secondsLeft));
+    if(playerState.secondsLeft<=0){
+      clearInterval(playerState.interval);
+      speak("Go!");
+      beginPlayerWork();
+      return;
+    }
+    const n = document.getElementById("playerNum"); if(n) n.textContent = playerState.secondsLeft;
+  }, 1000);
+}
+function beginPlayerWork(){
+  const ex = playerExercise();
+  playerState.phase = "work";
+  if(playerIsTimed(ex)){
+    playerState.secondsLeft = ex.seconds;
+    renderPlayer();
+    playerState.interval = setInterval(() => {
+      playerState.secondsLeft--;
+      if(playerState.secondsLeft<=0){ clearInterval(playerState.interval); beginPlayerRest(); return; }
+      const n = document.getElementById("playerNum"); if(n) n.textContent = playerState.secondsLeft;
+    }, 1000);
+  } else {
+    renderPlayer();
   }
 }
 function beginPlayerRest(){
@@ -1395,11 +1439,16 @@ function initAmrapPlayer(){
     idx: 0, round: 1,
     secondsLeft: activeCustomHunt.timeCapSeconds || 1200,
     running: false, finished: false, interval: null,
-    phase: "work", restSecondsLeft: 0,
+    phase: "countdown", restSecondsLeft: 0, countdownSecondsLeft: 10,
   };
+  announceAmrapUpcoming();
   renderAmrapPlayer();
 }
 function amrapExercise(){ return amrapState.exercises[amrapState.idx]; }
+function announceAmrapUpcoming(){
+  const w = findWorkout(amrapExercise().workoutId);
+  speak(`Next: ${w.name}. Get ready.`);
+}
 function renderAmrapPlayer(){
   const el = document.getElementById("amrapBlock");
   if(!el || !amrapState) return;
@@ -1407,12 +1456,17 @@ function renderAmrapPlayer(){
   const w = findWorkout(ex.workoutId);
   const target = ex.reps ? `${ex.reps} reps` : ex.seconds ? `${ex.seconds}s` : "";
   const isRest = amrapState.phase === "rest" && !amrapState.finished;
-  const circleSeconds = amrapState.finished ? amrapState.secondsLeft : (isRest ? amrapState.restSecondsLeft : amrapState.secondsLeft);
+  const isCountdown = amrapState.phase === "countdown" && !amrapState.finished;
+  let circleSeconds = amrapState.secondsLeft, circleLabel = "Time Cap Remaining";
+  if(amrapState.finished){ circleLabel = "Time's up!"; }
+  else if(isRest){ circleSeconds = amrapState.restSecondsLeft; circleLabel = "Rest"; }
+  else if(isCountdown){ circleSeconds = amrapState.countdownSecondsLeft; circleLabel = "Get Ready"; }
+  const showMasterClock = isRest || isCountdown;
   el.innerHTML = `<div class="card" style="text-align:center">
-    ${isRest ? `<div class="muted">Time Cap Remaining: ${formatClock(amrapState.secondsLeft)}</div>` : ""}
-    <div class="timer-circle ${(amrapState.finished || isRest)?"rest":""}" id="amrapCircle">
+    ${showMasterClock ? `<div class="muted">Time Cap Remaining: ${formatClock(amrapState.secondsLeft)}</div>` : ""}
+    <div class="timer-circle ${(amrapState.finished || isRest || isCountdown)?"rest":""}" id="amrapCircle">
       <div class="timer-num" id="amrapNum">${formatClock(circleSeconds)}</div>
-      <div class="muted" id="amrapCircleLabel">${amrapState.finished ? "Time's up!" : isRest ? "Rest" : "Time Cap Remaining"}</div>
+      <div class="muted" id="amrapCircleLabel">${circleLabel}</div>
     </div>
     <div class="muted" style="margin-top:10px">Round ${amrapState.round}</div>
     <h3 style="margin:6px 0">${w.name}</h3>
@@ -1423,8 +1477,11 @@ function renderAmrapPlayer(){
       : isRest
         ? `<button class="primary" style="width:100%; margin-top:14px" onclick="amrapSkipRest()" ${amrapState.finished?"disabled":""}>Skip Rest ▸</button>
            <button class="ghost" style="width:100%; margin-top:8px" onclick="amrapToggle()" ${amrapState.finished?"disabled":""}>${amrapState.running?"Pause":"Resume"}</button>`
-        : `<button class="primary" style="width:100%; margin-top:14px" onclick="amrapNext()" ${amrapState.finished?"disabled":""}>Next Exercise ▸</button>
-           <button class="ghost" style="width:100%; margin-top:8px" onclick="amrapToggle()" ${amrapState.finished?"disabled":""}>${amrapState.running?"Pause":"Resume"}</button>`}
+        : isCountdown
+          ? `<button class="ghost" style="width:100%; margin-top:14px" disabled>Get ready…</button>
+             <button class="ghost" style="width:100%; margin-top:8px" onclick="amrapToggle()" ${amrapState.finished?"disabled":""}>${amrapState.running?"Pause":"Resume"}</button>`
+          : `<button class="primary" style="width:100%; margin-top:14px" onclick="amrapNext()" ${amrapState.finished?"disabled":""}>Next Exercise ▸</button>
+             <button class="ghost" style="width:100%; margin-top:8px" onclick="amrapToggle()" ${amrapState.finished?"disabled":""}>${amrapState.running?"Pause":"Resume"}</button>`}
   </div>`;
   renderExerciseList();
 }
@@ -1440,15 +1497,20 @@ function amrapToggle(){
   renderAmrapPlayer();
   amrapState.interval = setInterval(() => {
     if(!amrapState) return;
-    amrapState.secondsLeft--;
-    if(amrapState.phase === "rest"){
+    if(amrapState.phase === "countdown"){
+      amrapState.countdownSecondsLeft--;
+      if(amrapState.countdownSecondsLeft>0 && amrapState.countdownSecondsLeft<=3) speak(String(amrapState.countdownSecondsLeft));
+      if(amrapState.countdownSecondsLeft<=0){
+        amrapState.phase = "work";
+        speak("Go!");
+      }
+    } else if(amrapState.phase === "rest"){
       amrapState.restSecondsLeft--;
       if(amrapState.restSecondsLeft <= 0){
         amrapAdvance();
-      } else {
-        renderAmrapPlayer();
       }
     }
+    amrapState.secondsLeft--;
     if(amrapState.secondsLeft<=0){
       amrapState.secondsLeft = 0;
       stopAmrapTimer();
@@ -1459,9 +1521,7 @@ function amrapToggle(){
       renderAmrapPlayer();
       return;
     }
-    if(amrapState.phase !== "rest"){
-      const n = document.getElementById("amrapNum"); if(n) n.textContent = formatClock(amrapState.secondsLeft);
-    }
+    renderAmrapPlayer();
   }, 1000);
 }
 function amrapAdvance(){
@@ -1470,11 +1530,13 @@ function amrapAdvance(){
     amrapState.idx = 0; amrapState.round++;
     if(navigator.vibrate) navigator.vibrate(150);
   }
-  amrapState.phase = "work";
+  amrapState.phase = "countdown";
+  amrapState.countdownSecondsLeft = 10;
+  announceAmrapUpcoming();
   renderAmrapPlayer();
 }
 function amrapNext(){
-  if(!amrapState || amrapState.finished || amrapState.phase==="rest") return;
+  if(!amrapState || amrapState.finished || amrapState.phase!=="work") return;
   const ex = amrapExercise();
   if(ex.restSeconds > 0){
     amrapState.phase = "rest";
