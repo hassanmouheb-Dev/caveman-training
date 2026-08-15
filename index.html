@@ -699,7 +699,10 @@ function dayVisibility(plan, d){
   const today = new Date(); today.setHours(0,0,0,0);
   if(dayDate.getTime() < today.getTime()) return true;
   if(dayDate.getTime() > today.getTime()) return false;
-  return isAncientRevealTimePassed() || isMissionSeenToday();
+  // Today: match Home exactly — visible only once actually discovered, not merely
+  // because the reveal hour has passed (otherwise Program would leak content Home is
+  // still gating behind the "YOUR MISSION AWAITS / DISCOVER" ceremony).
+  return isMissionSeenToday();
 }
 function practicalHint(hunt){
   if(!hunt) return "";
@@ -1116,7 +1119,6 @@ function renderHome(){
       </div>`;
     }
   } else {
-    markMissionSeenToday();
     const h = day.hunt;
     body = `<div class="card">
       ${weekLink}
@@ -2444,6 +2446,13 @@ function dismissIntro(){
 }
 
 /* ===================== INIT ===================== */
+// One-time migration: an earlier build marked "seen" from passive Modern-mode rendering
+// (including the automatic render below), which pre-empted Ancient Mode's reveal for anyone
+// who had already opened the app that day before switching modes. Clear the stale flag once.
+if(!localStorage.getItem("cm_ancient_seen_fix_v1")){
+  localStorage.removeItem("cm_last_seen_mission_date");
+  localStorage.setItem("cm_ancient_seen_fix_v1", "1");
+}
 applyTranslations();
 renderHome();
 runSplashSequence();
