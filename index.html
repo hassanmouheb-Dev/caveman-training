@@ -13,7 +13,7 @@
 <style>
 :root{
   --bg:#f6f1e4; --surface:#ffffff; --surface2:#efe6d2; --border:#ddcfab;
-  --text:#2c2318; --text-dim:#544936; --heading:#4a3826;
+  --text:#2c2318; --text-dim:#3d3320; --heading:#4a3826;
   --orange:#a8541a; --red:#a4392a; --olive:#5b7a3f; --sand:#c9b183; --blue:#3d6690;
   --radius:14px;
 }
@@ -27,7 +27,7 @@ header.top .brand-logo{height:52px; width:auto;}
 .screen.active{display:block;}
 .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:14px;}
 .card h3{margin:0 0 8px; font-size:20px; color:var(--heading);}
-.pill{display:inline-block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; padding:3px 9px; border-radius:20px; background:#3a3226; color:#fff; margin-right:6px;}
+.pill{display:inline-block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; padding:3px 9px; border-radius:20px; background:#3a3226; color:#fff; margin-right:6px;}
 .pill.strength{background:var(--orange); color:#fff;}
 .pill.hiit{background:var(--red); color:#fff;}
 .pill.run_zone2{background:var(--blue); color:#fff;}
@@ -42,24 +42,24 @@ button.ghost{background:transparent; color:var(--text-dim); border:1px solid var
 button.danger{background:var(--red); color:#fff;}
 button:disabled{opacity:0.4;}
 input,select,textarea{width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:10px; font-family:'Montserrat',sans-serif; font-size:14px;}
-label{font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; display:block; margin:12px 0 4px;}
+label{font-size:13px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; display:block; margin:12px 0 4px;}
 .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
 .chip-group{display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;}
-.chip{padding:7px 12px; border-radius:20px; border:1px solid var(--border); background:var(--surface2); color:var(--text-dim); font-size:13px; cursor:pointer;}
+.chip{padding:7px 12px; border-radius:20px; border:1px solid var(--border); background:var(--surface2); color:var(--text-dim); font-size:14px; cursor:pointer;}
 .builder-ex-row{border-bottom:1px solid var(--border);}
 .builder-ex-row:last-child{border-bottom:none;}
 .builder-ex-fields{display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:0 0 10px 32px;}
-.builder-ex-fields input{width:56px; padding:6px; font-size:13px;}
-.builder-ex-fields .muted{font-size:12px;}
+.builder-ex-fields input{width:56px; padding:6px; font-size:14px;}
+.builder-ex-fields .muted{font-size:13px;}
 .chip.selected{background:var(--olive); color:#fff; border-color:var(--olive);}
 nav.tabs{position:fixed; bottom:0; left:0; right:0; max-width:480px; margin:0 auto; background:var(--surface); border-top:1px solid var(--border); display:flex;}
-nav.tabs button{flex:1; background:none; border-radius:0; color:var(--text-dim); font-size:11px; padding:8px 4px 10px; display:flex; flex-direction:column; align-items:center; gap:2px;}
+nav.tabs button{flex:1; background:none; border-radius:0; color:var(--text-dim); font-size:12px; padding:8px 4px 10px; display:flex; flex-direction:column; align-items:center; gap:2px;}
 nav.tabs button.active{color:var(--orange);}
 nav.tabs .icon{font-size:18px;}
 .exercise-row{display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);}
 .exercise-row:last-child{border-bottom:none;}
 .exercise-row .name{font-weight:600;}
-.exercise-row .presc{color:var(--text-dim); font-size:13px;}
+.exercise-row .presc{color:var(--text-dim); font-size:14px;}
 .exercise-row.active-exercise{background:rgba(232,138,58,0.12); border-left:3px solid var(--orange); border-radius:6px; padding:10px 8px; margin:2px -8px 2px -1px;}
 .exercise-row.active-exercise .name{color:var(--orange);}
 .modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,0.7); display:none; align-items:flex-end; justify-content:center; z-index:50;}
@@ -74,10 +74,10 @@ nav.tabs .icon{font-size:18px;}
 .bars{display:flex; gap:6px; align-items:flex-end; height:80px; margin-top:8px;}
 .bars .bar{flex:1; height:100%; background:var(--surface2); border-radius:4px 4px 0 0; position:relative;}
 .bars .bar .fill{position:absolute; bottom:0; left:0; right:0; background:var(--orange); border-radius:4px 4px 0 0;}
-.bars .bar .lbl{position:absolute; bottom:-18px; left:0; right:0; text-align:center; font-size:10px; color:var(--text-dim);}
+.bars .bar .lbl{position:absolute; bottom:-18px; left:0; right:0; text-align:center; font-size:11px; color:var(--text-dim);}
 .lock{opacity:0.45; position:relative;}
-.lock::after{content:"🔒 Premium"; position:absolute; top:8px; right:8px; font-size:10px; color:#fff; background:#3a3226; padding:3px 8px; border-radius:10px;}
-.toast{position:fixed; bottom:96px; left:50%; transform:translateX(-50%); background:var(--surface2); border:1px solid var(--border); padding:10px 18px; border-radius:20px; font-size:13px; z-index:60; display:none;}
+.lock::after{content:"🔒 Premium"; position:absolute; top:8px; right:8px; font-size:11px; color:#fff; background:#3a3226; padding:3px 8px; border-radius:10px;}
+.toast{position:fixed; bottom:96px; left:50%; transform:translateX(-50%); background:var(--surface2); border:1px solid var(--border); padding:10px 18px; border-radius:20px; font-size:14px; z-index:60; display:none;}
 #splashScreen{position:fixed; inset:0; background:#15120f; z-index:1000; display:flex; align-items:center; justify-content:center; transition:opacity 0.5s ease;}
 #splashScreen img{width:85vw; max-height:82vh; height:auto; object-fit:contain; opacity:0; transition:opacity 0.45s ease, transform 0.45s ease; transform:scale(0.94);}
 #splashScreen img.visible{opacity:1; transform:scale(1);}
@@ -87,7 +87,7 @@ nav.tabs .icon{font-size:18px;}
 .intro-overlay.active{display:flex;}
 .intro-overlay img{width:120px; margin-bottom:20px;}
 .intro-item{margin-bottom:16px; font-size:14px; line-height:1.4; color:var(--text); text-align:left;}
-.section-eyebrow{font-size:11px; font-weight:700; letter-spacing:0.8px; color:var(--orange); text-transform:uppercase; margin:20px 4px 6px;}
+.section-eyebrow{font-size:12px; font-weight:700; letter-spacing:0.8px; color:var(--orange); text-transform:uppercase; margin:20px 4px 6px;}
 .section-eyebrow:first-child{margin-top:2px;}
 @keyframes heartbeat{
   0%{transform:scale(1);} 14%{transform:scale(1.1);} 28%{transform:scale(1);} 42%{transform:scale(1.1);} 70%{transform:scale(1);}
@@ -105,12 +105,12 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
 .tier-badge-sm{width:88px; height:88px; object-fit:contain; vertical-align:middle; margin-right:6px;}
 .lib-row{padding:10px 0; border-bottom:1px solid var(--border);}
 .lib-row:last-child{border-bottom:none;}
-.lib-row .cue{color:var(--text-dim); font-size:12.5px; margin-top:3px;}
-.lib-row .impact-tag{color:var(--red); font-size:11px; text-transform:uppercase; margin-left:6px;}
+.lib-row .cue{color:var(--text-dim); font-size:13.5px; margin-top:3px;}
+.lib-row .impact-tag{color:var(--red); font-size:12px; text-transform:uppercase; margin-left:6px;}
 .week-strip{display:flex; gap:6px; margin-bottom:14px;}
 .week-strip .day-chip{flex:1; text-align:center; padding:7px 2px; border-radius:8px; background:var(--surface2); border:1px solid var(--border); cursor:pointer;}
 .week-strip .day-chip.today{border-color:var(--orange); border-width:2px;}
-.week-strip .day-chip .d{font-size:10px; color:var(--text-dim); text-transform:uppercase; font-weight:700;}
+.week-strip .day-chip .d{font-size:11px; color:var(--text-dim); text-transform:uppercase; font-weight:700;}
 .week-strip .day-chip .dot{width:16px; height:16px; border-radius:50%; margin:4px auto 0; display:flex; align-items:center; justify-content:center; font-size:9px; color:#fff; background:#9b8f76;}
 .achievement-group{margin-bottom:18px;}
 .achievement-group:last-child{margin-bottom:0;}
@@ -118,18 +118,18 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
 .ag-title .muted{font-weight:400;}
 .ag-scroll{display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch;}
 .ag-chip{flex:0 0 auto; min-width:88px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:10px 12px; cursor:pointer;}
-.ag-chip .ag-date{font-size:11px; color:var(--red); font-weight:700;}
+.ag-chip .ag-date{font-size:12px; color:var(--red); font-weight:700;}
 .ag-chip .ag-stat{font-size:15px; font-weight:700; color:var(--heading); margin-top:2px;}
 .ach-stat-row{display:flex; justify-content:space-around; text-align:center; padding:14px 0;}
 .ach-stat-row .v{font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--orange);}
 .mini-hero{text-align:center; margin-bottom:14px;}
 .mini-hero img{max-height:110px; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.15));}
 .premium-cta{background:linear-gradient(135deg, #2c2318 0%, #4a3826 55%, #7a2e1c 130%); border:none; color:#f6f1e4; text-align:center;}
-.premium-cta .premium-badge{display:inline-block; background:var(--orange); color:#1a1310; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:0.5px; text-transform:uppercase;}
+.premium-cta .premium-badge{display:inline-block; background:var(--orange); color:#1a1310; font-size:12px; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:0.5px; text-transform:uppercase;}
 .premium-cta h3{color:#fff; margin:10px 0 4px;}
-.premium-cta p{color:#e3d5b8; font-size:13px; margin:0 0 12px;}
+.premium-cta p{color:#e3d5b8; font-size:14px; margin:0 0 12px;}
 .premium-benefits{list-style:none; padding:0; margin:0 0 16px; text-align:left; display:inline-block;}
-.premium-benefits li{font-size:13px; color:#f0e6d0; margin-bottom:6px;}
+.premium-benefits li{font-size:14px; color:#f0e6d0; margin-bottom:6px;}
 </style>
 </head>
 <body>
@@ -145,9 +145,9 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
     <div class="intro-item" data-i18n-html="intro_bullet3_html"><b>Track everything</b> — Mission Score and full history, no gimmicks.</div>
   </div>
   <div style="width:100%; max-width:300px; text-align:left; margin-bottom:8px">
-    <label style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim)" data-i18n="intro_country_label">Country</label>
+    <label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim)" data-i18n="intro_country_label">Country</label>
     <select id="intro_country" style="width:100%; margin-bottom:12px"></select>
-    <label style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim)" data-i18n="intro_language_label">Language</label>
+    <label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim)" data-i18n="intro_language_label">Language</label>
     <select id="intro_language" style="width:100%"></select>
   </div>
   <button class="primary" style="width:100%; max-width:300px; margin-top:16px" onclick="dismissIntro()" data-i18n="intro_lets_go">Let's Go</button>
@@ -167,13 +167,13 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
   <section class="screen" id="screen-program">
     <div class="section-eyebrow" data-i18n="program_eyebrow_this_week">This Week</div>
     <div class="card">
-      <div class="row between"><h3 data-i18n="program_weekly_mission">Weekly Mission</h3><button class="ghost" style="padding:6px 10px;font-size:12px" id="editWeekBtn" onclick="toggleEditWeek()">Edit Week</button></div>
+      <div class="row between"><h3 data-i18n="program_weekly_mission">Weekly Mission</h3><button class="ghost" style="padding:6px 10px;font-size:13px" id="editWeekBtn" onclick="toggleEditWeek()">Edit Week</button></div>
       <p class="muted" id="weeklyMissionProgress"></p>
       <div class="progressbar"><div class="fill" id="weeklyMissionFill" style="width:0%"></div></div>
       <div id="weekList" style="margin-top:10px"></div>
       <div class="row" id="weekActionsRow" style="gap:8px; margin-top:12px">
-        <button class="ghost" style="flex:1; padding:8px; font-size:12px" onclick="shuffleWeek()" data-i18n="program_shuffle_variation">Shuffle Variation</button>
-        <button class="ghost" style="flex:1; padding:8px; font-size:12px" onclick="resetWeek()" data-i18n="program_reset_week">Reset Week</button>
+        <button class="ghost" style="flex:1; padding:8px; font-size:13px" onclick="shuffleWeek()" data-i18n="program_shuffle_variation">Shuffle Variation</button>
+        <button class="ghost" style="flex:1; padding:8px; font-size:13px" onclick="resetWeek()" data-i18n="program_reset_week">Reset Week</button>
       </div>
     </div>
 
@@ -186,7 +186,7 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
 
     <div class="section-eyebrow" data-i18n="program_eyebrow_your_library">Your Library</div>
     <div class="card">
-      <div class="row between"><h3 data-i18n="program_my_missions_title">My Missions</h3><button class="ghost" style="padding:6px 10px;font-size:12px" onclick="openBuilderToCreateMission()" data-i18n="program_my_missions_new">+ New</button></div>
+      <div class="row between"><h3 data-i18n="program_my_missions_title">My Missions</h3><button class="ghost" style="padding:6px 10px;font-size:13px" onclick="openBuilderToCreateMission()" data-i18n="program_my_missions_new">+ New</button></div>
       <p class="muted" data-i18n="program_my_missions_desc">Save a custom Mission here to reuse it anytime, on any day.</p>
       <div id="myMissionsList" style="margin-top:10px"></div>
     </div>
@@ -229,7 +229,7 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
     <div class="card">
       <h3 data-i18n="profile_training_mode_title">Training Mode</h3>
       <div class="chip-group" id="trainingModeToggle"></div>
-      <p class="muted" id="trainingModeDesc" style="margin-top:8px; font-size:13px"></p>
+      <p class="muted" id="trainingModeDesc" style="margin-top:8px; font-size:14px"></p>
     </div>
     <div class="card">
       <h3 data-i18n="profile_region_language_title">Region &amp; Language</h3>
@@ -297,7 +297,7 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
       <p class="muted" data-i18n="profile_reminders_desc">A real daily notification (~8am), one of a rotating set of motivational nudges.</p>
       <button class="secondary" id="reminderBtn" onclick="toggleReminder()" data-i18n="profile_enable_reminder">Enable Daily Reminder</button>
     </div>
-    <p class="muted" id="appVersionFooter" style="text-align:center; font-size:11px; margin:8px 0 24px"></p>
+    <p class="muted" id="appVersionFooter" style="text-align:center; font-size:12px; margin:8px 0 24px"></p>
   </section>
 
   <nav class="tabs">
@@ -328,12 +328,12 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
     <div class="row between">
       <div class="row" style="gap:8px">
         <h3 id="workoutTitle">Mission</h3>
-        <button class="ghost" style="padding:4px 8px; font-size:12px" onclick="renameActiveMission()" data-i18n="modal_workout_rename">✎ Rename</button>
+        <button class="ghost" style="padding:4px 8px; font-size:13px" onclick="renameActiveMission()" data-i18n="modal_workout_rename">✎ Rename</button>
       </div>
       <button class="ghost" style="padding:6px 10px" onclick="closeModal('modal-workout')">✕</button>
     </div>
     <div class="row" id="workoutMeta" style="margin-bottom:8px"></div>
-    <div id="workoutModeHint" class="muted" style="font-size:12px; margin-bottom:8px"></div>
+    <div id="workoutModeHint" class="muted" style="font-size:13px; margin-bottom:8px"></div>
     <div id="workoutNotes" class="muted" style="margin-bottom:10px"></div>
     <div class="row between" style="margin-bottom:10px">
       <span class="muted" data-i18n="modal_workout_scaling">Scaling</span>
@@ -1095,8 +1095,8 @@ function renderHome(){
   const score = missionScore();
   const tierName = tierFromScore(score);
   const weekLink = `<div class="row between" style="margin-bottom:8px">
-    <span class="muted" style="text-transform:uppercase; font-size:11px; letter-spacing:0.5px">${t("home_your_weekly_mission")}</span>
-    <button class="ghost" style="padding:5px 12px; font-size:11px" onclick="switchTab('program')">${t("home_full_week_edit")}</button>
+    <span class="muted" style="text-transform:uppercase; font-size:12px; letter-spacing:0.5px">${t("home_your_weekly_mission")}</span>
+    <button class="ghost" style="padding:5px 12px; font-size:12px" onclick="switchTab('program')">${t("home_full_week_edit")}</button>
   </div>
   ${weekStripHtml(plan, today)}`;
   const chooseWorkoutBtn = `<button class="ghost" style="width:100%; margin-top:8px" onclick="openBuilderToStartNow()">${t("home_choose_different_workout")}</button>`;
@@ -1109,10 +1109,10 @@ function renderHome(){
       body = `<div class="card">
         ${weekLink}
         <div style="text-align:center; padding:14px 0">
-          <div class="muted" style="text-transform:uppercase; font-size:11px; letter-spacing:0.8px">${t("home_mission_unknown_title")}</div>
+          <div class="muted" style="text-transform:uppercase; font-size:12px; letter-spacing:0.8px">${t("home_mission_unknown_title")}</div>
           <h3 style="margin:8px 0; letter-spacing:1px">${t("home_mission_unknown_badge")}</h3>
-          <p class="muted" style="font-size:13px">${t("home_mission_unknown_sub")}</p>
-          ${hint ? `<p class="muted" style="font-size:12px; margin-top:8px">${hint}</p>` : ""}
+          <p class="muted" style="font-size:14px">${t("home_mission_unknown_sub")}</p>
+          ${hint ? `<p class="muted" style="font-size:13px; margin-top:8px">${hint}</p>` : ""}
         </div>
         ${chooseWorkoutBtn}
       </div>`;
@@ -1120,8 +1120,8 @@ function renderHome(){
       body = `<div class="card" id="ancientAwaitsCard">
         ${weekLink}
         <div style="text-align:center; padding:14px 0">
-          <div class="muted" style="text-transform:uppercase; font-size:11px; letter-spacing:0.8px">${t("home_mission_awaits_title")}</div>
-          ${hint ? `<p class="muted" style="font-size:12px; margin-top:8px">${hint}</p>` : ""}
+          <div class="muted" style="text-transform:uppercase; font-size:12px; letter-spacing:0.8px">${t("home_mission_awaits_title")}</div>
+          ${hint ? `<p class="muted" style="font-size:13px; margin-top:8px">${hint}</p>` : ""}
           <button class="primary" style="margin-top:14px; width:100%" onclick="discoverMission()">${t("home_mission_discover_btn")}</button>
         </div>
         ${chooseWorkoutBtn}
@@ -1234,13 +1234,13 @@ function renderProgram(){
     const todayBadge = pos===0 ? `<div style="font-size:9px; font-weight:700; color:var(--orange); letter-spacing:0.3px">${t("common_today").toUpperCase()}</div>` : "";
     if(programEditMode){
       const slotToggle = [["workout","slot_workout"],["rest","slot_rest"],["mobility","slot_mobility"]].map(([v,k]) =>
-        `<span class="chip ${d.slot===v?"selected":""}" style="padding:5px 10px;font-size:12px" onclick="setDaySlot(${weekOffset},${indexInPlan},'${v}')">${t(k)}</span>`
+        `<span class="chip ${d.slot===v?"selected":""}" style="padding:5px 10px;font-size:13px" onclick="setDaySlot(${weekOffset},${indexInPlan},'${v}')">${t(k)}</span>`
       ).join("");
       let missionLine;
       if(d.slot!=="workout"){
         missionLine = "";
       } else if(!visible){
-        missionLine = `<div class="row between" style="margin-top:8px"><div class="muted" style="font-size:13px">🔒 ${t("program_ancient_locked")}</div></div>`;
+        missionLine = `<div class="row between" style="margin-top:8px"><div class="muted" style="font-size:14px">🔒 ${t("program_ancient_locked")}</div></div>`;
       } else if(d.hunt){
         missionLine = `<div class="row between" style="margin-top:8px">
              <div style="flex:1">
@@ -1248,23 +1248,23 @@ function renderProgram(){
                <div class="presc" style="margin-top:4px">
                  <span class="pill ${d.hunt.category}">${categoryLabel(d.hunt.category)}</span>
                  ${d.hunt.type==="AMRAP" ? `<span class="pill" style="background:var(--olive)">AMRAP</span>` : ""}
-                 <span class="muted" style="font-size:12px; margin-left:4px">${d.hunt.duration} min · RPE ${d.hunt.targetRPE}</span>
+                 <span class="muted" style="font-size:13px; margin-left:4px">${d.hunt.duration} min · RPE ${d.hunt.targetRPE}</span>
                </div>
-               <div class="muted" style="font-size:11px; margin-top:3px">${exercisePreview(d.hunt)}</div>
+               <div class="muted" style="font-size:12px; margin-top:3px">${exercisePreview(d.hunt)}</div>
              </div>
-             <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}',${weekOffset})">${t("common_edit")}</button>
+             <button class="ghost" style="padding:4px 8px;font-size:12px" onclick="openBuilder('${d.day}',${weekOffset})">${t("common_edit")}</button>
            </div>`;
       } else {
-        missionLine = `<div class="row between" style="margin-top:8px"><div class="muted" style="font-size:13px">${t("program_no_mission_set")}</div><button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}',${weekOffset})">${t("common_build")}</button></div>`;
+        missionLine = `<div class="row between" style="margin-top:8px"><div class="muted" style="font-size:14px">${t("program_no_mission_set")}</div><button class="ghost" style="padding:4px 8px;font-size:12px" onclick="openBuilder('${d.day}',${weekOffset})">${t("common_build")}</button></div>`;
       }
       const canUp = pos>0 && rolling[pos-1].weekOffset === weekOffset;
       const canDown = pos<rolling.length-1 && rolling[pos+1].weekOffset === weekOffset;
       return `<div class="week-day" style="flex-direction:column; align-items:stretch; gap:8px">
         <div class="row between">
-          <div class="dayname" style="width:auto; white-space:nowrap">${d.day} <span class="muted" style="font-size:11px; font-weight:400">${dateLabel}</span>${todayBadge}</div>
+          <div class="dayname" style="width:auto; white-space:nowrap">${d.day} <span class="muted" style="font-size:12px; font-weight:400">${dateLabel}</span>${todayBadge}</div>
           <div class="row" style="gap:4px">
-            <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="swapDaySlot(${weekOffset},${indexInPlan},${indexInPlan-1})" ${canUp?"":"disabled"}>▲</button>
-            <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="swapDaySlot(${weekOffset},${indexInPlan},${indexInPlan+1})" ${canDown?"":"disabled"}>▼</button>
+            <button class="ghost" style="padding:4px 8px;font-size:12px" onclick="swapDaySlot(${weekOffset},${indexInPlan},${indexInPlan-1})" ${canUp?"":"disabled"}>▲</button>
+            <button class="ghost" style="padding:4px 8px;font-size:12px" onclick="swapDaySlot(${weekOffset},${indexInPlan},${indexInPlan+1})" ${canDown?"":"disabled"}>▼</button>
           </div>
         </div>
         <div class="chip-group" style="margin-top:0">${slotToggle}</div>
@@ -1277,14 +1277,14 @@ function renderProgram(){
     } else if(!visible){
       label = `<span class="muted">🔒 ${t("program_ancient_locked")}</span>`;
     } else if(d.hunt){
-      label = `${d.hunt.name} <span class="muted" style="font-size:12px">· ${d.hunt.duration} min</span> <span class="pill ${d.hunt.category}" style="margin-left:6px">${categoryLabel(d.hunt.category)}</span><div class="muted" style="font-size:11px; margin-top:3px">${exercisePreview(d.hunt)}</div>`;
+      label = `${d.hunt.name} <span class="muted" style="font-size:13px">· ${d.hunt.duration} min</span> <span class="pill ${d.hunt.category}" style="margin-left:6px">${categoryLabel(d.hunt.category)}</span><div class="muted" style="font-size:12px; margin-top:3px">${exercisePreview(d.hunt)}</div>`;
     } else {
       label = `<span class="muted">${t("program_no_mission_set_tap_edit")}</span>`;
     }
     return `<div class="week-day">
-      <div class="dayname">${d.day}<div class="muted" style="font-size:11px; font-weight:400">${dateLabel}</div>${todayBadge}</div>
+      <div class="dayname">${d.day}<div class="muted" style="font-size:12px; font-weight:400">${dateLabel}</div>${todayBadge}</div>
       <div style="flex:1">${label}</div>
-      ${(d.slot==="workout" && visible) ? `<button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}',${weekOffset})">${t("common_edit")}</button>` : ""}
+      ${(d.slot==="workout" && visible) ? `<button class="ghost" style="padding:4px 8px;font-size:12px" onclick="openBuilder('${d.day}',${weekOffset})">${t("common_edit")}</button>` : ""}
     </div>`;
   }).join("");
   renderMyMissions();
@@ -1339,9 +1339,9 @@ function renderMyMissions(){
       </div>
       <div class="presc">${m.hunt.type==="AMRAP" ? `${t("format_amrap")} · ${Math.round(m.hunt.timeCapSeconds/60)} min` : t("program_exercises_count_template").replace("{n}", m.hunt.exercises.length)}</div>
       <div class="row" style="gap:6px; margin-top:10px">
-        <button class="secondary" style="flex:1; padding:8px; font-size:13px" onclick="startSavedMission('${m.id}')">${t("common_start")}</button>
-        <button class="ghost" style="flex:1; padding:8px; font-size:13px" onclick="openBuilderToEditSavedMission('${m.id}')">${t("common_edit")}</button>
-        <button class="ghost" style="flex:1; padding:8px; font-size:13px" onclick="deleteSavedMission('${m.id}')">${t("common_delete")}</button>
+        <button class="secondary" style="flex:1; padding:8px; font-size:14px" onclick="startSavedMission('${m.id}')">${t("common_start")}</button>
+        <button class="ghost" style="flex:1; padding:8px; font-size:14px" onclick="openBuilderToEditSavedMission('${m.id}')">${t("common_edit")}</button>
+        <button class="ghost" style="flex:1; padding:8px; font-size:14px" onclick="deleteSavedMission('${m.id}')">${t("common_delete")}</button>
       </div>
     </div>
   `).join("") : `<p class="muted">${t("program_no_missions_saved")}</p>`;
@@ -1710,10 +1710,10 @@ function renderWorkoutScreen(){
           <div><div class="big" style="font-size:22px" id="gpsTime">00:00</div><div class="muted">Time</div></div>
           <div><div class="big" style="font-size:22px" id="gpsPace">–</div><div class="muted">Pace /km</div></div>
         </div>
-        <div class="muted" id="gpsStatus" style="margin-top:10px; font-size:12px"></div>
+        <div class="muted" id="gpsStatus" style="margin-top:10px; font-size:13px"></div>
       </div>
       <button class="secondary" style="width:100%" onclick="toggleGpsTracking()" id="gpsBtn">Start GPS Tracking</button>
-      <p class="muted" style="margin-top:8px; font-size:11px">Keep this screen open while moving — background tracking isn't supported yet, so lock screen / app switching will pause it.</p>`;
+      <p class="muted" style="margin-top:8px; font-size:12px">Keep this screen open while moving — background tracking isn't supported yet, so lock screen / app switching will pause it.</p>`;
   } else if(activeCustomHunt.type==="FOR_TIME"){
     document.getElementById("timerBlock").innerHTML = `<div id="playerBlock"></div>`;
     if(!playerState) initPlayer(); else renderPlayer();
