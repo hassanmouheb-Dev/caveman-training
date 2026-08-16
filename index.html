@@ -315,6 +315,7 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
       <p class="muted" data-i18n="profile_reminders_desc">A real daily notification (~8am), one of a rotating set of motivational nudges.</p>
       <button class="secondary" id="reminderBtn" onclick="toggleReminder()" data-i18n="profile_enable_reminder">Enable Daily Reminder</button>
     </div>
+    <p class="muted" id="appVersionFooter" style="text-align:center; font-size:11px; margin:8px 0 24px"></p>
   </section>
 
   <nav class="tabs">
@@ -2251,6 +2252,7 @@ function renderProfileForm(){
   renderChipGroup("p_injuries", INJURIES, p.injuries||[]);
   populateLocaleSelects("p_country", "p_language");
   renderTrainingModeToggle();
+  renderVersionFooter();
   updateBmiPreview();
   updateTierPreview();
   updateReminderButton();
@@ -2264,6 +2266,17 @@ function renderTrainingModeToggle(){
     `<span class="chip ${mode===v?"selected":""}" onclick="setTrainingMode('${v}')">${t(k)}</span>`
   ).join("");
   document.getElementById("trainingModeDesc").textContent = mode==="ancient" ? t("profile_training_mode_ancient_desc") : "";
+}
+async function renderVersionFooter(){
+  const el = document.getElementById("appVersionFooter");
+  if(!el) return;
+  try{
+    const keys = await caches.keys();
+    const cacheKey = keys.find(k => k.startsWith("caveman-"));
+    el.textContent = cacheKey ? cacheKey : "version unknown (offline cache not active)";
+  } catch(e){
+    el.textContent = "version unknown";
+  }
 }
 function setTrainingMode(mode){
   Store.trainingMode = mode;
