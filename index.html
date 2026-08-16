@@ -36,7 +36,7 @@ header.top .brand-logo{height:52px; width:auto;}
 .big{font-size:34px; font-family:'Bebas Neue',sans-serif; color:var(--orange);}
 .muted{color:var(--text-dim); font-size:14px;}
 button{font-family:'Montserrat',sans-serif; font-weight:700; border:none; border-radius:10px; padding:14px; font-size:15px; cursor:pointer;}
-button.primary{background:var(--orange); color:#1a1310; width:100%;}
+button.primary{background:var(--orange); color:#fff; width:100%;}
 button.secondary{background:var(--surface2); color:var(--text); border:1px solid var(--border);}
 button.ghost{background:transparent; color:var(--text-dim); border:1px solid var(--border);}
 button.danger{background:var(--red); color:#fff;}
@@ -125,7 +125,7 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
 .mini-hero{text-align:center; margin-bottom:14px;}
 .mini-hero img{max-height:110px; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.15));}
 .premium-cta{background:linear-gradient(135deg, #2c2318 0%, #4a3826 55%, #7a2e1c 130%); border:none; color:#f6f1e4; text-align:center;}
-.premium-cta .premium-badge{display:inline-block; background:var(--orange); color:#1a1310; font-size:12px; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:0.5px; text-transform:uppercase;}
+.premium-cta .premium-badge{display:inline-block; background:var(--orange); color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:0.5px; text-transform:uppercase;}
 .premium-cta h3{color:#fff; margin:10px 0 4px;}
 .premium-cta p{color:#e3d5b8; font-size:14px; margin:0 0 12px;}
 .premium-benefits{list-style:none; padding:0; margin:0 0 16px; text-align:left; display:inline-block;}
@@ -1676,7 +1676,7 @@ function renderExerciseList(){
     else if(ex.sets && ex.reps) presc = `${ex.sets} x ${ex.reps} · rest ${ex.restSeconds||0}s`;
     else if(ex.sets && ex.seconds) presc = `${ex.sets} x ${ex.seconds}s · rest ${ex.restSeconds||0}s`;
     else if(ex.seconds) presc = `${Math.round(ex.seconds/60)} min`;
-    return `<div class="exercise-row ${i===activeIdx?"active-exercise":""}"><div style="flex:1"><div class="name">${w.name}</div><div class="presc">${presc}</div>${w.cue?`<div class="muted" style="margin-top:3px">${w.cue}</div>`:""}</div>${i===activeIdx?'<span class="pill" style="background:var(--orange); color:#1a1310">NOW</span>':""}</div>`;
+    return `<div class="exercise-row ${i===activeIdx?"active-exercise":""}"><div style="flex:1"><div class="name">${w.name}</div><div class="presc">${presc}</div>${w.cue?`<div class="muted" style="margin-top:3px">${w.cue}</div>`:""}</div>${i===activeIdx?'<span class="pill" style="background:var(--orange); color:#fff">NOW</span>':""}</div>`;
   }).join("");
 }
 function workoutModeHint(hunt){
