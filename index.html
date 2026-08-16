@@ -13,8 +13,8 @@
 <style>
 :root{
   --bg:#f6f1e4; --surface:#ffffff; --surface2:#efe6d2; --border:#ddcfab;
-  --text:#2c2318; --text-dim:#7a6c53; --heading:#4a3826;
-  --orange:#d9772e; --red:#a4392a; --olive:#5b7a3f; --sand:#c9b183; --blue:#3d6690;
+  --text:#2c2318; --text-dim:#544936; --heading:#4a3826;
+  --orange:#a8541a; --red:#a4392a; --olive:#5b7a3f; --sand:#c9b183; --blue:#3d6690;
   --radius:14px;
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -34,7 +34,7 @@ header.top .brand-logo{height:52px; width:auto;}
 .row{display:flex; gap:10px; align-items:center;}
 .row.between{justify-content:space-between;}
 .big{font-size:34px; font-family:'Bebas Neue',sans-serif; color:var(--orange);}
-.muted{color:var(--text-dim); font-size:13px;}
+.muted{color:var(--text-dim); font-size:14px;}
 button{font-family:'Montserrat',sans-serif; font-weight:700; border:none; border-radius:10px; padding:14px; font-size:15px; cursor:pointer;}
 button.primary{background:var(--orange); color:#1a1310; width:100%;}
 button.secondary{background:var(--surface2); color:var(--text); border:1px solid var(--border);}
@@ -50,7 +50,7 @@ label{font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-sp
 .builder-ex-row:last-child{border-bottom:none;}
 .builder-ex-fields{display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:0 0 10px 32px;}
 .builder-ex-fields input{width:56px; padding:6px; font-size:13px;}
-.builder-ex-fields .muted{font-size:11px;}
+.builder-ex-fields .muted{font-size:12px;}
 .chip.selected{background:var(--olive); color:#fff; border-color:var(--olive);}
 nav.tabs{position:fixed; bottom:0; left:0; right:0; max-width:480px; margin:0 auto; background:var(--surface); border-top:1px solid var(--border); display:flex;}
 nav.tabs button{flex:1; background:none; border-radius:0; color:var(--text-dim); font-size:11px; padding:8px 4px 10px; display:flex; flex-direction:column; align-items:center; gap:2px;}
@@ -67,7 +67,7 @@ nav.tabs .icon{font-size:18px;}
 .modal{background:var(--bg); width:100%; max-width:480px; max-height:92vh; overflow-y:auto; border-radius:20px 20px 0 0; padding:20px 18px 28px;}
 .week-day{display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);}
 .week-day:last-child{border-bottom:none;}
-.week-day .dayname{width:44px; font-weight:700; color:var(--heading);}
+.week-day .dayname{width:58px; font-weight:700; color:var(--heading);}
 .timer-circle{width:220px; height:220px; border-radius:50%; border:6px solid var(--orange); display:flex; align-items:center; justify-content:center; margin:24px auto; flex-direction:column;}
 .timer-circle.rest{border-color:var(--olive);}
 .timer-num{font-family:'Bebas Neue',sans-serif; font-size:56px;}
@@ -209,17 +209,6 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
       </div>
     </div>
     <div class="card">
-      <div class="row between">
-        <h3 data-i18n="progress_thirty_day_title">30-Day Mission</h3>
-        <div class="row" style="gap:8px">
-          <span class="muted" id="thirtyDayCycle"></span>
-          <button class="ghost" style="padding:4px 10px;font-size:11px" onclick="openMissionStartEdit()" data-i18n="common_edit">Edit</button>
-        </div>
-      </div>
-      <p class="muted" id="thirtyDayLabel"></p>
-      <div class="progressbar"><div class="fill" id="thirtyDayFill" style="width:0%"></div></div>
-    </div>
-    <div class="card">
       <h3 data-i18n="progress_last_seven_days">Last 7 Days</h3>
       <div class="bars" id="progressBars"></div>
     </div>
@@ -286,13 +275,6 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
         <option value="keto" data-i18n="profile_diet_keto">Keto</option>
         <option value="other" data-i18n="profile_diet_other">Other</option>
       </select>
-      <div class="grid2">
-        <div><label data-i18n="profile_smoker_label">Smoker</label><select id="p_smoker"><option value="false" data-i18n="profile_smoker_no">No</option><option value="true" data-i18n="profile_smoker_yes">Yes</option></select></div>
-        <div><label data-i18n="profile_alcohol_label">Alcohol</label><select id="p_alcohol">
-          <option value="none" data-i18n="profile_alcohol_none">None</option><option value="occasional" data-i18n="profile_alcohol_occasional">Occasional</option>
-          <option value="moderate" data-i18n="profile_alcohol_moderate">Moderate</option><option value="frequent" data-i18n="profile_alcohol_frequent">Frequent</option>
-        </select></div>
-      </div>
       <label data-i18n="profile_goals_label">Goals</label>
       <div class="chip-group" id="p_goals"></div>
       <label data-i18n="profile_injuries_label">Injuries</label>
@@ -407,21 +389,6 @@ nav.tabs button.active .tab-icon{color:var(--orange);}
     <div id="builderExerciseList" style="max-height:320px; overflow-y:auto; border:1px solid var(--border); border-radius:8px; padding:8px"></div>
     <button class="primary" style="margin-top:16px" onclick="saveCustomHunt()" id="builderSaveBtn">Save to Today</button>
     <button class="ghost" style="width:100%; margin-top:10px" onclick="closeModal('modal-builder')" data-i18n="common_cancel">Cancel</button>
-  </div>
-</div>
-
-<!-- 30-DAY MISSION START EDIT MODAL -->
-<div class="modal-overlay" id="modal-mission-start">
-  <div class="modal">
-    <div class="row between">
-      <h3 data-i18n="modal_mission_start_title">Edit 30-Day Mission</h3>
-      <button class="ghost" style="padding:6px 10px" onclick="closeModal('modal-mission-start')">✕</button>
-    </div>
-    <p class="muted" data-i18n="modal_mission_start_desc">Set which day your 30-Day Mission started. Useful if you were already training before setting this up, or want to restart the cycle.</p>
-    <label data-i18n="modal_mission_start_date_label">Start Date</label>
-    <input type="date" id="mission_start_date" />
-    <button class="primary" style="margin-top:16px" onclick="saveMissionStart()" data-i18n="modal_mission_start_save">Save</button>
-    <button class="ghost" style="width:100%; margin-top:10px" onclick="restartMission()" data-i18n="modal_mission_start_restart">Restart at Day 1 (Today)</button>
   </div>
 </div>
 
@@ -689,14 +656,11 @@ function isMissionSeenToday(){ return Store.lastSeenMissionDate === todayKey(); 
 function markMissionSeenToday(){ Store.lastSeenMissionDate = todayKey(); }
 // Visibility for a day anywhere in the Program week list: past days and non-workout days are
 // always shown; today follows the same reveal check as Home; future days stay hidden until
-// their own reveal morning arrives.
-function dayVisibility(plan, d){
+// their own reveal morning arrives. `date` is the day's actual calendar date.
+function dayVisibility(d, date){
   if(d.slot !== "workout") return true;
   if(!isAncientMode()) return true;
-  const idx = WEEK_ORDER.indexOf(d.day);
-  const dayDate = new Date(plan.weekStart);
-  dayDate.setHours(0,0,0,0);
-  dayDate.setDate(dayDate.getDate() + idx);
+  const dayDate = new Date(date); dayDate.setHours(0,0,0,0);
   const today = new Date(); today.setHours(0,0,0,0);
   if(dayDate.getTime() < today.getTime()) return true;
   if(dayDate.getTime() > today.getTime()) return false;
@@ -718,6 +682,8 @@ const Store = {
   set profile(v){ localStorage.setItem("cm_profile", JSON.stringify(v)); },
   get plan(){ return JSON.parse(localStorage.getItem("cm_plan")||"null"); },
   set plan(v){ localStorage.setItem("cm_plan", JSON.stringify(v)); },
+  get nextWeekPlan(){ return JSON.parse(localStorage.getItem("cm_plan_next")||"null"); },
+  set nextWeekPlan(v){ localStorage.setItem("cm_plan_next", JSON.stringify(v)); },
   get logs(){ return JSON.parse(localStorage.getItem("cm_logs")||"[]"); },
   set logs(v){ localStorage.setItem("cm_logs", JSON.stringify(v)); },
   get savedMissions(){ return JSON.parse(localStorage.getItem("cm_saved_missions")||"[]"); },
@@ -753,12 +719,61 @@ function ensureWeekPlan(){
   if(existing && new Date(existing.weekStart).toDateString() === weekStart.toDateString()){
     return existing;
   }
+  // The calendar week rolled over. If a staged "next week" plan (built for the rolling
+  // Program-tab preview) already matches, promote it so any edits made while it was
+  // showing as upcoming days survive instead of being discarded.
+  const staged = Store.nextWeekPlan;
+  if(staged && new Date(staged.weekStart).toDateString() === weekStart.toDateString()){
+    Store.plan = staged;
+    Store.nextWeekPlan = null;
+    return staged;
+  }
   const plan = composeWeeklyPlan({
     userId:"local", weekStart, ageGroup:profile.ageGroup, recoveryProfile:profile.recovery,
     rotationIndex: weekRotationIndex(weekStart),
   });
   Store.plan = plan;
   return plan;
+}
+function ensureNextWeekPlan(){
+  const profile = Store.profile; if(!profile) return null;
+  const weekStart = new Date(mondayOf(new Date())); weekStart.setDate(weekStart.getDate()+7);
+  const existing = Store.nextWeekPlan;
+  if(existing && new Date(existing.weekStart).toDateString() === weekStart.toDateString()){
+    return existing;
+  }
+  const plan = composeWeeklyPlan({
+    userId:"local", weekStart, ageGroup:profile.ageGroup, recoveryProfile:profile.recovery,
+    rotationIndex: weekRotationIndex(weekStart),
+  });
+  Store.nextWeekPlan = plan;
+  return plan;
+}
+function getPlanByOffset(weekOffset){ return weekOffset===1 ? ensureNextWeekPlan() : ensureWeekPlan(); }
+function savePlanByOffset(weekOffset, plan){ if(weekOffset===1) Store.nextWeekPlan = plan; else Store.plan = plan; }
+// The Program tab shows a rolling window (today + the next 6 days) rather than a fixed
+// Mon-Sun calendar week, so it never shows days that have already passed. Each entry
+// tracks which underlying plan object (current vs next calendar week) it belongs to,
+// since edits must be saved back to the right one.
+function rollingWindowDays(){
+  const current = ensureWeekPlan();
+  const todayIdx = WEEK_ORDER.indexOf(todayWeekday());
+  let next = null;
+  const out = [];
+  for(let i=0;i<7;i++){
+    const date = new Date(); date.setHours(0,0,0,0); date.setDate(date.getDate()+i);
+    const weekday = WEEK_ORDER[(date.getDay()+6)%7];
+    const indexInPlan = WEEK_ORDER.indexOf(weekday);
+    let plan, weekOffset;
+    if(indexInPlan >= todayIdx){
+      plan = current; weekOffset = 0;
+    } else {
+      if(!next) next = ensureNextWeekPlan();
+      plan = next; weekOffset = 1;
+    }
+    out.push({ d: plan.days.find(x=>x.day===weekday), date, weekOffset, indexInPlan });
+  }
+  return out;
 }
 
 let activeCustomHunt = null; // hunt currently loaded into the workout screen
@@ -853,7 +868,6 @@ const I18N = {
     program_browse_all_exercises: "Browse All Exercises",
 
     progress_mission_score: "Mission Score",
-    progress_thirty_day_title: "30-Day Mission",
     progress_last_seven_days: "Last 7 Days",
     progress_completed: "Completed",
     progress_avg_rpe: "Avg RPE",
@@ -875,9 +889,6 @@ const I18N = {
     profile_diet_type_label: "Diet Type",
     profile_diet_omnivore: "Omnivore", profile_diet_vegetarian: "Vegetarian", profile_diet_vegan: "Vegan",
     profile_diet_pescatarian: "Pescatarian", profile_diet_keto: "Keto", profile_diet_other: "Other",
-    profile_smoker_label: "Smoker", profile_smoker_no: "No", profile_smoker_yes: "Yes",
-    profile_alcohol_label: "Alcohol", profile_alcohol_none: "None", profile_alcohol_occasional: "Occasional",
-    profile_alcohol_moderate: "Moderate", profile_alcohol_frequent: "Frequent",
     profile_goals_label: "Goals", profile_injuries_label: "Injuries",
     profile_save_profile: "Save Profile",
     profile_smart_scale_title: "Smart Scale Data",
@@ -907,11 +918,6 @@ const I18N = {
     modal_builder_time_cap_label: "Time Cap (minutes)",
     modal_builder_pick_exercises: "Pick Exercises",
     modal_builder_pick_exercises_hint: "— tap to expand and edit sets/reps/rest",
-    modal_mission_start_title: "Edit 30-Day Mission",
-    modal_mission_start_desc: "Set which day your 30-Day Mission started. Useful if you were already training before setting this up, or want to restart the cycle.",
-    modal_mission_start_date_label: "Start Date",
-    modal_mission_start_save: "Save",
-    modal_mission_start_restart: "Restart at Day 1 (Today)",
     modal_achievement_detail_exercises: "Exercises",
 
     common_edit: "Edit", common_cancel: "Cancel", common_save: "Save", common_delete: "Delete",
@@ -1063,8 +1069,10 @@ function weekStripHtml(plan, todayKey){
     const date = new Date(plan.weekStart); date.setDate(date.getDate()+i);
     const done = completedDates.has(date.toDateString());
     const isToday = d.day === todayKey;
-    const bg = d.slot==="workout" && d.hunt ? (catColor[d.hunt.category]||"#9b8f76") : "#9b8f76";
-    return `<div class="day-chip ${isToday?"today":""}" onclick="switchTab('program')" title="${d.slot==="workout" && d.hunt ? d.hunt.name : d.slot}">
+    const visible = dayVisibility(d, date);
+    const bg = (d.slot==="workout" && d.hunt && visible) ? (catColor[d.hunt.category]||"#9b8f76") : "#9b8f76";
+    const title = (d.slot==="workout" && d.hunt && visible) ? d.hunt.name : d.slot;
+    return `<div class="day-chip ${isToday?"today":""}" onclick="switchTab('program')" title="${title}">
       <div class="d">${d.day}</div>
       <div class="dot" style="background:${done?"var(--olive)":bg}">${done?"✓":""}</div>
     </div>`;
@@ -1124,7 +1132,7 @@ function renderHome(){
     body = `<div class="card">
       ${weekLink}
       <span class="pill ${h.category}">${categoryLabel(h.category).toUpperCase()}</span>
-      <span class="pill">${h.type}</span>
+      <span class="pill">${h.category==="run_zone2" ? (findWorkout(h.exercises[0].workoutId)?.name || h.type) : h.type}</span>
       <h3 style="margin-top:10px">${h.name}</h3>
       <div class="row between">
         <div><div class="muted">${t("home_target_rpe")}</div><div class="big">${h.targetRPE}</div></div>
@@ -1213,17 +1221,20 @@ function renderProgram(){
   const profile = Store.profile;
   const el = document.getElementById("weekList");
   if(!profile){ el.innerHTML = `<p class="muted">${t("profile_setup_required")}</p>`; renderMyMissions(); return; }
-  const plan = ensureWeekPlan();
+  const rolling = rollingWindowDays();
   const completedThisWeek = weeklySessionsCompleted();
   document.getElementById("weeklyMissionProgress").textContent = t("program_sessions_completed_template").replace("{completed}", completedThisWeek);
   document.getElementById("weeklyMissionFill").style.width = `${Math.min(100, Math.round((completedThisWeek/5)*100))}%`;
   document.getElementById("editWeekBtn").textContent = programEditMode ? t("program_edit_week_done") : t("program_edit_week");
   document.getElementById("weekActionsRow").style.display = programEditMode ? "none" : "flex";
-  el.innerHTML = plan.days.map((d,i) => {
-    const visible = dayVisibility(plan, d);
+  el.innerHTML = rolling.map((row, pos) => {
+    const { d, date, weekOffset, indexInPlan } = row;
+    const visible = dayVisibility(d, date);
+    const dateLabel = date.toLocaleDateString(undefined, {month:"short", day:"numeric"});
+    const todayBadge = pos===0 ? `<div style="font-size:9px; font-weight:700; color:var(--orange); letter-spacing:0.3px">${t("common_today").toUpperCase()}</div>` : "";
     if(programEditMode){
       const slotToggle = [["workout","slot_workout"],["rest","slot_rest"],["mobility","slot_mobility"]].map(([v,k]) =>
-        `<span class="chip ${d.slot===v?"selected":""}" style="padding:5px 10px;font-size:12px" onclick="setDaySlot(${i},'${v}')">${t(k)}</span>`
+        `<span class="chip ${d.slot===v?"selected":""}" style="padding:5px 10px;font-size:12px" onclick="setDaySlot(${weekOffset},${indexInPlan},'${v}')">${t(k)}</span>`
       ).join("");
       let missionLine;
       if(d.slot!=="workout"){
@@ -1241,17 +1252,19 @@ function renderProgram(){
                </div>
                <div class="muted" style="font-size:11px; margin-top:3px">${exercisePreview(d.hunt)}</div>
              </div>
-             <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">${t("common_edit")}</button>
+             <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}',${weekOffset})">${t("common_edit")}</button>
            </div>`;
       } else {
-        missionLine = `<div class="row between" style="margin-top:8px"><div class="muted" style="font-size:13px">${t("program_no_mission_set")}</div><button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">${t("common_build")}</button></div>`;
+        missionLine = `<div class="row between" style="margin-top:8px"><div class="muted" style="font-size:13px">${t("program_no_mission_set")}</div><button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}',${weekOffset})">${t("common_build")}</button></div>`;
       }
+      const canUp = pos>0 && rolling[pos-1].weekOffset === weekOffset;
+      const canDown = pos<rolling.length-1 && rolling[pos+1].weekOffset === weekOffset;
       return `<div class="week-day" style="flex-direction:column; align-items:stretch; gap:8px">
         <div class="row between">
-          <div class="dayname">${d.day}</div>
+          <div class="dayname" style="width:auto; white-space:nowrap">${d.day} <span class="muted" style="font-size:11px; font-weight:400">${dateLabel}</span>${todayBadge}</div>
           <div class="row" style="gap:4px">
-            <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="swapDaySlot(${i},${i-1})" ${i===0?"disabled":""}>▲</button>
-            <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="swapDaySlot(${i},${i+1})" ${i===plan.days.length-1?"disabled":""}>▼</button>
+            <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="swapDaySlot(${weekOffset},${indexInPlan},${indexInPlan-1})" ${canUp?"":"disabled"}>▲</button>
+            <button class="ghost" style="padding:4px 8px;font-size:11px" onclick="swapDaySlot(${weekOffset},${indexInPlan},${indexInPlan+1})" ${canDown?"":"disabled"}>▼</button>
           </div>
         </div>
         <div class="chip-group" style="margin-top:0">${slotToggle}</div>
@@ -1269,9 +1282,9 @@ function renderProgram(){
       label = `<span class="muted">${t("program_no_mission_set_tap_edit")}</span>`;
     }
     return `<div class="week-day">
-      <div class="dayname">${d.day}</div>
+      <div class="dayname">${d.day}<div class="muted" style="font-size:11px; font-weight:400">${dateLabel}</div>${todayBadge}</div>
       <div style="flex:1">${label}</div>
-      ${(d.slot==="workout" && visible) ? `<button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}')">${t("common_edit")}</button>` : ""}
+      ${(d.slot==="workout" && visible) ? `<button class="ghost" style="padding:4px 8px;font-size:11px" onclick="openBuilder('${d.day}',${weekOffset})">${t("common_edit")}</button>` : ""}
     </div>`;
   }).join("");
   renderMyMissions();
@@ -1281,36 +1294,37 @@ function toggleEditWeek(){
   programEditMode = !programEditMode;
   renderProgram();
 }
-function setDaySlot(i, newSlot){
-  const plan = Store.plan; if(!plan) return;
+function setDaySlot(weekOffset, i, newSlot){
+  const plan = getPlanByOffset(weekOffset); if(!plan) return;
   const d = plan.days[i];
   if(d.slot === newSlot) return;
   const becameWorkout = newSlot === "workout";
   d.slot = newSlot;
   d.hunt = null;
   d.highIntensity = false;
-  if(becameWorkout && !dayVisibility(plan, d)){
+  const date = new Date(plan.weekStart); date.setDate(date.getDate()+i);
+  if(becameWorkout && !dayVisibility(d, date)){
     // Ancient Mode, day not yet revealed: fill it in behind the scenes, no peeking allowed.
     const hunt = autoGenerateHiddenHunt();
     d.hunt = hunt;
     d.highIntensity = hunt.highIntensity;
-    Store.plan = plan;
+    savePlanByOffset(weekOffset, plan);
     renderProgram();
     return;
   }
-  Store.plan = plan;
+  savePlanByOffset(weekOffset, plan);
   renderProgram();
-  if(becameWorkout) openBuilder(d.day);
+  if(becameWorkout) openBuilder(d.day, weekOffset);
 }
-function swapDaySlot(i, j){
-  const plan = Store.plan; if(!plan) return;
+function swapDaySlot(weekOffset, i, j){
+  const plan = getPlanByOffset(weekOffset); if(!plan) return;
   if(j<0 || j>=plan.days.length) return;
   const a = plan.days[i], b = plan.days[j];
   const aData = {slot:a.slot, hunt:a.hunt, highIntensity:a.highIntensity};
   const bData = {slot:b.slot, hunt:b.hunt, highIntensity:b.highIntensity};
   Object.assign(a, bData);
   Object.assign(b, aData);
-  Store.plan = plan;
+  savePlanByOffset(weekOffset, plan);
   renderProgram();
 }
 function renderMyMissions(){
@@ -1362,6 +1376,7 @@ function shuffleWeek(){
   renderProgram(); toast("Week shuffled");
 }
 let builderTargetDay = null;
+let builderTargetWeekOffset = 0;
 let builderPreselected = [];
 let builderOverrides = {}; // {workoutId: {sets, reps, seconds, restSeconds}} — only fields the user actually edited
 let builderMode = "save"; // "save" (Program tab: save into the weekly plan), "start" (Home: do it right now), or "library" (Program tab: save to My Missions)
@@ -1426,11 +1441,12 @@ function updateBuilderModeBadge(){
   el.textContent = text;
   el.style.background = color;
 }
-function openBuilder(dayKey){
+function openBuilder(dayKey, weekOffset=0){
   builderTargetDay = dayKey;
+  builderTargetWeekOffset = weekOffset;
   builderMode = "save";
   builderEditingSavedId = null;
-  const plan = ensureWeekPlan();
+  const plan = getPlanByOffset(weekOffset);
   const existingDay = dayKey ? plan.days.find(d=>d.day===dayKey) : null;
   const existingHunt = existingDay && existingDay.slot==="workout" ? existingDay.hunt : null;
   loadBuilderFromHunt(existingHunt);
@@ -1441,6 +1457,7 @@ function openBuilder(dayKey){
 }
 function openBuilderToStartNow(){
   builderTargetDay = null;
+  builderTargetWeekOffset = 0;
   builderMode = "start";
   builderEditingSavedId = null;
   loadBuilderFromHunt(null);
@@ -1451,6 +1468,7 @@ function openBuilderToStartNow(){
 }
 function openBuilderToCreateMission(){
   builderTargetDay = null;
+  builderTargetWeekOffset = 0;
   builderMode = "library";
   builderEditingSavedId = null;
   loadBuilderFromHunt(null);
@@ -1463,6 +1481,7 @@ function openBuilderToEditSavedMission(id){
   const saved = Store.savedMissions.find(m=>m.id===id);
   if(!saved) return;
   builderTargetDay = null;
+  builderTargetWeekOffset = 0;
   builderMode = "library";
   builderEditingSavedId = id;
   loadBuilderFromHunt(saved.hunt);
@@ -1575,11 +1594,12 @@ function saveCustomHunt(){
     return;
   }
 
-  const plan = ensureWeekPlan();
+  const weekOffset = builderTargetDay ? builderTargetWeekOffset : 0;
+  const plan = getPlanByOffset(weekOffset);
   const targetDay = builderTargetDay || todayWeekday();
   const dayObj = plan.days.find(d=>d.day===targetDay);
   dayObj.slot = "workout"; dayObj.hunt = hunt; dayObj.highIntensity = hunt.highIntensity;
-  Store.plan = plan;
+  savePlanByOffset(weekOffset, plan);
   closeModal("modal-builder");
   renderProgram(); renderHome();
   toast("Mission saved to "+targetDay);
@@ -2118,44 +2138,8 @@ function missionScore(){
 function tierFromScore(score){
   return score>700?"Apex":score>450?"Alpha":score>200?"Hunter":"Scout";
 }
-function programDay(){
-  const profile = Store.profile;
-  if(!profile || !profile.programStartDate) return null;
-  const days = Math.floor((new Date() - new Date(profile.programStartDate))/86400000)+1;
-  return {cycleDay: ((days-1)%30)+1, cycleNum: Math.floor((days-1)/30)+1};
-}
-function openMissionStartEdit(){
-  const profile = Store.profile; if(!profile) return;
-  const d = new Date(profile.programStartDate || new Date());
-  document.getElementById("mission_start_date").value = d.toISOString().slice(0,10);
-  openModal("modal-mission-start");
-}
-function saveMissionStart(){
-  const val = document.getElementById("mission_start_date").value;
-  if(!val){ toast("Pick a date"); return; }
-  const profile = Store.profile;
-  profile.programStartDate = new Date(val+"T00:00:00").toISOString();
-  Store.profile = profile;
-  closeModal("modal-mission-start");
-  renderProgress();
-  toast("30-Day Mission updated");
-}
-function restartMission(){
-  const profile = Store.profile;
-  profile.programStartDate = new Date().toISOString();
-  Store.profile = profile;
-  closeModal("modal-mission-start");
-  renderProgress();
-  toast("Mission restarted at Day 1");
-}
 function renderProgress(){
   const logs = Store.logs;
-  const pd = programDay();
-  if(pd){
-    document.getElementById("thirtyDayLabel").textContent = `Day ${pd.cycleDay} of 30`;
-    document.getElementById("thirtyDayCycle").textContent = pd.cycleNum>1 ? `Cycle ${pd.cycleNum}` : "";
-    document.getElementById("thirtyDayFill").style.width = `${Math.round((pd.cycleDay/30)*100)}%`;
-  }
   const score = missionScore();
   document.getElementById("statHunterScore").textContent = score;
   const tierName = tierFromScore(score);
@@ -2238,7 +2222,7 @@ function renderChipGroup(containerId, options, selected){
   el.innerHTML = options.map(o => `<span class="chip ${selected.includes(o)?"selected":""}" data-val="${o}" onclick="this.classList.toggle('selected')">${o.replace("_"," ")}</span>`).join("");
 }
 function renderProfileForm(){
-  const p = Store.profile || {age:30,heightCm:175,weightKg:75,recovery:"moderate",fitnessLevel:"Scout",activityLevel:"moderate",dietType:"omnivore",smoker:false,alcohol:"occasional",goals:[],injuries:[]};
+  const p = Store.profile || {age:30,heightCm:175,weightKg:75,recovery:"moderate",fitnessLevel:"Scout",activityLevel:"moderate",dietType:"omnivore",goals:[],injuries:[]};
   document.getElementById("p_age").value = p.age;
   document.getElementById("p_height").value = p.heightCm;
   document.getElementById("p_weight").value = p.weightKg;
@@ -2246,8 +2230,6 @@ function renderProfileForm(){
   document.getElementById("p_level").value = p.fitnessLevel;
   document.getElementById("p_activity").value = p.activityLevel;
   document.getElementById("p_diet").value = p.dietType;
-  document.getElementById("p_smoker").value = String(p.smoker);
-  document.getElementById("p_alcohol").value = p.alcohol;
   renderChipGroup("p_goals", GOALS, p.goals||[]);
   renderChipGroup("p_injuries", INJURIES, p.injuries||[]);
   populateLocaleSelects("p_country", "p_language");
@@ -2305,18 +2287,14 @@ function saveProfile(){
   const weightKg = parseFloat(document.getElementById("p_weight").value);
   const goals = Array.from(document.querySelectorAll("#p_goals .chip.selected")).map(c=>c.dataset.val);
   const injuries = Array.from(document.querySelectorAll("#p_injuries .chip.selected")).map(c=>c.dataset.val);
-  const existing = Store.profile;
   const profile = {
     age, heightCm, weightKg,
     bmi: heightCm>0 ? +(weightKg/((heightCm/100)**2)).toFixed(1) : null,
     ageGroup: ageGroupFromAge(age),
-    programStartDate: (existing && existing.programStartDate) || new Date().toISOString(),
     recovery: document.getElementById("p_recovery").value,
     fitnessLevel: document.getElementById("p_level").value,
     activityLevel: document.getElementById("p_activity").value,
     dietType: document.getElementById("p_diet").value,
-    smoker: document.getElementById("p_smoker").value==="true",
-    alcohol: document.getElementById("p_alcohol").value,
     goals, injuries,
   };
   Store.profile = profile;
